@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import {
@@ -149,6 +149,37 @@ function ProBadge() {
 export function DocsContent({ highlightedCode }: DocsContentProps) {
   const [activeSection, setActiveSection] = useState("installation");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Auto-update active section based on scroll position
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // Find the section that's most visible
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      {
+        rootMargin: "-100px 0px -60% 0px", // Trigger when section is near top
+        threshold: 0,
+      }
+    );
+
+    // Get all section elements
+    const sections = navigation
+      .flatMap((section) => section.children || [])
+      .map((child) => document.getElementById(child.id))
+      .filter((el): el is HTMLElement => el !== null);
+
+    // Observe all sections
+    sections.forEach((section) => observer.observe(section));
+
+    return () => {
+      sections.forEach((section) => observer.unobserve(section));
+    };
+  }, []);
 
   const scrollToSection = (id: string) => {
     setActiveSection(id);
