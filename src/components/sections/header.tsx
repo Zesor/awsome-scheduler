@@ -51,7 +51,7 @@ export function Header() {
 
         <div className="hidden lg:flex items-center gap-4">
           <Link
-            href="https://github.com/calaboratehq"
+            href="https://github.com/Zesor/calendarkit-basic"
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-foreground hover:text-foreground transition-colors"

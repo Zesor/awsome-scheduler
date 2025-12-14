@@ -109,11 +109,14 @@ function EmailCaptureModal({
 interface PricingTier {
   name: string;
   price: string;
+  originalPrice?: string | null;
   description: string;
   features: string[];
   cta: string;
+  ctaLink?: string;
   popular?: boolean;
   comingSoon?: boolean;
+  openSource?: boolean;
 }
 
 function PricingTierCard({
@@ -124,9 +127,17 @@ function PricingTierCard({
   onNotifyClick: (planName: string) => void;
 }) {
   const handleCTAClick = () => {
-    track("Pricing CTA Clicked", { plan: tier.name, action: tier.comingSoon ? "waitlist" : "buy" });
-    if (tier.comingSoon) {
+    if (tier.openSource && tier.ctaLink) {
+      track("Pricing CTA Clicked", { plan: tier.name, action: "npm_link" });
+      window.open(tier.ctaLink, "_blank");
+    } else if (tier.ctaLink && !tier.comingSoon) {
+      track("Pricing CTA Clicked", { plan: tier.name, action: "checkout" });
+      window.open(tier.ctaLink, "_blank");
+    } else if (tier.comingSoon) {
+      track("Pricing CTA Clicked", { plan: tier.name, action: "waitlist" });
       onNotifyClick(tier.name);
+    } else {
+      track("Pricing CTA Clicked", { plan: tier.name, action: "buy" });
     }
   };
 
@@ -149,10 +160,11 @@ function PricingTierCard({
 
       <div className="flex flex-col h-full">
         <CardHeader className="border-b p-6">
-          <CardTitle className="flex items-center justify-between">
+          <CardTitle className="flex items-center justify-between min-h-[32px]">
             <span className="text-sm font-medium text-muted-foreground flex items-center gap-2">
               {tier.name}
               {tier.popular && <Sparkles className="h-4 w-4 text-primary" />}
+              {tier.openSource && <span className="text-xs px-2 py-0.5 bg-green-500/10 text-green-600 dark:text-green-400 rounded-full">Open Source</span>}
             </span>
             {tier.popular && (
               <Badge
@@ -163,11 +175,21 @@ function PricingTierCard({
               </Badge>
             )}
           </CardTitle>
-          <div className="pt-4">
+          <div className="pt-4 min-h-[140px] flex flex-col justify-start">
+            {tier.originalPrice && (
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-2xl font-bold text-muted-foreground line-through">
+                  {tier.originalPrice}
+                </span>
+                <span className="px-2 py-1 bg-green-500/10 text-green-600 dark:text-green-400 text-xs font-semibold rounded-full">
+                  Save 25%
+                </span>
+              </div>
+            )}
             <div className="text-4xl font-bold tracking-tight">
               {tier.price}
             </div>
-            {!tier.comingSoon && (
+            {!tier.comingSoon && !tier.openSource && (
               <span className="text-sm text-muted-foreground">one-time</span>
             )}
           </div>
@@ -192,7 +214,9 @@ function PricingTierCard({
             size="lg"
             className={cn(
               "w-full",
-              tier.popular
+              tier.openSource
+                ? "bg-green-500 text-white hover:bg-green-600"
+                : tier.popular
                 ? "bg-primary text-primary-foreground hover:bg-primary/90"
                 : tier.comingSoon
                 ? "bg-muted text-foreground hover:bg-muted/80"
@@ -220,17 +244,29 @@ export function Pricing() {
   return (
     <Section id="pricing" title="Pricing">
       <div className="border border-b-0">
+        {/* Seasonal Discount Banner */}
+        {siteConfig.seasonalDiscount.active && (
+          <div className="bg-gradient-to-r from-green-500/10 via-green-500/5 to-green-500/10 border-b border-green-500/20 p-4 text-center">
+            <div className="flex items-center justify-center gap-2">
+              <Sparkles className="h-5 w-5 text-green-600 dark:text-green-400" />
+              <p className="text-sm md:text-base font-semibold text-green-600 dark:text-green-400">
+                {siteConfig.seasonalDiscount.reason} - Save {siteConfig.seasonalDiscount.percentage}% on Pro Plan!
+              </p>
+              <Sparkles className="h-5 w-5 text-green-600 dark:text-green-400" />
+            </div>
+            <p className="text-xs text-muted-foreground mt-1">
+              Limited time offer · Ends {new Date(siteConfig.seasonalDiscount.endDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            </p>
+          </div>
+        )}
+
         {/* Header */}
         <div className="p-6 md:p-10 text-center border-b">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-            <Bell className="h-4 w-4" />
-            Payment Processing Coming Very Soon
-          </div>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tighter text-balance">
             Simple, One-Time Pricing
           </h2>
           <p className="mt-4 text-muted-foreground text-balance max-w-2xl mx-auto">
-            Pay once, own forever. Free updates included. Get notified when we launch!
+            Pay once, own forever. Free updates included. No subscriptions.
           </p>
         </div>
 

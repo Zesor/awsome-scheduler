@@ -3,7 +3,7 @@
 import { Section } from "@/components/section";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { Clock, Code, Sparkles, Zap, TrendingDown, Calendar } from "lucide-react";
+import { Code, Sparkles, Zap, TrendingDown, Calendar, Check, X, DollarSign } from "lucide-react";
 import { track } from "@vercel/analytics";
 import { useEffect } from "react";
 
@@ -231,6 +231,280 @@ export function TimeSavings() {
           </motion.div>
         </div>
 
+        {/* Competitor Comparison Section */}
+        <div className="border-t bg-gradient-to-b from-background to-muted/30 p-6 md:p-10">
+          <div className="max-w-6xl mx-auto">
+            {/* Section Header */}
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+                <DollarSign className="h-4 w-4" />
+                Market Comparison
+              </div>
+              <h3 className="text-2xl md:text-4xl font-bold tracking-tight mb-3">
+                Why Choose CalendarKit?
+              </h3>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Compare our pricing and features against the leading calendar solutions on the market.
+              </p>
+            </div>
+
+            {/* Comparison Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse">
+                <thead>
+                  <tr className="border-b-2 border-border">
+                    <th className="text-left p-4 text-sm font-semibold text-muted-foreground w-1/4">Feature</th>
+                    <th className="p-4 text-center">
+                      <div className="space-y-1">
+                        <div className="font-bold text-base">FullCalendar</div>
+                        <div className="text-xl font-bold text-red-600 dark:text-red-400">$480</div>
+                        <div className="text-xs text-muted-foreground">1 - 10 devs/team</div>
+                      </div>
+                    </th>
+                    <th className="p-4 text-center">
+                      <div className="space-y-1">
+                        <div className="font-bold text-base">React Big Calendar</div>
+                        <div className="text-xl font-bold text-red-600 dark:text-red-400">$680</div>
+                        <div className="text-xs text-muted-foreground">per dev/team</div>
+                      </div>
+                    </th>
+                    <th className="p-4 text-center bg-green-500/5 rounded-t-lg">
+                      <div className="space-y-1">
+                        <div className="inline-flex items-center gap-1">
+                          <Sparkles className="h-4 w-4 text-green-600 dark:text-green-400" />
+                          <span className="font-bold text-base">CalendarKit Pro</span>
+                        </div>
+                        <div className="text-xl font-bold text-green-600 dark:text-green-400">$149</div>
+                        <div className="text-xs text-muted-foreground">one-time forever</div>
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="text-sm">
+                  {/* Pricing Model */}
+                  <tr className="border-b border-border hover:bg-muted/50 transition-colors">
+                    <td className="p-4 font-medium">Pricing Model</td>
+                    <td className="p-4 text-center text-muted-foreground">Per developer license</td>
+                    <td className="p-4 text-center text-muted-foreground">Per developer/team</td>
+                    <td className="p-4 text-center bg-green-500/5">
+                      <span className="font-semibold text-green-600 dark:text-green-400">One-time payment</span>
+                    </td>
+                  </tr>
+
+                  {/* Free Version */}
+                  <tr className="border-b border-border hover:bg-muted/50 transition-colors">
+                    <td className="p-4 font-medium">Free Open Source Version</td>
+                    <td className="p-4 text-center">
+                      <X className="h-5 w-5 text-red-500 mx-auto" />
+                    </td>
+                    <td className="p-4 text-center">
+                      <X className="h-5 w-5 text-red-500 mx-auto" />
+                    </td>
+                    <td className="p-4 text-center bg-green-500/5">
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    </td>
+                  </tr>
+
+                  {/* Core Features */}
+                  <tr className="border-b border-border hover:bg-muted/50 transition-colors">
+                    <td className="p-4 font-medium">Month/Week/Day Views</td>
+                    <td className="p-4 text-center">
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    </td>
+                    <td className="p-4 text-center">
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    </td>
+                    <td className="p-4 text-center bg-green-500/5">
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    </td>
+                  </tr>
+
+                  {/* Drag & Drop */}
+                  <tr className="border-b border-border hover:bg-muted/50 transition-colors">
+                    <td className="p-4 font-medium">Drag & Drop Events</td>
+                    <td className="p-4 text-center">
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    </td>
+                    <td className="p-4 text-center">
+                      <span className="text-xs text-muted-foreground">Basic only</span>
+                    </td>
+                    <td className="p-4 text-center bg-green-500/5">
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    </td>
+                  </tr>
+
+                  {/* Agenda View */}
+                  <tr className="border-b border-border hover:bg-muted/50 transition-colors">
+                    <td className="p-4 font-medium">Agenda View</td>
+                    <td className="p-4 text-center">
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    </td>
+                    <td className="p-4 text-center">
+                      <X className="h-5 w-5 text-red-500 mx-auto" />
+                    </td>
+                    <td className="p-4 text-center bg-green-500/5">
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    </td>
+                  </tr>
+
+                  {/* Resource View */}
+                  <tr className="border-b border-border hover:bg-muted/50 transition-colors">
+                    <td className="p-4 font-medium">Resource/Timeline View</td>
+                    <td className="p-4 text-center">
+                      <span className="text-xs text-muted-foreground">+$200 addon</span>
+                    </td>
+                    <td className="p-4 text-center">
+                      <X className="h-5 w-5 text-red-500 mx-auto" />
+                    </td>
+                    <td className="p-4 text-center bg-green-500/5">
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    </td>
+                  </tr>
+
+                  {/* Recurring Events */}
+                  <tr className="border-b border-border hover:bg-muted/50 transition-colors">
+                    <td className="p-4 font-medium">Recurring Events (RRULE)</td>
+                    <td className="p-4 text-center">
+                      <span className="text-xs text-muted-foreground">+$150 addon</span>
+                    </td>
+                    <td className="p-4 text-center">
+                      <X className="h-5 w-5 text-red-500 mx-auto" />
+                    </td>
+                    <td className="p-4 text-center bg-green-500/5">
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    </td>
+                  </tr>
+
+                  {/* Dark Mode */}
+                  <tr className="border-b border-border hover:bg-muted/50 transition-colors">
+                    <td className="p-4 font-medium">Built-in Dark Mode</td>
+                    <td className="p-4 text-center">
+                      <span className="text-xs text-muted-foreground">Manual CSS</span>
+                    </td>
+                    <td className="p-4 text-center">
+                      <span className="text-xs text-muted-foreground">Manual CSS</span>
+                    </td>
+                    <td className="p-4 text-center bg-green-500/5">
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    </td>
+                  </tr>
+
+                  {/* TypeScript */}
+                  <tr className="border-b border-border hover:bg-muted/50 transition-colors">
+                    <td className="p-4 font-medium">TypeScript First</td>
+                    <td className="p-4 text-center">
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    </td>
+                    <td className="p-4 text-center">
+                      <span className="text-xs text-muted-foreground">Partial</span>
+                    </td>
+                    <td className="p-4 text-center bg-green-500/5">
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    </td>
+                  </tr>
+
+                  {/* Timezone */}
+                  <tr className="border-b border-border hover:bg-muted/50 transition-colors">
+                    <td className="p-4 font-medium">Timezone Support</td>
+                    <td className="p-4 text-center">
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    </td>
+                    <td className="p-4 text-center">
+                      <span className="text-xs text-muted-foreground">Manual</span>
+                    </td>
+                    <td className="p-4 text-center bg-green-500/5">
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    </td>
+                  </tr>
+
+                  {/* i18n */}
+                  <tr className="border-b border-border hover:bg-muted/50 transition-colors">
+                    <td className="p-4 font-medium">Multi-language (i18n)</td>
+                    <td className="p-4 text-center">
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    </td>
+                    <td className="p-4 text-center">
+                      <span className="text-xs text-muted-foreground">Manual</span>
+                    </td>
+                    <td className="p-4 text-center bg-green-500/5">
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    </td>
+                  </tr>
+
+                  {/* Source Code */}
+                  <tr className="border-b border-border hover:bg-muted/50 transition-colors">
+                    <td className="p-4 font-medium">Full Source Code Access</td>
+                    <td className="p-4 text-center">
+                      <X className="h-5 w-5 text-red-500 mx-auto" />
+                    </td>
+                    <td className="p-4 text-center">
+                      <X className="h-5 w-5 text-red-500 mx-auto" />
+                    </td>
+                    <td className="p-4 text-center bg-green-500/5">
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    </td>
+                  </tr>
+
+                  {/* Updates */}
+                  <tr className="border-b border-border hover:bg-muted/50 transition-colors">
+                    <td className="p-4 font-medium">Lifetime Updates</td>
+                    <td className="p-4 text-center">
+                      <span className="text-xs text-muted-foreground">1 year only</span>
+                    </td>
+                    <td className="p-4 text-center">
+                      <span className="text-xs text-muted-foreground">1 year only</span>
+                    </td>
+                    <td className="p-4 text-center bg-green-500/5">
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    </td>
+                  </tr>
+
+                  {/* Support */}
+                  <tr className="border-b-2 border-border hover:bg-muted/50 transition-colors">
+                    <td className="p-4 font-medium">Email Support</td>
+                    <td className="p-4 text-center">
+                      <span className="text-xs text-muted-foreground">Forum only</span>
+                    </td>
+                    <td className="p-4 text-center">
+                      <span className="text-xs text-muted-foreground">Community</span>
+                    </td>
+                    <td className="p-4 text-center bg-green-500/5">
+                      <Check className="h-5 w-5 text-green-500 mx-auto" />
+                    </td>
+                  </tr>
+
+                  {/* Total Cost */}
+                  <tr className="bg-muted/50 font-bold">
+                    <td className="p-4">Total Cost (5 developers)</td>
+                    <td className="p-4 text-center">
+                      <div className="text-xl text-red-600 dark:text-red-400">$2,400</div>
+                      <div className="text-xs text-muted-foreground font-normal">+ renewals</div>
+                    </td>
+                    <td className="p-4 text-center">
+                      <div className="text-xl text-red-600 dark:text-red-400">$3,400</div>
+                      <div className="text-xs text-muted-foreground font-normal">+ renewals</div>
+                    </td>
+                    <td className="p-4 text-center bg-green-500/10 rounded-b-lg">
+                      <div className="text-2xl text-green-600 dark:text-green-400">$149</div>
+                      <div className="text-xs text-green-600 dark:text-green-400 font-normal">one-time forever</div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            {/* Bottom CTA */}
+            <div className="mt-8 text-center space-y-3">
+              <div className="text-3xl font-bold text-green-600 dark:text-green-400">
+                Save up to 96% vs competitors
+              </div>
+              <p className="text-muted-foreground">
+                Get all premium features for a fraction of the cost. No per-developer fees, no renewals, no hidden costs.
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* ROI Bottom Section */}
         <div className="border-t bg-muted/30 p-6 md:p-10">
           <div className="max-w-3xl mx-auto text-center space-y-4">
@@ -239,13 +513,13 @@ export function TimeSavings() {
               <span className="text-lg font-semibold">Quick ROI Calculation</span>
             </div>
             <p className="text-muted-foreground leading-relaxed">
-              A senior developer costs <span className="font-semibold text-foreground">$75-150/hour</span>.
-              Building from scratch = <span className="font-semibold text-foreground">160-240 hours × $75-150</span> =
-              <span className="font-bold text-foreground text-lg"> $12,000-36,000</span> in development costs alone.
+              A senior developer costs <span className="font-semibold text-foreground">$60 - 150/hour (US)</span>.
+              Building from scratch = <span className="font-semibold text-foreground">60 - 70 hours × $60-150</span> =
+              <span className="font-bold text-foreground text-lg"> $6,000 - 10,500</span> in development costs alone.
             </p>
             <p className="text-muted-foreground leading-relaxed">
               CalendarKit Pro = <span className="font-bold text-green-600 dark:text-green-400 text-xl">$149</span> one-time.
-              <span className="font-semibold text-foreground"> That's a 99.6% cost reduction</span> and you ship
+              <span className="font-semibold text-foreground"> That's a 90% cost reduction</span> and you ship
               <span className="font-semibold text-foreground"> 4-6 weeks faster</span>.
             </p>
             <div className="pt-4">

@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Section } from "@/components/section";
 import { cn } from "@/lib/utils";
 import { Scheduler as ProScheduler } from "@/components/pro-scheduler/index";
-import { Scheduler as BasicScheduler } from "@/components/basic-scheduler/index";
+import { BasicScheduler } from "calendarkit-basic";
 import { CalendarEvent, ViewType } from "@/components/pro-scheduler/types";
 import { addDays, startOfWeek, addHours } from "date-fns";
 import { fr } from "date-fns/locale";

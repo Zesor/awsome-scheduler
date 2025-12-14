@@ -9,22 +9,28 @@ export const metadata: Metadata = {
 
 // Code examples for documentation
 const codeExamples = {
-  installation: `# After purchase, you'll receive access to our private GitHub repository.
-# Clone the repository using your GitHub account:
+  installation: `# Basic (Free - Open Source)
+# Install from npm - no purchase needed!
+npm install calendarkit-basic
+# or
+yarn add calendarkit-basic
+# or
+pnpm add calendarkit-basic
 
-git clone https://github.com/calaboratehq/basic-scheduler.git
-# or for Pro version:
+# Pro (After Purchase)
+# You'll receive access to our private GitHub repository.
+# Clone the repository using your GitHub account:
 git clone https://github.com/calaboratehq/pro-scheduler.git
 
 # Install dependencies
-cd basic-scheduler  # or pro-scheduler
+cd pro-scheduler
 npm install
 
 # Run the development server
 npm run dev`,
 
-  basicImport: `import { Scheduler } from '@/components/scheduler';
-import { CalendarEvent, ViewType } from '@/components/scheduler/types';
+  basicImport: `import { BasicScheduler } from 'calendarkit-basic';
+import { CalendarEvent, ViewType } from 'calendarkit-basic';
 import { useState } from 'react';
 
 export default function MyCalendar() {
@@ -33,7 +39,7 @@ export default function MyCalendar() {
   const [date, setDate] = useState(new Date());
 
   return (
-    <Scheduler
+    <BasicScheduler
       events={events}
       view={view}
       onViewChange={setView}

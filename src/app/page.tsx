@@ -1,3 +1,4 @@
+import { SeasonalBanner } from "@/components/seasonal-banner";
 import { Comparison } from "@/components/sections/comparison";
 import { FAQ } from "@/components/sections/faq";
 import { Features } from "@/components/sections/features";
@@ -13,6 +14,7 @@ import { UseCases } from "@/components/sections/use-cases";
 export default function Home() {
   return (
     <main>
+      <SeasonalBanner />
       <Header />
       <Hero />
       <Comparison />

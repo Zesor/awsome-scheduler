@@ -273,28 +273,37 @@ export function DocsContent({ highlightedCode }: DocsContentProps) {
             <section id="installation" className="mb-16 scroll-mt-20">
               <h2 className="text-3xl font-bold mb-4">Installation</h2>
               <p className="text-muted-foreground mb-6">
-                After purchasing CalendarKit, you&apos;ll receive access to a private GitHub repository containing the full source code.
+                CalendarKit offers two versions: Basic (free, open source) and Pro (premium features).
               </p>
 
-              <div className="mb-6 p-4 bg-muted/50 rounded-lg border">
-                <h4 className="font-semibold mb-3">How it works:</h4>
-                <ol className="space-y-2 text-sm text-muted-foreground list-decimal list-inside">
-                  <li>Complete your purchase on our website</li>
-                  <li>Provide your GitHub username during checkout</li>
-                  <li>Within minutes, you&apos;ll receive an invitation to our private repository</li>
-                  <li>Accept the invitation and clone the repository</li>
-                  <li>The source code is yours - customize it as needed</li>
-                </ol>
+              <div className="mb-6 p-4 bg-green-500/10 rounded-lg border border-green-500/20">
+                <h4 className="font-semibold mb-3 text-green-600 dark:text-green-400">Basic (Free - Open Source)</h4>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Install directly from npm - no purchase needed! Includes month, week, and day views with event management.
+                </p>
+                <ul className="space-y-1 text-sm text-muted-foreground">
+                  <li>✓ Month, Week, Day views</li>
+                  <li>✓ Event creation & editing</li>
+                  <li>✓ Calendar filtering</li>
+                  <li>✓ Full TypeScript support</li>
+                  <li>✓ MIT License</li>
+                </ul>
               </div>
 
               <div className="mb-6 p-4 bg-blue-500/10 rounded-lg border border-blue-500/20">
-                <h4 className="font-semibold mb-2 text-blue-600 dark:text-blue-400">What you get:</h4>
+                <h4 className="font-semibold mb-3 text-blue-600 dark:text-blue-400">Pro (Premium)</h4>
+                <p className="text-sm text-muted-foreground mb-3">
+                  After purchase, you&apos;ll receive access to a private GitHub repository with full source code.
+                </p>
                 <ul className="space-y-1 text-sm text-muted-foreground">
-                  <li>• Full source code with TypeScript types</li>
-                  <li>• Working Next.js demo application</li>
-                  <li>• Complete documentation</li>
-                  <li>• Lifetime access to the repository</li>
-                  <li>• Future updates and bug fixes</li>
+                  <li>✓ Everything in Basic</li>
+                  <li>✓ Drag & drop events</li>
+                  <li>✓ Agenda & Resource views</li>
+                  <li>✓ Dark mode & i18n</li>
+                  <li>✓ Timezone support</li>
+                  <li>✓ Recurring events (RRULE)</li>
+                  <li>✓ Event attachments & guests</li>
+                  <li>✓ Lifetime updates</li>
                 </ul>
               </div>
 

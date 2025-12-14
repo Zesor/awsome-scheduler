@@ -148,11 +148,21 @@ export const siteConfig = {
       icon: <GraduationCap className="h-6 w-6" />,
     },
   ],
+
+  // Seasonal discount configuration
+  seasonalDiscount: {
+    active: true,
+    reason: "Holiday Season Sale", // Can be: "Christmas Sale", "New Year Sale", "Chinese New Year", etc.
+    percentage: 25, // 25% off
+    endDate: "2025-12-31", // When discount ends
+  },
+
   pricing: [
     {
       name: "Basic",
-      price: "$89",
-      description: "Perfect for simple scheduling needs.",
+      price: "Free",
+      originalPrice: null,
+      description: "Open source React calendar component on npm.",
       features: [
         "Month view",
         "Week view",
@@ -163,12 +173,14 @@ export const siteConfig = {
         "Full TypeScript types",
         "MIT License",
       ],
-      cta: "Coming Soon",
-      comingSoon: true,
+      cta: "View on npm",
+      ctaLink: "https://www.npmjs.com/package/@calendarkit/basic",
+      openSource: true,
     },
     {
       name: "Pro",
       price: "$149",
+      originalPrice: "$199",
       description: "Everything you need for production apps.",
       features: [
         "Everything in Basic",
@@ -185,12 +197,13 @@ export const siteConfig = {
         "Download event attachments",
       ],
       popular: true,
-      cta: "Coming Soon",
-      comingSoon: true,
+      cta: "Buy Now",
+      ctaLink: "https://calendarkit.lemonsqueezy.com/buy/f8025fe8-2134-4451-a8d5-0273c66d9ff2",
     },
     {
       name: "Universal",
       price: "Coming Soon",
+      originalPrice: null,
       description: "Multi-framework support for all your projects.",
       features: [
         "Everything in Pro",
