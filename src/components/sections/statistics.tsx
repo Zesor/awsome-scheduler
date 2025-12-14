@@ -12,11 +12,6 @@ const stats = [
     icon: <Icons.github className="h-5 w-5" />,
   },
   {
-    title: "50K+",
-    subtitle: "Discord Members",
-    icon: <Icons.discord className="h-5 w-5" />,
-  },
-  {
     title: "1M+",
     subtitle: "Downloads",
     icon: <Icons.npm className="h-5 w-5" />,
