@@ -18,10 +18,10 @@ export default function Home() {
       <Header />
       <Hero />
       <Comparison />
-      <TimeSavings />
+      <SchedulerExamples />
       <UseCases />
       <Features />
-      <SchedulerExamples />
+      <TimeSavings />
       <Testimonials />
       <Pricing />
       <FAQ />
