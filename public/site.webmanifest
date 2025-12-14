@@ -1,0 +1,20 @@
+{
+  "name": "CalendarKit - Modern React Calendar & Scheduler Component Provider",
+  "short_name": "CalendarKit",
+  "description": "The leading React calendar and scheduler component provider. Build beautiful, responsive calendars and schedulers with TypeScript support.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ],
+  "categories": ["development", "productivity", "utilities"],
+  "lang": "en-US",
+  "dir": "ltr"
+}

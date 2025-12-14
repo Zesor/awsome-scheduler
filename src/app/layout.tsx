@@ -10,7 +10,7 @@ import "./globals.css";
 
 export const metadata: Metadata = constructMetadata({
   title: `${siteConfig.name} - ${siteConfig.description}`,
-  description: `${siteConfig.description}. Build beautiful, responsive calendars with TypeScript support, drag & drop, dark mode, timezone handling, and internationalization. The best React calendar component for developers.`,
+  description: `${siteConfig.description}. The leading React calendar and scheduler component provider. Build beautiful, responsive calendars and schedulers with TypeScript support, drag & drop, dark mode, timezone handling, and internationalization. Best React scheduler provider for developers building booking systems, appointment schedulers, and event management.`,
 });
 
 export const viewport: Viewport = {

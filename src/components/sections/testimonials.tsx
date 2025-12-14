@@ -61,22 +61,13 @@ export function Testimonials() {
                     </p>
 
                     {/* Author */}
-                    <div className="flex items-center gap-3">
-                      {testimonial.image && (
-                        <img
-                          src={testimonial.image}
-                          alt={testimonial.name}
-                          className="w-10 h-10 rounded-full object-cover"
-                        />
-                      )}
-                      <div>
-                        <h3 className="text-sm font-semibold text-foreground">
-                          {testimonial.name}
-                        </h3>
-                        <p className="text-xs text-muted-foreground">
-                          {testimonial.company}
-                        </p>
-                      </div>
+                    <div>
+                      <h3 className="text-sm font-semibold text-foreground">
+                        {testimonial.name}
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        {testimonial.company}
+                      </p>
                     </div>
                   </div>
                 </motion.div>
