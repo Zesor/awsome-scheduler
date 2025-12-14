@@ -7,6 +7,7 @@ import { Hero } from "@/components/sections/hero";
 import { Pricing } from "@/components/sections/pricing";
 import { SchedulerExamples } from "@/components/sections/scheduler-examples";
 import { Testimonials } from "@/components/sections/testimonials";
+import { TimeSavings } from "@/components/sections/time-savings";
 import { UseCases } from "@/components/sections/use-cases";
 
 export default function Home() {
@@ -15,6 +16,7 @@ export default function Home() {
       <Header />
       <Hero />
       <Comparison />
+      <TimeSavings />
       <UseCases />
       <Features />
       <SchedulerExamples />

@@ -77,7 +77,6 @@ export const siteConfig = {
     description:
       "Build scheduling features in minutes, not months. A beautifully crafted React calendar component with drag & drop, dark mode, and full TypeScript support.",
     cta: "Get Started",
-    ctaDescription: "npm install @calendarkit/react",
   },
   features: [
     {

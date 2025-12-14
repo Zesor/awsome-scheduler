@@ -119,9 +119,6 @@ function HeroCTA() {
         animate={{ opacity: 1 }}
         transition={{ delay: 1.0, duration: 0.8 }}
       >
-        <code className="text-sm bg-muted px-3 py-1.5 rounded-md font-mono text-muted-foreground">
-          {siteConfig.hero.ctaDescription}
-        </code>
       </motion.div>
     </div>
   );
