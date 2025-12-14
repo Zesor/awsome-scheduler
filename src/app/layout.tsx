@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import { TailwindIndicator } from "@/components/tailwind-indicator";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -61,6 +62,7 @@ export default function RootLayout({
           <ThemeToggle />
           <TailwindIndicator />
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
