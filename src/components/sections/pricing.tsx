@@ -15,17 +15,19 @@ import { track } from "@vercel/analytics";
 function EmailCaptureModal({
   isOpen,
   onClose,
+  planName,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  planName?: string;
 }) {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Track email capture for Universal waitlist
-    track("Waitlist Email Submitted", { plan: "Universal", email_domain: email.split("@")[1] });
+    // Track email capture for waitlist
+    track("Waitlist Email Submitted", { plan: planName || "Unknown", email_domain: email.split("@")[1] });
     // In a real app, you'd send this to your backend
     console.log("Email captured:", email);
     setSubmitted(true);
@@ -68,8 +70,10 @@ function EmailCaptureModal({
               </div>
               <h3 className="text-lg font-semibold mb-2">Get Notified</h3>
               <p className="text-sm text-muted-foreground">
-                Be the first to know when CalendarKit Universal launches with Vue,
-                Angular, Svelte and more.
+                {planName === "Universal"
+                  ? "Be the first to know when CalendarKit Universal launches with Vue, Angular, Svelte and more."
+                  : `Be the first to know when ${planName} is available for purchase. We're setting up payment processing now!`
+                }
               </p>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -117,14 +121,12 @@ function PricingTierCard({
   onNotifyClick,
 }: {
   tier: PricingTier;
-  onNotifyClick: () => void;
+  onNotifyClick: (planName: string) => void;
 }) {
   const handleCTAClick = () => {
+    track("Pricing CTA Clicked", { plan: tier.name, action: tier.comingSoon ? "waitlist" : "buy" });
     if (tier.comingSoon) {
-      track("Pricing CTA Clicked", { plan: tier.name, action: "waitlist" });
-      onNotifyClick();
-    } else {
-      track("Pricing CTA Clicked", { plan: tier.name, price: tier.price, action: "buy" });
+      onNotifyClick(tier.name);
     }
   };
 
@@ -208,17 +210,27 @@ function PricingTierCard({
 
 export function Pricing() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<string>("");
+
+  const handleNotifyClick = (planName: string) => {
+    setSelectedPlan(planName);
+    setIsModalOpen(true);
+  };
 
   return (
     <Section id="pricing" title="Pricing">
       <div className="border border-b-0">
         {/* Header */}
         <div className="p-6 md:p-10 text-center border-b">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+            <Bell className="h-4 w-4" />
+            Payment Processing Coming Very Soon
+          </div>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tighter text-balance">
             Simple, One-Time Pricing
           </h2>
           <p className="mt-4 text-muted-foreground text-balance max-w-2xl mx-auto">
-            Pay once, own forever. Free updates included.
+            Pay once, own forever. Free updates included. Get notified when we launch!
           </p>
         </div>
 
@@ -228,7 +240,7 @@ export function Pricing() {
             <PricingTierCard
               key={index}
               tier={tier}
-              onNotifyClick={() => setIsModalOpen(true)}
+              onNotifyClick={handleNotifyClick}
             />
           ))}
         </div>
@@ -261,6 +273,7 @@ export function Pricing() {
       <EmailCaptureModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        planName={selectedPlan}
       />
     </Section>
   );
