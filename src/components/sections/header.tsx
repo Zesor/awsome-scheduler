@@ -6,6 +6,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { siteConfig } from "@/lib/config";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import Image from "next/image";
 import { track } from "@vercel/analytics";
 
 const navLinks = [
@@ -24,7 +25,13 @@ export function Header() {
           title="brand-logo"
           className="relative mr-6 flex items-center space-x-2"
         >
-          <Icons.logo className="w-auto h-6 text-primary" />
+          <Image
+            src="/apple-touch-icon.png"
+            alt="CalendarKit Logo"
+            width={32}
+            height={32}
+            className="w-8 h-8 rounded-md"
+          />
           <span className="font-bold text-lg">{siteConfig.name}</span>
         </Link>
 
