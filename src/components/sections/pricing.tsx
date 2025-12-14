@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Check, Bell, Sparkles } from "lucide-react";
 import { useState } from "react";
+import { track } from "@vercel/analytics";
 
 // Email capture modal for Universal waitlist
 function EmailCaptureModal({
@@ -23,6 +24,8 @@ function EmailCaptureModal({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // Track email capture for Universal waitlist
+    track("Waitlist Email Submitted", { plan: "Universal", email_domain: email.split("@")[1] });
     // In a real app, you'd send this to your backend
     console.log("Email captured:", email);
     setSubmitted(true);
@@ -116,6 +119,15 @@ function PricingTierCard({
   tier: PricingTier;
   onNotifyClick: () => void;
 }) {
+  const handleCTAClick = () => {
+    if (tier.comingSoon) {
+      track("Pricing CTA Clicked", { plan: tier.name, action: "waitlist" });
+      onNotifyClick();
+    } else {
+      track("Pricing CTA Clicked", { plan: tier.name, price: tier.price, action: "buy" });
+    }
+  };
+
   return (
     <div
       className={cn(
@@ -184,7 +196,7 @@ function PricingTierCard({
                 ? "bg-muted text-foreground hover:bg-muted/80"
                 : "bg-foreground text-background hover:bg-foreground/90"
             )}
-            onClick={tier.comingSoon ? onNotifyClick : undefined}
+            onClick={handleCTAClick}
           >
             {tier.cta}
           </Button>
@@ -228,6 +240,7 @@ export function Pricing() {
             <a
               href="#"
               className="text-primary hover:underline underline-offset-4"
+              onClick={() => track("Pricing FAQ Clicked", { source: "pricing_section" })}
             >
               Check our FAQ
             </a>{" "}
@@ -235,6 +248,7 @@ export function Pricing() {
             <a
               href="mailto:support@calendarkit.io"
               className="text-primary hover:underline underline-offset-4"
+              onClick={() => track("Contact Clicked", { source: "pricing_section", method: "email" })}
             >
               contact us
             </a>

@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { lazy, Suspense } from "react";
 import { Calendar, ArrowRight } from "lucide-react";
+import { track } from "@vercel/analytics";
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
@@ -98,6 +99,7 @@ function HeroCTA() {
             buttonVariants({ variant: "default", size: "lg" }),
             "w-full sm:w-auto text-background flex gap-2 rounded-lg"
           )}
+          onClick={() => track("Hero CTA Clicked", { cta: "Get Started", destination: "pricing" })}
         >
           <Calendar className="h-5 w-5" />
           {siteConfig.hero.cta}
@@ -108,6 +110,7 @@ function HeroCTA() {
             buttonVariants({ variant: "outline", size: "lg" }),
             "w-full sm:w-auto flex gap-2 rounded-lg"
           )}
+          onClick={() => track("Hero CTA Clicked", { cta: "Live Demo", destination: "comparison" })}
         >
           Live Demo
           <ArrowRight className="h-4 w-4" />

@@ -4,6 +4,8 @@ import { Section } from "@/components/section";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { Clock, Code, Sparkles, Zap, TrendingDown, Calendar } from "lucide-react";
+import { track } from "@vercel/analytics";
+import { useEffect } from "react";
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -169,6 +171,31 @@ function TimeComparisonCard({ comparison }: { comparison: TimeComparisonProps })
 }
 
 export function TimeSavings() {
+  useEffect(() => {
+    // Track when users scroll to this section
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            track("Time Savings Section Viewed");
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    const section = document.getElementById("time-savings");
+    if (section) {
+      observer.observe(section);
+    }
+
+    return () => {
+      if (section) {
+        observer.unobserve(section);
+      }
+    };
+  }, []);
+
   return (
     <Section id="time-savings" title="Time Savings">
       <div className="border border-b-0">

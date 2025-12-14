@@ -10,6 +10,7 @@ import { CalendarEvent, ViewType } from "@/components/pro-scheduler/types";
 import { addDays, startOfWeek, addHours } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Check, X, Sparkles } from "lucide-react";
+import { track } from "@vercel/analytics";
 
 // Calendar colors - match calendarId to color
 const calendarColors: Record<string, string> = {
@@ -272,6 +273,7 @@ export function Comparison() {
 
   // Event handlers
   const handleEventCreate = (newEvent: Partial<CalendarEvent>) => {
+    track("Demo Event Created", { plan: activePlan, view: view });
     const event: CalendarEvent = {
       ...newEvent,
       id: Math.random().toString(36).substr(2, 9),
@@ -283,12 +285,14 @@ export function Comparison() {
   };
 
   const handleEventUpdate = (updatedEvent: CalendarEvent) => {
+    track("Demo Event Updated", { plan: activePlan, view: view });
     setEvents((prev) =>
       prev.map((e) => (e.id === updatedEvent.id ? updatedEvent : e))
     );
   };
 
   const handleEventDelete = (eventId: string) => {
+    track("Demo Event Deleted", { plan: activePlan, view: view });
     setEvents((prev) => prev.filter((e) => e.id !== eventId));
   };
 
@@ -329,7 +333,10 @@ export function Comparison() {
                 }}
               />
               <button
-                onClick={() => setActivePlan("basic")}
+                onClick={() => {
+                  track("Demo Plan Toggled", { plan: "basic", previous_plan: activePlan });
+                  setActivePlan("basic");
+                }}
                 className={cn(
                   "relative z-10 px-6 py-2.5 text-sm font-medium transition-colors rounded-full",
                   activePlan === "basic"
@@ -340,7 +347,10 @@ export function Comparison() {
                 Basic
               </button>
               <button
-                onClick={() => setActivePlan("pro")}
+                onClick={() => {
+                  track("Demo Plan Toggled", { plan: "pro", previous_plan: activePlan });
+                  setActivePlan("pro");
+                }}
                 className={cn(
                   "relative z-10 px-6 py-2.5 text-sm font-medium transition-colors rounded-full flex items-center gap-2",
                   activePlan === "pro"
@@ -419,7 +429,10 @@ export function Comparison() {
                 <ProScheduler
                   events={filteredEvents}
                   view={view}
-                  onViewChange={setView}
+                  onViewChange={(v) => {
+                    track("Demo View Changed", { plan: activePlan, from_view: view, to_view: v });
+                    setView(v);
+                  }}
                   date={currentDate}
                   onDateChange={setCurrentDate}
                   calendars={calendars}
@@ -428,19 +441,31 @@ export function Comparison() {
                   onEventUpdate={handleEventUpdate}
                   onEventDelete={handleEventDelete}
                   isDarkMode={isDarkMode}
-                  onThemeToggle={() => setIsDarkMode(!isDarkMode)}
+                  onThemeToggle={() => {
+                    track("Demo Theme Toggled", { plan: activePlan, to_theme: !isDarkMode ? "dark" : "light" });
+                    setIsDarkMode(!isDarkMode);
+                  }}
                   language={language}
-                  onLanguageChange={setLanguage}
+                  onLanguageChange={(lang) => {
+                    track("Demo Language Changed", { plan: activePlan, language: lang });
+                    setLanguage(lang);
+                  }}
                   locale={language === "fr" ? fr : undefined}
                   timezone={timezone}
-                  onTimezoneChange={setTimezone}
+                  onTimezoneChange={(tz) => {
+                    track("Demo Timezone Changed", { plan: activePlan, timezone: tz });
+                    setTimezone(tz);
+                  }}
                   className="h-full"
                 />
               ) : (
                 <BasicScheduler
                   events={filteredEvents}
                   view={view as "month" | "week" | "day"}
-                  onViewChange={(v) => setView(v)}
+                  onViewChange={(v) => {
+                    track("Demo View Changed", { plan: activePlan, from_view: view, to_view: v });
+                    setView(v);
+                  }}
                   date={currentDate}
                   onDateChange={setCurrentDate}
                   calendars={calendars}

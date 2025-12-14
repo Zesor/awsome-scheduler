@@ -6,6 +6,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { siteConfig } from "@/lib/config";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { track } from "@vercel/analytics";
 
 const navLinks = [
   { href: "#comparison", label: "Demo" },
@@ -34,6 +35,7 @@ export function Header() {
               key={link.href}
               href={link.href}
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              onClick={() => track("Header Nav Clicked", { destination: link.label.toLowerCase(), source: "desktop" })}
             >
               {link.label}
             </Link>
@@ -46,6 +48,7 @@ export function Header() {
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-foreground hover:text-foreground transition-colors"
+            onClick={() => track("Social Clicked", { platform: "github", source: "header" })}
           >
             <Icons.github className="h-5 w-5" />
           </Link>
@@ -55,6 +58,7 @@ export function Header() {
               buttonVariants({ variant: "default" }),
               "h-9 text-primary-foreground rounded-lg group tracking-tight font-medium"
             )}
+            onClick={() => track("Header CTA Clicked", { cta: "Get Started", source: "header" })}
           >
             {siteConfig.cta}
           </Link>
