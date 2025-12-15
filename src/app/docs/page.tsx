@@ -20,7 +20,7 @@ pnpm add calendarkit-basic
 # Pro (After Purchase)
 # You'll receive access to our private GitHub repository.
 # Clone the repository using your GitHub account:
-git clone https://github.com/calaboratehq/pro-scheduler.git
+git clone https://github.com/Zesor/pro-scheduler.git
 
 # Install dependencies
 cd pro-scheduler
