@@ -22,6 +22,7 @@ const navLinks = [
   { href: "#features", label: "Features" },
   { href: "#pricing", label: "Pricing" },
   { href: "/docs", label: "Docs" },
+  { href: "/changelog", label: "Changelog" },
 ];
 
 export function MobileDrawer() {

@@ -77,6 +77,12 @@ const navigation: NavItem[] = [
       { id: "timezone", label: "Timezone Support" },
       { id: "resources", label: "Resource View" },
       { id: "recurring", label: "Recurring Events" },
+      { id: "event-resizing", label: "Event Resizing" },
+      { id: "notifications", label: "Notifications" },
+      { id: "ics-import-export", label: "ICS Import/Export" },
+      { id: "context-menus", label: "Context Menus" },
+      { id: "mobile-gestures", label: "Mobile Gestures" },
+      { id: "loading-states", label: "Loading States" },
     ],
   },
   {
@@ -293,10 +299,16 @@ export function DocsContent({ highlightedCode }: DocsContentProps) {
                 <ul className="space-y-1 text-sm text-muted-foreground">
                   <li>✓ Everything in Basic</li>
                   <li>✓ Drag & drop events</li>
+                  <li>✓ Event resizing with 15-min snapping</li>
                   <li>✓ Agenda & Resource views</li>
                   <li>✓ Dark mode & i18n</li>
                   <li>✓ Timezone support</li>
                   <li>✓ Recurring events (RRULE)</li>
+                  <li>✓ Event reminders & notifications</li>
+                  <li>✓ ICS import/export</li>
+                  <li>✓ Context menus (right-click)</li>
+                  <li>✓ Mobile swipe gestures</li>
+                  <li>✓ Skeleton loading & empty states</li>
                   <li>✓ Event attachments & guests</li>
                   <li>✓ Lifetime updates</li>
                 </ul>
@@ -527,6 +539,11 @@ export function DocsContent({ highlightedCode }: DocsContentProps) {
                       <td className="px-4 py-3">Callback when event is dragged</td>
                     </tr>
                     <tr>
+                      <td className="px-4 py-3 font-mono text-xs">onEventResize</td>
+                      <td className="px-4 py-3 font-mono text-xs">function</td>
+                      <td className="px-4 py-3">Callback when event is resized</td>
+                    </tr>
+                    <tr>
                       <td className="px-4 py-3 font-mono text-xs">hideViewSwitcher</td>
                       <td className="px-4 py-3 font-mono text-xs">boolean</td>
                       <td className="px-4 py-3">Hide the view toggle buttons</td>
@@ -648,6 +665,151 @@ export function DocsContent({ highlightedCode }: DocsContentProps) {
                     <code className="bg-muted px-1.5 py-0.5 rounded">until</code> - End date for recurrence
                   </li>
                 </ul>
+              </div>
+            </section>
+
+            {/* New Pro Features */}
+            <section id="event-resizing" className="mb-16 scroll-mt-20">
+              <h2 className="text-3xl font-bold mb-4">
+                Event Resizing
+                <ProBadge />
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                Drag the bottom edge of events to resize them directly in the week and day views. Events snap to 15-minute intervals with visual feedback during resize.
+              </p>
+              <CodeBlock
+                code={highlightedCode.eventResizing}
+                title="Event Resizing"
+              />
+              <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
+                <h4 className="font-semibold mb-2">Features</h4>
+                <ul className="space-y-1 text-sm text-muted-foreground">
+                  <li>✓ Drag bottom edge to resize events</li>
+                  <li>✓ 15-minute snap intervals</li>
+                  <li>✓ Visual feedback during resize</li>
+                  <li>✓ Works in Week and Day views</li>
+                </ul>
+              </div>
+            </section>
+
+            <section id="notifications" className="mb-16 scroll-mt-20">
+              <h2 className="text-3xl font-bold mb-4">
+                Notification Reminders
+                <ProBadge />
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                Add reminder notifications to events with predefined intervals. Users can set multiple reminders per event.
+              </p>
+              <CodeBlock
+                code={highlightedCode.notifications}
+                title="Event Reminders"
+              />
+              <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
+                <h4 className="font-semibold mb-2">Reminder Options</h4>
+                <ul className="space-y-1 text-sm text-muted-foreground">
+                  <li>✓ 5, 10, 15, 30 minutes before</li>
+                  <li>✓ 1 hour before</li>
+                  <li>✓ 1 day before</li>
+                  <li>✓ Multiple reminders per event</li>
+                </ul>
+              </div>
+            </section>
+
+            <section id="ics-import-export" className="mb-16 scroll-mt-20">
+              <h2 className="text-3xl font-bold mb-4">
+                ICS Import/Export
+                <ProBadge />
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                Import and export calendar events in the standard ICS format. Compatible with Google Calendar, Apple Calendar, Outlook, and more.
+              </p>
+              <CodeBlock
+                code={highlightedCode.icsImportExport}
+                title="ICS Import/Export"
+              />
+              <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
+                <h4 className="font-semibold mb-2">Supported Features</h4>
+                <ul className="space-y-1 text-sm text-muted-foreground">
+                  <li>✓ Full ICS generation and parsing</li>
+                  <li>✓ Recurring events support</li>
+                  <li>✓ All-day events</li>
+                  <li>✓ Attachments support</li>
+                  <li>✓ Import/Export buttons in Sidebar</li>
+                </ul>
+              </div>
+            </section>
+
+            <section id="context-menus" className="mb-16 scroll-mt-20">
+              <h2 className="text-3xl font-bold mb-4">
+                Context Menus
+                <ProBadge />
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                Right-click on events to access quick actions like edit, delete, and duplicate.
+              </p>
+              <CodeBlock
+                code={highlightedCode.contextMenus}
+                title="Context Menu Usage"
+              />
+              <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
+                <h4 className="font-semibold mb-2">Available Actions</h4>
+                <ul className="space-y-1 text-sm text-muted-foreground">
+                  <li>✓ Edit event</li>
+                  <li>✓ Delete event</li>
+                  <li>✓ Duplicate event</li>
+                  <li>✓ Customizable via useEventContextMenu hook</li>
+                </ul>
+              </div>
+            </section>
+
+            <section id="mobile-gestures" className="mb-16 scroll-mt-20">
+              <h2 className="text-3xl font-bold mb-4">
+                Mobile Swipe Gestures
+                <ProBadge />
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                Navigate between dates with intuitive swipe gestures on mobile devices.
+              </p>
+              <CodeBlock
+                code={highlightedCode.mobileGestures}
+                title="Swipe Gesture Configuration"
+              />
+              <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
+                <h4 className="font-semibold mb-2">Features</h4>
+                <ul className="space-y-1 text-sm text-muted-foreground">
+                  <li>✓ Swipe left/right to navigate dates</li>
+                  <li>✓ Configurable swipe threshold (default: 50px)</li>
+                  <li>✓ Works across all views</li>
+                  <li>✓ useSwipeGesture hook for custom implementations</li>
+                </ul>
+              </div>
+            </section>
+
+            <section id="loading-states" className="mb-16 scroll-mt-20">
+              <h2 className="text-3xl font-bold mb-4">
+                Loading States &amp; Empty States
+                <ProBadge />
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                Beautiful skeleton loading animations and empty state displays for a polished user experience.
+              </p>
+              <CodeBlock
+                code={highlightedCode.loadingStates}
+                title="Loading & Empty States"
+              />
+              <div className="grid gap-4 mt-6">
+                <div className="p-4 border rounded-lg">
+                  <h4 className="font-semibold mb-2">Skeleton Loading</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Per-view skeleton loaders (Month, Week, Day, Agenda) that automatically display when isLoading is true.
+                  </p>
+                </div>
+                <div className="p-4 border rounded-lg">
+                  <h4 className="font-semibold mb-2">Empty States</h4>
+                  <p className="text-sm text-muted-foreground">
+                    View-specific illustrations and messages with CTA button to create events.
+                  </p>
+                </div>
               </div>
             </section>
 

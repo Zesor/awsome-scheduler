@@ -282,6 +282,147 @@ const events = [
   )}
 />`,
 
+  eventResizing: `// Event resizing is enabled by default in ProScheduler
+// Users can drag the bottom edge of events to resize them
+
+<Scheduler
+  events={events}
+  // Called when user resizes an event by dragging
+  onEventResize={(event, newStart, newEnd) => {
+    setEvents(events.map(e =>
+      e.id === event.id ? { ...e, start: newStart, end: newEnd } : e
+    ));
+  }}
+/>
+
+// The ResizableEvent component handles:
+// - 15-minute snap intervals for precise scheduling
+// - Visual feedback during resize (cursor, preview)
+// - Minimum duration constraints`,
+
+  notifications: `// Events can have multiple reminders
+interface EventReminder {
+  id: string;
+  minutes: number;  // Minutes before event
+  type: 'notification' | 'email';
+}
+
+const event: CalendarEvent = {
+  id: '1',
+  title: 'Team Meeting',
+  start: new Date(2025, 0, 15, 14, 0),
+  end: new Date(2025, 0, 15, 15, 0),
+  reminders: [
+    { id: 'r1', minutes: 15, type: 'notification' },  // 15 min before
+    { id: 'r2', minutes: 60, type: 'email' },         // 1 hour before
+  ],
+};
+
+// Built-in reminder options in EventModal:
+// - 5 minutes before
+// - 10 minutes before
+// - 15 minutes before
+// - 30 minutes before
+// - 1 hour before
+// - 1 day before`,
+
+  icsImportExport: `import { generateICS, parseICS } from '@/lib/ics';
+
+// Export events to ICS file
+const handleExport = () => {
+  const icsContent = generateICS(events, calendars);
+  const blob = new Blob([icsContent], { type: 'text/calendar' });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'calendar.ics';
+  link.click();
+};
+
+// Import events from ICS file
+const handleImport = async (file: File) => {
+  const text = await file.text();
+  const importedEvents = parseICS(text);
+  setEvents([...events, ...importedEvents]);
+};
+
+// Supports:
+// - Recurring events (RRULE)
+// - All-day events
+// - Event attachments
+// - Multiple calendars`,
+
+  contextMenus: `// Context menus appear on right-click
+// Use the useEventContextMenu hook for custom actions
+
+import { useEventContextMenu } from '@/hooks/useEventContextMenu';
+
+function MyScheduler() {
+  const { contextMenu, handleContextMenu, closeContextMenu } =
+    useEventContextMenu();
+
+  return (
+    <Scheduler
+      events={events}
+      onEventContextMenu={handleContextMenu}
+      // Built-in actions: Edit, Delete, Duplicate
+      onEventEdit={(event) => openEditModal(event)}
+      onEventDelete={(eventId) => deleteEvent(eventId)}
+      onEventDuplicate={(event) => {
+        const duplicate = { ...event, id: Date.now().toString() };
+        setEvents([...events, duplicate]);
+      }}
+    />
+  );
+}`,
+
+  mobileGestures: `// Swipe gestures are automatically enabled on touch devices
+import { useSwipeGesture } from '@/hooks/useSwipeGesture';
+
+// The hook provides swipe detection with configurable threshold
+const { swipeDirection, swipeHandlers } = useSwipeGesture({
+  threshold: 50,  // Minimum swipe distance in pixels
+  onSwipeLeft: () => navigateToNextPeriod(),
+  onSwipeRight: () => navigateToPreviousPeriod(),
+});
+
+// Usage in custom component
+<div {...swipeHandlers}>
+  <CalendarContent />
+</div>
+
+// Built into ProScheduler:
+// - Swipe left: Go to next week/month/day
+// - Swipe right: Go to previous week/month/day
+// - Works in all calendar views`,
+
+  loadingStates: `// Show loading skeleton
+<Scheduler
+  events={events}
+  isLoading={isLoadingEvents}  // Shows skeleton when true
+/>
+
+// Skeleton components available:
+// - MonthViewSkeleton
+// - WeekViewSkeleton
+// - DayViewSkeleton
+// - AgendaViewSkeleton
+
+// Empty states are shown automatically when:
+// - No events exist for the current view
+// - All calendars are filtered out
+
+// Customize empty state
+<Scheduler
+  events={events}
+  emptyStateMessage="No meetings scheduled"
+  emptyStateAction={{
+    label: "Schedule a meeting",
+    onClick: () => openNewEventModal(),
+  }}
+/>`,
+
   basicPropsTable: `// BasicScheduler Props
 interface BasicSchedulerProps {
   // Data

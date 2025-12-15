@@ -1,14 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, Sparkles, Tag } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { X, Sparkles, Tag, Copy, Check } from "lucide-react";
 import { siteConfig } from "@/lib/config";
 import Link from "next/link";
 
 export function SeasonalBanner() {
   const [isDismissed, setIsDismissed] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const promoCode = "CXMDA5MQ";
 
   useEffect(() => {
     // Check if banner was dismissed in this session
@@ -26,13 +28,21 @@ export function SeasonalBanner() {
     sessionStorage.setItem("seasonal-banner-dismissed", "true");
   };
 
+  const handleCopyCode = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    await navigator.clipboard.writeText(promoCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   // Don't show if discount is not active or banner is dismissed
   if (!siteConfig.seasonalDiscount.active || isDismissed || !isVisible) {
     return null;
   }
 
   return (
-    <div className="sticky top-0 z-50 relative bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white overflow-hidden">
+    <div className="relative bg-gradient-to-r from-green-600 via-green-500 to-green-600 text-white overflow-hidden">
       {/* Scrolling content */}
       <div className="relative h-10 flex items-center">
         <div className="animate-scroll-left flex items-center gap-8 whitespace-nowrap">
@@ -49,12 +59,30 @@ export function SeasonalBanner() {
                 </span>
                 <Tag className="h-4 w-4" />
                 <span className="font-bold">
-                  Save {siteConfig.seasonalDiscount.percentage}% on Pro Plan!
-                </span>
-                <span className="text-sm opacity-90">
-                  Ends {new Date(siteConfig.seasonalDiscount.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                  Save {siteConfig.seasonalDiscount.percentage}%!
                 </span>
               </Link>
+              <span className="text-white/30">•</span>
+              <button
+                onClick={handleCopyCode}
+                className="flex items-center gap-2 px-3 py-1 bg-white/20 hover:bg-white/30 rounded-full transition-colors cursor-pointer"
+              >
+                <span className="text-sm">Extra 10% off:</span>
+                <span className="font-mono font-bold">{promoCode}</span>
+                {copied ? (
+                  <Check className="h-3.5 w-3.5" />
+                ) : (
+                  <Copy className="h-3.5 w-3.5" />
+                )}
+              </button>
+              <span className="text-white/30">•</span>
+              <span className="text-sm opacity-90">
+                Ends{" "}
+                {new Date(siteConfig.seasonalDiscount.endDate).toLocaleDateString(
+                  "en-US",
+                  { month: "short", day: "numeric" }
+                )}
+              </span>
               <span className="text-white/30">•</span>
             </div>
           ))}
@@ -81,7 +109,7 @@ export function SeasonalBanner() {
         }
 
         .animate-scroll-left {
-          animation: scroll-left 30s linear infinite;
+          animation: scroll-left 35s linear infinite;
         }
 
         .animate-scroll-left:hover {

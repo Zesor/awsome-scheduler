@@ -86,33 +86,33 @@ export const siteConfig = {
       icon: <Zap className="h-6 w-6" />,
     },
     {
-      name: "Fully Styled",
+      name: "Drag & Resize",
       description:
-        "Beautiful out of the box with Tailwind CSS. Full theme control with CSS variables for complete customization.",
-      icon: <Palette className="h-6 w-6" />,
+        "Smooth event dragging with snap-to-grid. Resize events by dragging edges with 15-min snap intervals.",
+      icon: <Move className="h-6 w-6" />,
     },
     {
-      name: "TypeScript First",
+      name: "ICS Import/Export",
       description:
-        "Full type safety with exported types & interfaces. Excellent IDE support and autocomplete.",
-      icon: <Code className="h-6 w-6" />,
+        "Full ICS file support for Google Calendar, Outlook, and Apple Calendar. Import and export with one click.",
+      icon: <CalendarCheck className="h-6 w-6" />,
     },
     {
       name: "Dark Mode",
       description:
-        "Built-in light & dark themes that respect system preferences. Toggle with a single prop.",
+        "Polished light & dark themes with glass effects, custom scrollbars, and smooth transitions.",
       icon: <Moon className="h-6 w-6" />,
     },
     {
-      name: "Drag & Drop",
+      name: "Mobile Ready",
       description:
-        "Smooth event dragging with snap-to-grid powered by dnd-kit. Resize events intuitively.",
-      icon: <Move className="h-6 w-6" />,
+        "Swipe gestures for navigation, skeleton loading states, and responsive design for all devices.",
+      icon: <Palette className="h-6 w-6" />,
     },
     {
-      name: "i18n Ready",
+      name: "Context Menus",
       description:
-        "Multi-language support with date-fns locales. Built-in translations for common UI elements.",
+        "Right-click events for quick actions: Edit, Delete, Duplicate. Plus notification reminders.",
       icon: <Globe className="h-6 w-6" />,
     },
   ],
@@ -154,7 +154,7 @@ export const siteConfig = {
     active: true,
     reason: "Holiday Season Sale", // Can be: "Christmas Sale", "New Year Sale", "Chinese New Year", etc.
     percentage: 25, // 25% off
-    endDate: "2025-12-31", // When discount ends
+    endDate: "2026-01-31", // When discount ends
   },
 
   pricing: [
@@ -184,16 +184,18 @@ export const siteConfig = {
       description: "Everything you need for production apps.",
       features: [
         "Everything in Basic",
-        "Agenda view",
-        "Resource view",
-        "Drag & drop events",
+        "Agenda & Resource views",
+        "Drag & drop + Event resizing",
+        "ICS Import/Export",
+        "Context menus (right-click)",
+        "Mobile swipe gestures",
+        "Skeleton loading & empty states",
+        "Notification reminders",
         "Timezone support",
-        "Dark / Light mode",
+        "Dark / Light mode (polished)",
         "Multi-language (i18n)",
         "Recurring events (RRULE)",
-        "Guest management",
-        "Upload file for event attachments",
-        "Download event attachments",
+        "Guest management & attachments",
       ],
       popular: true,
       cta: "Buy Now",
