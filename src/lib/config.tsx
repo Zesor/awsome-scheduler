@@ -174,7 +174,7 @@ export const siteConfig = {
         "MIT License",
       ],
       cta: "View on npm",
-      ctaLink: "https://www.npmjs.com/package/@calendarkit/basic",
+      ctaLink: "https://www.npmjs.com/package/calendarkit-basic",
       openSource: true,
     },
     {
@@ -191,7 +191,6 @@ export const siteConfig = {
         "Dark / Light mode",
         "Multi-language (i18n)",
         "Recurring events (RRULE)",
-        "Event attachments",
         "Guest management",
         "Upload file for event attachments",
         "Download event attachments",

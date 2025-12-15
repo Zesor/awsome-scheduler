@@ -1,12 +1,14 @@
 import { Icons } from "@/components/icons";
 import { siteConfig } from "@/lib/config";
+import Image from "next/image";
+import favicon from "@/app/favicon-32x32.png";
 
 export function Footer() {
   return (
     <footer className="flex flex-col gap-y-5 rounded-lg p-5 container max-w-[var(--container-max-width)] mx-auto">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-x-2">
-          <Icons.logo className="h-5 w-5 text-primary" />
+          <Image src={favicon} alt="Logo" className="h-5 w-5" />
           <h2 className="text-lg font-bold text-foreground">
             {siteConfig.name}
           </h2>
