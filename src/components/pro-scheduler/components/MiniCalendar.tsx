@@ -52,29 +52,44 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
   };
 
   return (
-    <div className={cn("p-4 w-[256px]", className)}>
-      <div className="flex items-center justify-between mb-4 pl-2">
-        <span className="text-sm font-semibold text-foreground">
+    <div className={cn("px-4 w-[260px]", className)}>
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <span className="text-sm font-semibold text-foreground capitalize">
           {format(viewDate, 'MMMM yyyy')}
         </span>
-        <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handlePrev} aria-label="Previous month">
+        <div className="flex items-center bg-muted/40 rounded-lg p-0.5">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 rounded-md hover:bg-background/80 transition-all"
+              onClick={handlePrev}
+              aria-label="Previous month"
+            >
                 <ChevronLeft className="h-4 w-4" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={handleNext} aria-label="Next month">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 rounded-md hover:bg-background/80 transition-all"
+              onClick={handleNext}
+              aria-label="Next month"
+            >
                 <ChevronRight className="h-4 w-4" />
             </Button>
         </div>
       </div>
-      
+
+      {/* Weekday Headers */}
       <div className="grid grid-cols-7 gap-y-2 text-center mb-2">
         {weekDays.map((day, i) => (
-          <div key={`${day}-${i}`} className="text-[10px] text-muted-foreground font-medium">
+          <div key={`${day}-${i}`} className="text-[10px] text-muted-foreground/70 font-semibold uppercase">
             {day}
           </div>
         ))}
       </div>
 
+      {/* Days Grid */}
       <div className="grid grid-cols-7 gap-y-1 text-center">
         {days.map(day => {
           const isSelected = isSameDay(day, currentDate);
@@ -86,11 +101,11 @@ export const MiniCalendar: React.FC<MiniCalendarProps> = ({
               key={day.toISOString()}
               onClick={() => handleDateClick(day)}
               className={cn(
-                "h-7 w-7 mx-auto flex items-center justify-center text-xs rounded-full transition-colors",
-                !isCurrentMonth && "text-muted-foreground/40",
-                isCurrentMonth && "text-foreground hover:bg-accent",
-                isSelected && "bg-primary text-primary-foreground hover:bg-primary/90",
-                !isSelected && isTodayDate && "bg-primary/10 text-primary"
+                "h-8 w-8 mx-auto flex items-center justify-center text-xs rounded-xl transition-all duration-200 font-medium",
+                !isCurrentMonth && "text-muted-foreground/30",
+                isCurrentMonth && !isSelected && !isTodayDate && "text-foreground hover:bg-accent/80",
+                isSelected && "bg-primary text-primary-foreground shadow-md shadow-primary/30 scale-105",
+                !isSelected && isTodayDate && "bg-primary/10 text-primary ring-1 ring-primary/30"
               )}
             >
               {format(day, 'd')}

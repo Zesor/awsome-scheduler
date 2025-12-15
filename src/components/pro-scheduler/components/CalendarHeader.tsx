@@ -1,7 +1,7 @@
 import React from 'react';
 import { format, Locale } from 'date-fns';
 import { Button } from './ui/button';
-import { ChevronLeft, ChevronRight, Menu, Moon, Sun } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Menu, Moon, Sun, CalendarDays, CalendarRange, Calendar, ListTodo } from 'lucide-react';
 import { ViewType } from '../types';
 import { cn } from '../utils';
 
@@ -38,117 +38,117 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   onLanguageChange,
   locale
 }) => {
-  return (
-    <div className="flex flex-col md:flex-row items-center justify-between p-2 pr-4 border-b bg-background gap-2 md:gap-0 h-auto md:h-16">
-      {/* Left Section: Menu, Logo, Title, Navigation */}
-      <div className="flex items-center gap-2 w-full md:w-auto justify-between md:justify-start">
-        <div className="flex items-center gap-1 md:gap-3">
-            <Button variant="ghost" size="icon" className="text-muted-foreground rounded-full h-10 w-10 md:h-12 md:w-12 hidden md:inline-flex" onClick={onMenuClick}>
-                <Menu className="h-6 w-6" />
-            </Button>
-            
-            {/* Logo area - REMOVED */}
-            {/* 
-            <div className="flex items-center gap-2 mr-2 md:mr-8 min-w-fit">
-                 <div className="relative w-8 h-8 md:w-10 md:h-10 flex items-center justify-center bg-primary rounded-xl text-white font-bold shadow-lg shadow-primary/20">
-                     <span className="text-xs md:text-sm font-bold">{format(new Date(), 'd')}</span>
-                 </div>
-                 <span className="text-lg md:text-xl font-bold text-foreground hidden sm:inline-block font-sans tracking-tight">
-                    Planner
-                 </span>
-            </div>
-            */}
+  const viewConfig = [
+    { key: 'month', icon: CalendarDays },
+    { key: 'week', icon: CalendarRange },
+    { key: 'day', icon: Calendar },
+    { key: 'agenda', icon: ListTodo },
+  ] as const;
 
-            <Button variant="outline" onClick={onToday} className="h-9 px-4 md:px-6 rounded-full text-sm font-medium hidden sm:inline-flex">
+  return (
+    <div className="flex flex-col md:flex-row items-center justify-between px-3 md:px-5 py-3 border-b border-border/50 bg-gradient-to-r from-background via-background to-muted/20 gap-3 md:gap-0 min-h-[64px]">
+      {/* Left Section: Menu, Navigation, Title */}
+      <div className="flex items-center gap-2 w-full md:w-auto justify-between md:justify-start">
+        <div className="flex items-center gap-2 md:gap-3">
+            {/* Menu Button */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-muted-foreground hover:text-foreground hover:bg-accent/80 rounded-xl h-10 w-10 hidden md:inline-flex transition-all duration-200"
+              onClick={onMenuClick}
+            >
+                <Menu className="h-5 w-5" />
+            </Button>
+
+            {/* Today Button */}
+            <Button
+              variant="outline"
+              onClick={onToday}
+              className="h-9 px-5 rounded-xl text-sm font-medium hidden sm:inline-flex border-border/60 hover:border-primary/40 hover:bg-primary/5 hover:text-primary transition-all duration-200"
+            >
                 {translations.today}
             </Button>
 
-            <div className="flex items-center gap-1">
-                <Button variant="ghost" size="icon" onClick={onPrev} className="rounded-full h-8 w-8">
-                    <ChevronLeft className="h-5 w-5 text-muted-foreground" />
+            {/* Navigation Arrows */}
+            <div className="flex items-center bg-muted/40 rounded-xl p-0.5">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onPrev}
+                  className="rounded-lg h-8 w-8 hover:bg-background/80 transition-all duration-200"
+                >
+                    <ChevronLeft className="h-4 w-4 text-muted-foreground" />
                 </Button>
-                <Button variant="ghost" size="icon" onClick={onNext} className="rounded-full h-8 w-8">
-                    <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={onNext}
+                  className="rounded-lg h-8 w-8 hover:bg-background/80 transition-all duration-200"
+                >
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
                 </Button>
             </div>
 
-            <h2 className="text-lg md:text-xl font-medium text-foreground ml-2 md:ml-4 whitespace-nowrap capitalize">
-                {format(currentDate, 'MMMM yyyy', { locale })}
-            </h2>
+            {/* Current Date Display */}
+            <div className="ml-2 md:ml-4">
+                <h2 className="text-lg md:text-xl font-semibold text-foreground whitespace-nowrap capitalize tracking-tight">
+                    {format(currentDate, 'MMMM yyyy', { locale })}
+                </h2>
+            </div>
         </div>
       </div>
 
       {/* Right Section: View Switcher & Theme Toggle */}
-      <div className="flex items-center gap-2 md:gap-4 w-full md:w-auto justify-end">
+      <div className="flex items-center gap-2 md:gap-3 w-full md:w-auto justify-end">
+        {/* Language Toggle */}
         {onLanguageChange && language && (
-             <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => onLanguageChange(language === 'en' ? 'fr' : 'en')}
-                className="text-muted-foreground"
-             >
-                {language.toUpperCase()}
-             </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => onLanguageChange(language === 'en' ? 'fr' : 'en')}
+            className="h-9 px-3 rounded-xl text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-accent/80 transition-all duration-200 uppercase tracking-wider"
+          >
+            {language}
+          </Button>
         )}
 
+        {/* Theme Toggle */}
         {onThemeToggle && (
-            <Button variant="ghost" size="icon" className="rounded-full h-9 w-9" onClick={onThemeToggle}>
-                {isDarkMode ? <Sun className="h-5 w-5 text-yellow-500" /> : <Moon className="h-5 w-5 text-muted-foreground" />}
-            </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-xl h-9 w-9 hover:bg-accent/80 transition-all duration-200"
+            onClick={onThemeToggle}
+          >
+            {isDarkMode ? (
+              <Sun className="h-4 w-4 text-amber-500" />
+            ) : (
+              <Moon className="h-4 w-4 text-muted-foreground" />
+            )}
+          </Button>
         )}
 
         {/* View Switcher */}
         {!hideViewSwitcher && (
-            <div className="flex items-center gap-2 border border-border rounded-md p-1 md:border-none md:p-0">
-             
-             {/* Simple View Switcher */}
-             <div className="flex items-center bg-muted/50 rounded-lg p-1">
-                <Button 
-                    variant={view === 'month' ? 'secondary' : 'ghost'} 
-                    size="sm"
-                    onClick={() => onViewChange('month')}
-                    className={cn(
-                        "h-7 px-3 text-xs rounded-md transition-all",
-                        view === 'month' ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
-                    )}
-                >
-                    {translations.month}
-                </Button>
-                <Button 
-                    variant={view === 'week' ? 'secondary' : 'ghost'} 
-                    size="sm"
-                    onClick={() => onViewChange('week')}
-                    className={cn(
-                        "h-7 px-3 text-xs rounded-md transition-all",
-                        view === 'week' ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
-                    )}
-                >
-                    {translations.week}
-                </Button>
-                <Button 
-                    variant={view === 'day' ? 'secondary' : 'ghost'} 
-                    size="sm"
-                    onClick={() => onViewChange('day')}
-                    className={cn(
-                        "h-7 px-3 text-xs rounded-md transition-all",
-                        view === 'day' ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
-                    )}
-                >
-                    {translations.day}
-                </Button>
-                <Button 
-                    variant={view === 'agenda' ? 'secondary' : 'ghost'} 
-                    size="sm"
-                    onClick={() => onViewChange('agenda')}
-                    className={cn(
-                        "h-7 px-3 text-xs rounded-md transition-all",
-                        view === 'agenda' ? "bg-background shadow-sm text-foreground" : "text-muted-foreground hover:text-foreground"
-                    )}
-                >
-                    {translations.agenda}
-                </Button>
-             </div>
-        </div>
+          <div className="flex items-center bg-muted/50 backdrop-blur-sm rounded-xl p-1 border border-border/30">
+            {viewConfig.map(({ key, icon: Icon }) => (
+              <Button
+                key={key}
+                variant="ghost"
+                size="sm"
+                onClick={() => onViewChange(key)}
+                className={cn(
+                  "h-8 px-3 text-xs rounded-lg transition-all duration-200 gap-1.5",
+                  view === key
+                    ? "bg-background shadow-sm text-foreground font-medium border border-border/50"
+                    : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+                )}
+              >
+                <Icon className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline">{translations[key]}</span>
+              </Button>
+            ))}
+          </div>
         )}
       </div>
     </div>

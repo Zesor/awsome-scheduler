@@ -42,7 +42,7 @@ export const Modal: React.FC<ModalProps> = ({
 
   // Render inside parent container (absolute positioning) instead of portal to document.body
   return (
-    <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md animate-in fade-in duration-300">
       <div
         ref={overlayRef}
         className="absolute inset-0"
@@ -50,20 +50,20 @@ export const Modal: React.FC<ModalProps> = ({
       />
       <div
         className={cn(
-          "relative bg-background dark:bg-slate-950 rounded-lg shadow-xl w-full max-w-md flex flex-col max-h-[70vh] sm:max-h-[75vh] animate-in zoom-in-95 duration-200 border border-border dark:border-slate-800",
+          "relative bg-background rounded-2xl shadow-2xl w-full max-w-md flex flex-col max-h-[70vh] sm:max-h-[80vh] animate-in zoom-in-95 slide-in-from-bottom-4 duration-300 border border-border/50",
           className
         )}
       >
         {!hideHeader && (
-          <div className="flex items-center justify-between px-6 py-4 border-b border-border dark:border-slate-800 shrink-0">
-            <h3 className="text-lg font-semibold text-foreground dark:text-slate-100">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-border/50 shrink-0 bg-gradient-to-r from-muted/20 to-background">
+            <h3 className="text-lg font-semibold text-foreground">
               {title}
             </h3>
             <Button
               variant="ghost"
               size="sm"
               onClick={onClose}
-              className="h-8 w-8 p-0 rounded-full"
+              className="h-9 w-9 p-0 rounded-xl hover:bg-accent/80 transition-all duration-200"
             >
               <X className="h-4 w-4" />
               <span className="sr-only">Close</span>

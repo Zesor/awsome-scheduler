@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from './ui/button';
-import { Plus, ChevronDown, ChevronUp, Search, Globe, Check } from 'lucide-react';
+import { Plus, ChevronDown, Globe, Download, Upload } from 'lucide-react';
 import { MiniCalendar } from './MiniCalendar';
 import { cn } from '../utils';
 import { toZonedTime } from 'date-fns-tz';
 import { format } from 'date-fns';
 
-import { ViewType } from '../types';
+import { ViewType, CalendarEvent } from '../types';
+import { downloadICS, importICSFile } from '../lib/ics';
 
 interface SidebarProps {
   currentDate: Date;
@@ -25,6 +26,8 @@ interface SidebarProps {
   }[];
   onCalendarToggle?: (calendarId: string, active: boolean) => void;
   translations?: any;
+  events?: CalendarEvent[];
+  onImport?: (events: Partial<CalendarEvent>[]) => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -38,8 +41,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
   readOnly,
   calendars,
   onCalendarToggle,
-  translations
+  translations,
+  events,
+  onImport
 }) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [calendarsOpen, setCalendarsOpen] = useState(true);
   const [timezoneOpen, setTimezoneOpen] = useState(false);
   const [now, setNow] = useState<Date | null>(null);
@@ -129,75 +135,78 @@ export const Sidebar: React.FC<SidebarProps> = ({
       );
   };
   
-  const currentOffset = ''; // Removed simple offset as we show full time now
   const selectedTzObj = timezones.find(t => t.value === (timezone || ''));
   const selectedTimezoneLabel = selectedTzObj ? formatTzLabel(selectedTzObj) : (translations?.localTime || 'Local Time');
 
   return (
-    <div className={cn("flex flex-col w-[256px] h-full bg-background border-r border-border pt-3 pb-4 overflow-y-auto hidden lg:flex", className)}>
+    <div className={cn("flex flex-col w-[260px] h-full bg-gradient-to-b from-background via-background to-muted/10 border-r border-border/50 pt-4 pb-4 overflow-y-auto hidden lg:flex", className)}>
       {!readOnly && (
         <div className="px-4 mb-6">
             <Button
-            className="rounded-full shadow-md bg-primary text-primary-foreground hover:bg-primary/90 h-12 px-6 gap-3 min-w-[140px] justify-start transition-all duration-200 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98]"
-            onClick={onEventCreate}
+              className="w-full rounded-2xl shadow-lg bg-primary text-primary-foreground hover:bg-primary/90 h-12 gap-3 justify-center transition-all duration-300 hover:shadow-xl hover:shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] font-semibold"
+              onClick={onEventCreate}
             >
-            <Plus className="w-6 h-6" />
-            <span className="text-sm font-medium">{translations?.create || 'Create'}</span>
+              <Plus className="w-5 h-5" />
+              <span className="text-sm">{translations?.create || 'Create'}</span>
             </Button>
         </div>
       )}
 
       <MiniCalendar currentDate={currentDate} onDateChange={onDateChange} onViewChange={onViewChange} />
-      <div className="flex-1 px-4 space-y-6 mt-4">
+
+      <div className="flex-1 px-4 space-y-5 mt-5">
         {/* Calendars List */}
-        <div>
-          <div 
-            className="flex items-center justify-between cursor-pointer hover:bg-accent/50 p-1 -mx-1 rounded mb-1 transition-colors"
+        <div className="bg-muted/20 rounded-2xl p-3 border border-border/30">
+          <div
+            className="flex items-center justify-between cursor-pointer hover:bg-accent/50 p-2 -m-1 rounded-xl mb-2 transition-all duration-200"
             onClick={() => setCalendarsOpen(!calendarsOpen)}
           >
-            <span className="text-sm font-medium text-foreground">{translations?.calendars || 'Calendars'}</span>
-            {calendarsOpen ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
+            <span className="text-sm font-semibold text-foreground">{translations?.calendars || 'Calendars'}</span>
+            <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-200", calendarsOpen && "rotate-180")} />
           </div>
-          
+
           {calendarsOpen && (
-            <div className="space-y-1 mt-1">
+            <div className="space-y-1">
               {displayCalendars.map(cal => (
-                <div 
-                    key={cal.id} 
-                    className="flex items-center gap-3 py-1.5 px-1 hover:bg-accent/50 rounded cursor-pointer group transition-colors"
-                    onClick={() => onCalendarToggle?.(cal.id, !(cal.active ?? true))} // Toggle on row click
+                <div
+                    key={cal.id}
+                    className="flex items-center gap-3 py-2 px-2 hover:bg-accent/60 rounded-xl cursor-pointer group transition-all duration-200"
+                    onClick={() => onCalendarToggle?.(cal.id, !(cal.active ?? true))}
                 >
                   <div className="relative flex items-center justify-center">
-                    <input 
-                        type="checkbox" 
+                    <input
+                        type="checkbox"
                         checked={cal.active ?? true}
                         onChange={(e) => {
-                             e.stopPropagation(); // Prevent double toggle from row click
+                             e.stopPropagation();
                              onCalendarToggle?.(cal.id, e.target.checked);
                         }}
-                        className="peer h-4 w-4 rounded border-border text-primary focus:ring-primary cursor-pointer appearance-none border-2 checked:bg-primary checked:border-primary transition-all"
+                        className="peer h-5 w-5 rounded-md border-2 border-border/60 cursor-pointer appearance-none checked:border-transparent transition-all duration-200"
                         style={{ '--primary-color': cal.color } as React.CSSProperties}
                         data-cal-id={cal.id}
                     />
-                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 peer-checked:opacity-100">
-                        <svg className="w-3 h-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 peer-checked:opacity-100 transition-opacity">
+                        <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
                     </div>
-                    {/* Custom checkbox color override */}
                     <style>{`
-                      /* Scope the style to this specific checkbox using a data attribute or class approach */
                       input[type="checkbox"][data-cal-id="${cal.id}"]:checked {
                         background-color: ${cal.color} !important;
                         border-color: ${cal.color} !important;
                       }
-                      /* Focus ring color */
                       input[type="checkbox"][data-cal-id="${cal.id}"]:focus {
-                        --tw-ring-color: ${cal.color}40 !important; 
+                        --tw-ring-color: ${cal.color}40 !important;
                       }
                     `}</style>
                   </div>
-                  <span className="text-sm text-foreground/80 truncate">{cal.label}</span>
+                  <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <span className="text-sm text-foreground/90 truncate font-medium">{cal.label}</span>
+                  </div>
+                  <div
+                    className="w-2 h-2 rounded-full opacity-60 group-hover:opacity-100 transition-opacity"
+                    style={{ backgroundColor: cal.color }}
+                  />
                 </div>
               ))}
             </div>
@@ -205,42 +214,91 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
       </div>
       
+      {/* Import/Export Section */}
+      {!readOnly && (
+        <div className="px-4 pt-5">
+          <div className="bg-muted/20 rounded-2xl p-3 border border-border/30">
+            <div className="flex items-center gap-2 mb-3">
+              <span className="text-sm font-semibold text-foreground">{translations?.importExport || 'Import / Export ICS'}</span>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="flex-1 flex items-center justify-center gap-2 bg-background/50 hover:bg-background/80 border border-border/50 rounded-xl py-2.5 px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all duration-200"
+              >
+                <Upload className="w-4 h-4" />
+                <span className="font-medium">{translations?.import || 'Import'}</span>
+              </button>
+              <button
+                onClick={() => {
+                  if (events && events.length > 0) {
+                    downloadICS(events, `calendar-${format(new Date(), 'yyyy-MM-dd')}.ics`);
+                  }
+                }}
+                disabled={!events || events.length === 0}
+                className={cn(
+                  "flex-1 flex items-center justify-center gap-2 bg-background/50 hover:bg-background/80 border border-border/50 rounded-xl py-2.5 px-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all duration-200",
+                  (!events || events.length === 0) && "opacity-50 cursor-not-allowed"
+                )}
+              >
+                <Download className="w-4 h-4" />
+                <span className="font-medium">{translations?.export || 'Export'}</span>
+              </button>
+            </div>
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".ics,.ical,.ifb,.icalendar"
+              className="hidden"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (file && onImport) {
+                  try {
+                    const importedEvents = await importICSFile(file);
+                    onImport(importedEvents);
+                  } catch (error) {
+                    console.error('Failed to import ICS file:', error);
+                  }
+                }
+                // Reset input
+                e.target.value = '';
+              }}
+            />
+          </div>
+        </div>
+      )}
+
       {/* Timezone Selector - Custom UI */}
-      <div className="mt-auto px-4 pt-4 border-t border-border">
-          <div className="relative">
-              <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                    <Globe className="w-3 h-3" />
-                    {translations?.timezone || 'Timezone'}
+      <div className="mt-auto px-4 pt-5">
+          <div className="bg-muted/20 rounded-2xl p-3 border border-border/30">
+              <div className="flex items-center gap-2 mb-3">
+                  <div className="p-1.5 bg-primary/10 rounded-lg">
+                      <Globe className="w-4 h-4 text-primary" />
                   </div>
-                  {currentOffset && (
-                      <div className="px-1.5 py-0.5 rounded bg-muted text-[10px] font-mono font-medium text-muted-foreground">
-                          {currentOffset}
-                      </div>
-                  )}
+                  <span className="text-sm font-semibold text-foreground">{translations?.timezone || 'Timezone'}</span>
               </div>
-              
+
               <div className="relative">
-                <button 
+                <button
                     onClick={() => setTimezoneOpen(!timezoneOpen)}
-                    className="w-full flex items-center justify-between bg-muted/30 hover:bg-muted/50 border border-border rounded-md py-2 pl-3 pr-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all text-left"
+                    className="w-full flex items-center justify-between bg-background/50 hover:bg-background/80 border border-border/50 rounded-xl py-2.5 pl-4 pr-3 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all duration-200 text-left"
                 >
-                    <div className="flex-1 truncate mr-2">{selectedTimezoneLabel}</div>
+                    <div className="flex-1 truncate mr-2 font-medium">{selectedTimezoneLabel}</div>
                     <ChevronDown className={cn("w-4 h-4 text-muted-foreground transition-transform duration-200", timezoneOpen && "rotate-180")} />
                 </button>
 
                 {timezoneOpen && (
                     <>
                         <div className="fixed inset-0 z-40" onClick={() => setTimezoneOpen(false)} />
-                        <div className="absolute bottom-full left-0 w-full mb-1 bg-popover border border-border rounded-md shadow-lg z-50 max-h-[240px] overflow-y-auto p-1 animate-in fade-in zoom-in-95 duration-200">
+                        <div className="absolute bottom-full left-0 w-full mb-2 bg-background border border-border rounded-xl shadow-2xl z-50 max-h-[260px] overflow-y-auto p-1.5 animate-in fade-in zoom-in-95 duration-200 backdrop-blur-none">
                             {timezones.map(tz => (
-                                <div 
+                                <div
                                     key={tz.value}
                                     className={cn(
-                                        "px-2 py-1.5 text-sm rounded cursor-pointer",
-                                        (timezone || '') === tz.value 
-                                            ? "bg-primary/10 text-primary font-medium" 
-                                            : "text-foreground hover:bg-accent"
+                                        "px-3 py-2.5 text-sm rounded-lg cursor-pointer transition-all duration-200",
+                                        (timezone || '') === tz.value
+                                            ? "bg-primary text-primary-foreground font-semibold"
+                                            : "text-foreground hover:bg-accent/80"
                                     )}
                                     onClick={() => {
                                         onTimezoneChange?.(tz.value);

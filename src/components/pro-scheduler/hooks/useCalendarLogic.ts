@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react';
-import { 
-  addMonths, subMonths, addWeeks, subWeeks, addDays, subDays, 
-  differenceInMilliseconds 
+import {
+  addMonths, subMonths, addWeeks, subWeeks, addDays, subDays,
+  differenceInMilliseconds
 } from 'date-fns';
+import { toZonedTime, fromZonedTime } from 'date-fns-tz';
 import { RRule } from 'rrule';
 import { DragEndEvent } from '@dnd-kit/core';
 import { ViewType, CalendarEvent } from '../types';
@@ -18,6 +19,7 @@ interface UseCalendarLogicProps {
   onEventCreate?: (event: Partial<CalendarEvent>) => void;
   onEventDelete?: (eventId: string) => void;
   readOnly?: boolean;
+  timezone?: string;
 }
 
 export const useCalendarLogic = ({
@@ -30,7 +32,8 @@ export const useCalendarLogic = ({
   onEventUpdate,
   onEventCreate,
   onEventDelete,
-  readOnly
+  readOnly,
+  timezone
 }: UseCalendarLogicProps) => {
   const [internalView, setInternalView] = useState<ViewType>('week');
   const [internalDate, setInternalDate] = useState(new Date());
@@ -229,57 +232,56 @@ export const useCalendarLogic = ({
     const duration = differenceInMilliseconds(originalEnd, originalStart);
 
     let newStart: Date;
-    
+
     if (view === 'month') {
-        newStart = new Date(overDate);
-        newStart.setHours(originalStart.getHours());
-        newStart.setMinutes(originalStart.getMinutes());
-        newStart.setSeconds(originalStart.getSeconds());
-        newStart.setMilliseconds(originalStart.getMilliseconds());
-    } else {
-        // Week / Day View Logic
-        
-        // If we dropped on a specific time slot (overDate), use that directly
-        // This is robust for both cross-column drags and same-column moves
-        if (overDate) {
-             const droppedTime = new Date(overDate);
-             newStart = new Date(droppedTime);
-             // We can optionally respect the minute offset within the slot if we want fine-grained drag
-             // But usually snapping to the slot start (e.g., 9:00, 9:15) is desired behavior
-             
-             // However, now that we have 15-minute intervals (droppable cells) in Week/Day view,
-             // overDate itself is precise to the 15-minute mark (e.g., 10:15).
-             // We should prioritize the drop target for start time if available,
-             // because visually the user dropped ON that cell.
-             
-             // The user explicitly asked to "Modify the drop logic to use the exact quarter of the target cell that was selected".
-             // This implies strict snapping to the dropped cell, ignoring pixel delta for minute offsets.
-             
-             newStart = new Date(overDate);
-             
-             // Preserve seconds/ms just in case, but usually 00
-             newStart.setSeconds(0);
-             newStart.setMilliseconds(0);
-             
+        // For month view, overDate is the day cell
+        // We need to preserve the original time but change the date
+        if (timezone) {
+          // Get the original time in the target timezone
+          const zonedOriginal = toZonedTime(originalStart, timezone);
+          // Create new date with overDate's date but original's time
+          const zonedNew = new Date(overDate);
+          zonedNew.setHours(zonedOriginal.getHours());
+          zonedNew.setMinutes(zonedOriginal.getMinutes());
+          zonedNew.setSeconds(zonedOriginal.getSeconds());
+          zonedNew.setMilliseconds(zonedOriginal.getMilliseconds());
+          // Convert back from zoned time to UTC
+          newStart = fromZonedTime(zonedNew, timezone);
         } else {
-             // Fallback if no overDate (shouldn't happen if dropped on grid)
-             return;
+          newStart = new Date(overDate);
+          newStart.setHours(originalStart.getHours());
+          newStart.setMinutes(originalStart.getMinutes());
+          newStart.setSeconds(originalStart.getSeconds());
+          newStart.setMilliseconds(originalStart.getMilliseconds());
         }
+    } else {
+        // Week / Day / Resource View Logic
+        // overDate represents the time slot in "display timezone"
+        if (timezone) {
+          // overDate is already in the display timezone representation
+          // We need to convert it back to UTC for storage
+          // The cell date was created as local time representing the target timezone
+          newStart = fromZonedTime(overDate, timezone);
+        } else {
+          // No timezone set - use the date directly
+          newStart = new Date(overDate);
+        }
+
+        newStart.setSeconds(0);
+        newStart.setMilliseconds(0);
     }
 
     const newEnd = new Date(newStart.getTime() + duration);
 
     // Resource Handling
     let newResourceId = activeEvent.resourceId;
-    // Check if we dragged onto a resource column/row
-    // The 'over' data might contain resourceId if we set it up in DroppableCell
     const overResourceId = over.data.current?.resourceId;
     if (overResourceId) {
         newResourceId = overResourceId;
     }
-    
+
     // Check if event has actually changed
-    if (newStart.getTime() === originalStart.getTime() && 
+    if (newStart.getTime() === originalStart.getTime() &&
         newEnd.getTime() === originalEnd.getTime() &&
         newResourceId === activeEvent.resourceId
     ) {

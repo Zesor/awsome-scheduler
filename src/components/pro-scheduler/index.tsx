@@ -1,4 +1,4 @@
-import React, { useId, useState, useMemo } from 'react';
+import React, { useId, useState, useMemo, useRef, useEffect, useCallback } from 'react';
 import { DndContext, useSensor, useSensors, PointerSensor, Modifier, DragOverlay } from '@dnd-kit/core';
 import { createSnapModifier, restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -10,11 +10,14 @@ import { DayView } from './views/DayView';
 import { AgendaView } from './views/AgendaView';
 import { ResourceView } from './views/ResourceView';
 import { EventModal } from './components/EventModal';
+import { MonthViewSkeleton, WeekViewSkeleton, DayViewSkeleton, AgendaViewSkeleton } from './components/Skeleton';
+import { EventContextMenu, useEventContextMenu } from './components/ContextMenu';
 import { CalendarProps, CalendarEvent } from './types';
 import { cn } from './utils';
 import { getThemeStyles } from './lib/theme';
 import { useCalendarLogic } from './hooks/useCalendarLogic';
 import { differenceInMinutes, format } from 'date-fns';
+import { useViewSwipe } from './hooks/useSwipeGesture';
 
 export const Scheduler: React.FC<CalendarProps> = ({
   events = [],
@@ -26,6 +29,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
   onEventCreate,
   onEventUpdate,
   onEventDelete,
+  onEventResize,
   timezone,
   onTimezoneChange,
   className,
@@ -46,6 +50,14 @@ export const Scheduler: React.FC<CalendarProps> = ({
   locale // Date-fns locale
 }) => {
   const [activeDragEvent, setActiveDragEvent] = useState<CalendarEvent | null>(null);
+
+  // Context menu state
+  const {
+    contextMenuEvent,
+    contextMenuPosition,
+    openContextMenu,
+    closeContextMenu,
+  } = useEventContextMenu();
 
   const {
     view,
@@ -79,7 +91,8 @@ export const Scheduler: React.FC<CalendarProps> = ({
     onEventUpdate,
     onEventCreate,
     onEventDelete,
-    readOnly
+    readOnly,
+    timezone
   });
 
   // DnD Sensors
@@ -97,8 +110,29 @@ export const Scheduler: React.FC<CalendarProps> = ({
 
   // Disable DnD if readOnly
   const dndSensors = readOnly ? [] : sensors;
+
+  // Handle event resize
+  const handleEventResize = (event: CalendarEvent, newEnd: Date) => {
+    if (readOnly) return;
+
+    // Call the external callback if provided
+    if (onEventResize) {
+      onEventResize(event, event.start, newEnd);
+    }
+
+    // Also update via onEventUpdate for internal state management
+    if (onEventUpdate) {
+      onEventUpdate({
+        ...event,
+        end: newEnd
+      });
+    }
+  };
   
   const id = useId();
+
+  // Mobile swipe gesture support
+  const swipeRef = useViewSwipe<HTMLDivElement>(handlePrev, handleNext, true);
 
   // Default Translations
   const t = {
@@ -219,14 +253,23 @@ export const Scheduler: React.FC<CalendarProps> = ({
         />
         
         <div className="flex flex-1 overflow-hidden">
-            <div className={cn(
-                "transition-all duration-300 ease-in-out",
-                isSidebarOpen ? "w-[256px]" : "w-0 overflow-hidden",
-                "hidden md:block"
-            )}>
-                <Sidebar 
-                    currentDate={currentDate} 
-                    onDateChange={handleDateChange} 
+            <motion.div
+                className={cn(
+                  "hidden md:block overflow-hidden",
+                )}
+                initial={false}
+                animate={{
+                  width: isSidebarOpen ? 256 : 0,
+                  opacity: isSidebarOpen ? 1 : 0,
+                }}
+                transition={{
+                  duration: 0.3,
+                  ease: [0.4, 0, 0.2, 1],
+                }}
+            >
+                <Sidebar
+                    currentDate={currentDate}
+                    onDateChange={handleDateChange}
                     onViewChange={handleViewChange}
                     onEventCreate={handleCreateEvent}
                     timezone={timezone}
@@ -235,25 +278,53 @@ export const Scheduler: React.FC<CalendarProps> = ({
                     readOnly={readOnly}
                     calendars={calendars}
                     onCalendarToggle={onCalendarToggle}
-                    translations={t} // Pass translations
+                    translations={t}
+                    events={filteredEvents}
+                    onImport={(importedEvents) => {
+                      // Call onEventCreate for each imported event
+                      importedEvents.forEach(event => {
+                        onEventCreate?.(event);
+                      });
+                    }}
                 />
-            </div>
+            </motion.div>
 
             <div className="flex-1 flex flex-col overflow-hidden relative">
-                {isLoading && (
-                    <div className="absolute inset-0 z-50 flex items-center justify-center bg-background/50 backdrop-blur-sm">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                {isLoading ? (
+                    <div className="flex-1 overflow-auto p-0 md:p-4">
+                      <div className="h-full min-w-full">
+                        {view === 'month' && <MonthViewSkeleton />}
+                        {view === 'week' && <WeekViewSkeleton />}
+                        {view === 'day' && <DayViewSkeleton />}
+                        {view === 'agenda' && <AgendaViewSkeleton />}
+                        {view === 'resource' && <WeekViewSkeleton />}
+                      </div>
                     </div>
-                )}
-                <div className="flex-1 overflow-auto p-0 md:p-4"> 
+                ) : (
+                <div ref={swipeRef} className="flex-1 overflow-auto p-0 md:p-4 touch-pan-y">
                   <div className="h-full min-w-full">
-                    <AnimatePresence mode="wait">
+                    <AnimatePresence mode="wait" initial={false}>
                         <motion.div
                             key={`${view}-${currentDate.toISOString()}-${timezone || 'local'}`}
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -10 }}
-                            transition={{ duration: 0.2, ease: "easeInOut" }}
+                            initial={{ opacity: 0, scale: 0.98, y: 15 }}
+                            animate={{
+                              opacity: 1,
+                              scale: 1,
+                              y: 0,
+                              transition: {
+                                duration: 0.25,
+                                ease: [0.25, 0.1, 0.25, 1],
+                              }
+                            }}
+                            exit={{
+                              opacity: 0,
+                              scale: 0.98,
+                              y: -10,
+                              transition: {
+                                duration: 0.15,
+                                ease: [0.25, 0.1, 0.25, 1],
+                              }
+                            }}
                             className="h-full"
                         >
                             {view === 'month' && (
@@ -272,6 +343,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
                                 events={filteredEvents}
                                 onEventClick={handleEventClickInternal}
                                 onTimeSlotClick={handleTimeSlotClick}
+                                onEventResize={handleEventResize}
                                 timezone={timezone}
                                 locale={locale}
                                 />
@@ -282,6 +354,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
                                     events={filteredEvents}
                                     onEventClick={handleEventClickInternal}
                                     onTimeSlotClick={handleTimeSlotClick}
+                                    onEventResize={handleEventResize}
                                     timezone={timezone}
                                     locale={locale}
                                 />
@@ -291,6 +364,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
                                     currentDate={currentDate}
                                     events={filteredEvents}
                                     onEventClick={handleEventClickInternal}
+                                    onCreateEvent={handleCreateEvent}
                                 />
                             )}
                             {view === 'resource' && resources && (
@@ -314,7 +388,8 @@ export const Scheduler: React.FC<CalendarProps> = ({
                     </AnimatePresence>
                   </div>
                 </div>
-                
+                )}
+
                 {/* Mobile Create Button (FAB) */}
                 <div className="md:hidden absolute bottom-6 right-6 z-50">
                     <button 
@@ -337,7 +412,7 @@ export const Scheduler: React.FC<CalendarProps> = ({
                 onDelete: handleModalDelete
             })
         ) : (
-            <EventModal 
+            <EventModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 event={selectedEvent}
@@ -349,27 +424,90 @@ export const Scheduler: React.FC<CalendarProps> = ({
                 translations={t} // Pass translations
             />
         )}
-        
-        <DragOverlay>
+
+        {/* Context Menu */}
+        <EventContextMenu
+          event={contextMenuEvent}
+          position={contextMenuPosition}
+          onClose={closeContextMenu}
+          onEdit={(event) => {
+            handleEventClickInternal(event);
+            closeContextMenu();
+          }}
+          onDelete={(eventId) => {
+            onEventDelete?.(eventId);
+            closeContextMenu();
+          }}
+          onDuplicate={(event) => {
+            // Create a duplicate with a new ID and slightly shifted time
+            const duplicatedEvent: Partial<CalendarEvent> = {
+              ...event,
+              id: `${event.id}-copy-${Date.now()}`,
+              title: `${event.title} (Copy)`,
+              start: new Date(event.start.getTime() + 24 * 60 * 60 * 1000), // +1 day
+              end: new Date(event.end.getTime() + 24 * 60 * 60 * 1000),
+            };
+            onEventCreate?.(duplicatedEvent);
+            closeContextMenu();
+          }}
+          translations={{
+            edit: t.editEvent || 'Edit',
+            delete: t.delete || 'Delete',
+            duplicate: 'Duplicate',
+          }}
+        />
+
+        <DragOverlay dropAnimation={null}>
             {activeDragEvent ? (
                 <div
                     className={cn(
-                    "text-xs px-2 py-1 rounded truncate shadow-lg border border-primary/50 opacity-50 cursor-grabbing overflow-hidden",
-                    !activeDragEvent.color && "bg-primary text-primary-foreground",
+                      "rounded-lg shadow-2xl border-2 overflow-hidden cursor-grabbing transition-transform",
+                      "backdrop-blur-sm",
+                      !activeDragEvent.color && "bg-primary/90 border-primary/60 text-primary-foreground",
                     )}
                     style={{
-                        backgroundColor: activeDragEvent.color || undefined,
+                        backgroundColor: activeDragEvent.color ? `${activeDragEvent.color}e0` : undefined,
+                        borderColor: activeDragEvent.color ? `${activeDragEvent.color}80` : undefined,
                         color: activeDragEvent.color ? '#fff' : undefined,
-                        width: getDragWidth(), // explicit width for better visibility
-                        height: getDragHeight() ? `${getDragHeight()}px` : undefined
+                        width: getDragWidth(),
+                        height: getDragHeight() ? `${getDragHeight()}px` : undefined,
+                        boxShadow: `0 20px 40px -15px ${activeDragEvent.color || 'var(--primary)'}40, 0 10px 20px -10px rgba(0,0,0,0.2)`,
+                        transform: 'rotate(-2deg) scale(1.02)',
                     }}
                 >
-                    <div className="font-semibold truncate">{activeDragEvent.title}</div>
-                    {(view === 'week' || view === 'day') && getDragHeight() && getDragHeight()! > 30 && (
-                         <div className="text-[10px] opacity-80">
-                             {format(activeDragEvent.start, 'h:mm')} - {format(activeDragEvent.end, 'h:mm')}
-                         </div>
-                    )}
+                    <div className="p-2.5 h-full flex flex-col">
+                        {/* Event color accent bar */}
+                        <div
+                          className="absolute left-0 top-0 bottom-0 w-1 rounded-l-lg"
+                          style={{ backgroundColor: activeDragEvent.color || 'var(--primary)' }}
+                        />
+
+                        {/* Content */}
+                        <div className="pl-2">
+                          <div className="font-semibold truncate text-sm">{activeDragEvent.title}</div>
+                          {(view === 'week' || view === 'day') && getDragHeight() && getDragHeight()! > 40 && (
+                            <div className="text-xs opacity-80 mt-0.5 flex items-center gap-1">
+                              <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <circle cx="12" cy="12" r="10"/>
+                                <path d="M12 6v6l4 2"/>
+                              </svg>
+                              {format(activeDragEvent.start, 'h:mm a')} - {format(activeDragEvent.end, 'h:mm a')}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Drag indicator */}
+                        <div className="absolute bottom-1.5 right-1.5 opacity-60">
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="9" cy="5" r="1.5"/>
+                            <circle cx="15" cy="5" r="1.5"/>
+                            <circle cx="9" cy="12" r="1.5"/>
+                            <circle cx="15" cy="12" r="1.5"/>
+                            <circle cx="9" cy="19" r="1.5"/>
+                            <circle cx="15" cy="19" r="1.5"/>
+                          </svg>
+                        </div>
+                    </div>
                 </div>
             ) : null}
         </DragOverlay>

@@ -1,11 +1,9 @@
 import React, { useMemo, useCallback } from 'react';
 import { format, isSameMonth, isSameDay, isToday, startOfWeek, endOfWeek, eachDayOfInterval } from 'date-fns';
 import { toZonedTime } from 'date-fns-tz';
-import { useVirtualizer } from '@tanstack/react-virtual';
 import { getMonthGrid } from '../lib/date';
 import { CalendarEvent } from '../types';
 import { cn } from '../utils';
-import { motion } from 'framer-motion';
 import { DraggableEvent } from '../components/dnd/DraggableEvent';
 import { DroppableCell } from '../components/dnd/DroppableCell';
 import { Locale } from 'date-fns';
@@ -24,16 +22,21 @@ const EventItem = React.memo(({ event, onEventClick }: { event: CalendarEvent, o
     <DraggableEvent event={event}>
         <div
             className={cn(
-            "text-xs px-2 py-1 rounded truncate cursor-pointer shadow-sm border border-transparent hover:border-border/50 transition-all",
-            !event.color && "bg-primary/10 text-primary hover:bg-primary/20"
+              "text-xs px-2.5 py-1.5 rounded-lg truncate cursor-pointer shadow-sm transition-all duration-200",
+              "hover:shadow-md hover:scale-[1.02] hover:z-10",
+              !event.color && "bg-primary/10 text-primary hover:bg-primary/15 border border-primary/20"
             )}
-            style={event.color ? { backgroundColor: event.color, color: '#fff' } : undefined}
+            style={event.color ? {
+              backgroundColor: `${event.color}20`,
+              color: event.color,
+              borderLeft: `3px solid ${event.color}`,
+            } : undefined}
             onClick={(e) => {
-            e.stopPropagation();
-            onEventClick?.(event);
+              e.stopPropagation();
+              onEventClick?.(event);
             }}
         >
-            {event.title}
+            <span className="font-medium">{event.title}</span>
         </div>
     </DraggableEvent>
 ));
@@ -82,59 +85,62 @@ export const MonthView: React.FC<MonthViewProps> = ({
   }, [events, getZonedDate]);
 
   return (
-    <div className="flex flex-col h-full bg-background border rounded-md overflow-hidden min-w-[800px] md:min-w-0">
+    <div className="flex flex-col h-full bg-background border border-border/50 rounded-2xl overflow-hidden min-w-[800px] md:min-w-0 shadow-sm">
       <div className="overflow-y-auto flex-1 relative">
         {/* Sticky Header */}
-        <div className="grid grid-cols-7 border-b bg-muted/40 sticky top-0 z-20">
+        <div className="grid grid-cols-7 border-b border-border/50 bg-gradient-to-r from-muted/30 via-muted/40 to-muted/30 sticky top-0 z-20 backdrop-blur-sm">
           {weekDays.map((day) => (
-            <div key={day.toISOString()} className="p-2 text-center text-sm font-medium text-muted-foreground border-r last:border-r-0 uppercase bg-muted/40">
+            <div
+              key={day.toISOString()}
+              className="py-3 text-center text-xs font-semibold text-muted-foreground border-r border-border/30 last:border-r-0 uppercase tracking-wider"
+            >
               {format(day, 'EEE', { locale })}
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-7" style={{ gridAutoRows: '120px' }}>
+        <div className="grid grid-cols-7" style={{ gridAutoRows: '130px' }}>
         {days.map((day) => {
           const dayKey = format(day, 'yyyy-MM-dd');
-          // O(1) lookup instead of O(N) filter
           const dayEvents = eventsByDay.get(dayKey) || [];
-          
+
           const isCurrentMonth = isSameMonth(day, currentDate);
           const cellId = day.toISOString();
-          
+
           return (
-            <DroppableCell 
+            <DroppableCell
               key={cellId}
               id={cellId}
               date={day}
               className={cn(
-                "h-[120px] p-2 border-b border-r last:border-r-0 relative transition-colors hover:bg-muted/20 flex flex-col gap-1 overflow-hidden",
-                !isCurrentMonth && "bg-muted/5 text-muted-foreground",
-                isToday(day) && "bg-accent/10"
+                "h-[130px] p-2 border-b border-r border-border/30 last:border-r-0 relative transition-all duration-200 hover:bg-accent/5 flex flex-col gap-1.5 overflow-hidden group",
+                !isCurrentMonth && "bg-muted/5 text-muted-foreground/60",
+                isToday(day) && "bg-primary/5 ring-1 ring-inset ring-primary/20"
               )}
               onClick={() => onDateClick?.(day)}
             >
               <div className="flex justify-between items-start">
                 <div className={cn(
-                  "text-sm font-medium w-7 h-7 flex items-center justify-center rounded-full",
-                  isToday(day) && "bg-primary text-primary-foreground"
+                  "text-sm font-semibold w-7 h-7 flex items-center justify-center rounded-full transition-all duration-200",
+                  isToday(day)
+                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/30"
+                    : "group-hover:bg-accent"
                 )}>
                   {format(day, 'd', { locale })}
                 </div>
+                {dayEvents.length > 0 && (
+                  <div className="text-[10px] font-medium text-muted-foreground/60 bg-muted/50 px-1.5 py-0.5 rounded-full">
+                    {dayEvents.length}
+                  </div>
+                )}
               </div>
-              
-              {/* Virtualized list for large event counts within a cell is tricky without fixed height.
-                  For "10000+ events" spread across a month, the main bottleneck is the `events.filter` loop inside the render map.
-                  We fixed that with `eventsByDay` useMemo.
-                  
-                  If a SINGLE day has 1000+ events, we should limit display and show "+X more".
-              */}
-              <div className="flex-1 flex flex-col gap-1 overflow-y-auto scrollbar-hide">
-                {dayEvents.slice(0, 20).map(event => (
+
+              <div className="flex-1 flex flex-col gap-1 overflow-y-auto scrollbar-thin">
+                {dayEvents.slice(0, 4).map(event => (
                    <EventItem key={`${event.id}-${dayKey}`} event={event} onEventClick={onEventClick} />
                 ))}
-                {dayEvents.length > 20 && (
-                    <div className="text-[10px] text-muted-foreground font-medium text-center sticky bottom-0 bg-background/80 backdrop-blur-sm py-1">
-                        + {dayEvents.length - 20} more
+                {dayEvents.length > 4 && (
+                    <div className="text-[10px] text-primary font-semibold text-center py-1 px-2 rounded-md bg-primary/5 hover:bg-primary/10 cursor-pointer transition-colors">
+                        +{dayEvents.length - 4} more
                     </div>
                 )}
               </div>

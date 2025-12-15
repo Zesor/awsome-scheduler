@@ -10,6 +10,13 @@ export interface EventAttachment {
   size?: string;
 }
 
+export interface EventReminder {
+  id: string;
+  type: 'notification' | 'email';
+  time: number; // minutes before event
+  label?: string; // e.g., "30 minutes before"
+}
+
 export interface CalendarEvent {
   id: string;
   title: string;
@@ -24,6 +31,7 @@ export interface CalendarEvent {
   icon?: string; // Lucide icon name or ReactNode if we can serialze
   attachments?: EventAttachment[];
   guests?: string[]; // Array of email addresses
+  reminders?: EventReminder[]; // Event reminders
   recurrence?: {
     freq: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY';
     interval?: number;

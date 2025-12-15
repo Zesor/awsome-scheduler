@@ -5,6 +5,7 @@ import { CalendarEvent } from '../types';
 import { cn } from '../utils';
 import { DraggableEvent } from '../components/dnd/DraggableEvent';
 import { DroppableCell } from '../components/dnd/DroppableCell';
+import { ResizableEvent } from '../components/dnd/ResizableEvent';
 import { Locale } from 'date-fns';
 
 interface WeekViewProps {
@@ -12,6 +13,7 @@ interface WeekViewProps {
   events: CalendarEvent[];
   onEventClick?: (event: CalendarEvent) => void;
   onTimeSlotClick?: (date: Date) => void;
+  onEventResize?: (event: CalendarEvent, newEnd: Date) => void;
   timezone?: string;
   locale?: Locale;
 }
@@ -21,6 +23,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
   events,
   onEventClick,
   onTimeSlotClick,
+  onEventResize,
   timezone,
   locale
 }) => {
@@ -104,7 +107,7 @@ export const WeekView: React.FC<WeekViewProps> = ({
   const nowFormat = locale?.code === 'fr' ? 'H:mm' : 'h:mm';
 
   return (
-    <div className="flex flex-col h-full bg-background border rounded-2xl overflow-hidden min-w-[800px] md:min-w-0 shadow-sm ring-1 ring-black/5 dark:ring-white/10">
+    <div className="flex flex-col h-full bg-background border border-border/50 rounded-2xl overflow-hidden min-w-[800px] md:min-w-0 shadow-sm">
       {/* Scrollable Container - includes header for proper alignment */}
       <div
         ref={scrollContainerRef}
@@ -112,21 +115,21 @@ export const WeekView: React.FC<WeekViewProps> = ({
         style={{ scrollbarGutter: 'stable' }}
       >
         {/* Header - sticky inside scroll container */}
-        <div className="flex border-b bg-background z-20 sticky top-0 shadow-sm">
-          <div className="flex-none p-3 text-center text-xs font-semibold text-muted-foreground w-16 flex items-center justify-center border-r border-border bg-background">
+        <div className="flex border-b border-border/50 bg-gradient-to-r from-muted/20 via-background to-muted/20 z-20 sticky top-0 backdrop-blur-sm">
+          <div className="flex-none p-3 text-center text-xs font-semibold text-muted-foreground w-16 flex items-center justify-center border-r border-border/30 bg-muted/10">
             {getTimezoneDisplay(timezone)}
           </div>
           <div className="flex-1 grid grid-cols-7">
               {weekDays.map((day, index) => (
-              <div key={day.toISOString()} className={cn("py-3 px-2 text-center bg-background", index > 0 && "border-l border-border")}>
-                  <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1">{format(day, 'EEE', { locale })}</div>
+              <div key={day.toISOString()} className={cn("py-3 px-2 text-center", index > 0 && "border-l border-border/30")}>
+                  <div className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1.5">{format(day, 'EEE', { locale })}</div>
                   <div className={cn(
-                  "w-8 h-8 flex items-center justify-center rounded-full mx-auto text-sm font-semibold transition-all duration-200",
-                  isToday(day)
-                      ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 scale-110"
-                      : "text-foreground hover:bg-accent"
+                    "w-9 h-9 flex items-center justify-center rounded-xl mx-auto text-sm font-semibold transition-all duration-200",
+                    isToday(day)
+                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/30 scale-110"
+                      : "text-foreground hover:bg-accent/80"
                   )}>
-                  {format(day, 'd', { locale })}
+                    {format(day, 'd', { locale })}
                   </div>
               </div>
               ))}
@@ -134,21 +137,18 @@ export const WeekView: React.FC<WeekViewProps> = ({
         </div>
 
         {/* Grid Content */}
-        <div 
-          className="flex min-w-full relative" 
+        <div
+          className="flex min-w-full relative"
           style={{ height: hours.length * hourHeight }}
         >
           {/* Time Labels Column */}
-          <div className="flex-none w-16 border-r border-border relative bg-background/50 divide-y divide-border">
+          <div className="flex-none w-16 border-r border-border/30 relative bg-muted/5">
             {hours.map((hour) => (
                  <div
                    key={hour}
-                   className="relative w-full text-xs text-muted-foreground text-right pr-3 font-medium tabular-nums box-border"
+                   className="relative w-full text-[11px] text-muted-foreground/80 text-right pr-3 font-medium tabular-nums box-border border-b border-border/20"
                    style={{ height: hourHeight }}
                  >
-                   {/* -translate-y-1/2 centers it vertically on the line (which is the top border of the slot? No, typically labels are at the line) 
-                       Here we want labels at the top line of the slot.
-                   */}
                    <span className="block -translate-y-1/2">
                     {hour !== 0 && format(new Date().setHours(hour, 0, 0, 0), timeFormat, { locale })}
                    </span>
@@ -166,13 +166,13 @@ export const WeekView: React.FC<WeekViewProps> = ({
                 });
 
                 return (
-                <div key={day.toISOString()} className={cn("relative h-full", dayIndex > 0 && "border-l border-border")}>
+                <div key={day.toISOString()} className={cn("relative h-full", dayIndex > 0 && "border-l border-border/30")}>
                     {/* Grid Rows (Droppable Cells) */}
                     {hours.map((hour) => {
                         return (
-                            <div 
-                                key={hour} 
-                                className="w-full border-b border-dashed border-border/50 box-border relative"
+                            <div
+                                key={hour}
+                                className="w-full border-b border-dashed border-border/20 box-border relative hover:bg-accent/5 transition-colors"
                                 style={{ height: hourHeight }}
                             >
                                 {/* 4 x 15-minute intervals */}
@@ -248,79 +248,85 @@ export const WeekView: React.FC<WeekViewProps> = ({
                                 key={`${event.id}-${day.toISOString()}`}
                                 event={event}
                                 className="absolute z-10 transition-all"
-                                style={{ 
+                                style={{
                                     top: `${top}px`,
                                     height: `${Math.max(height, 20)}px`,
                                     left: `${leftPercent}%`,
                                     width: `${widthPercent}%`,
                                     // Add minimal spacing between overlapping events
-                                    paddingRight: count > 1 ? '2px' : '0' 
+                                    paddingRight: count > 1 ? '2px' : '0'
                                 }}
                             >
-                                <div
-                                    className={cn(
-                                        "rounded-md border shadow-sm transition-all hover:shadow-md hover:scale-[1.02] cursor-grab active:cursor-grabbing group overflow-hidden relative",
-                                        "glass",
-                                        !event.color && "border-primary/20 bg-primary/10",
-                                        isShortEvent ? "px-1 flex items-center justify-center" : "p-2",
-                                        // Add active border for overlapped events to distinguish them
-                                        count > 1 && "border-l-4 border-l-primary/50"
-                                    )}
-                                    style={{
-                                        height: '100%',
-                                        backgroundColor: event.color ? `${event.color}15` : undefined,
-                                        borderColor: event.color ? `${event.color}40` : undefined,
-                                        borderLeftWidth: '3px',
-                                        borderLeftColor: event.color || 'var(--primary)'
-                                    }}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        onEventClick?.(event);
-                                    }}
-                                    title={count > 1 ? `${event.title} (${index + 1}/${count})` : undefined}
+                                <ResizableEvent
+                                    event={event}
+                                    hourHeight={hourHeight}
+                                    onResize={onEventResize}
+                                    className="h-full"
+                                    style={{ height: '100%' }}
                                 >
-                                    <div className="flex flex-col h-full overflow-hidden w-full">
-                                        <div className={cn("font-semibold truncate text-foreground/90 leading-tight", 
-                                            isShortEvent ? "text-xs text-center" : "text-xs"
-                                        )}>
-                                            {event.title}
-                                        </div>
-                                        {!isShortEvent && (
-                                            <>
-                                                <div className="text-[10px] text-muted-foreground truncate mt-0.5 font-medium leading-tight">
-                                                    {format(zonedEventStart, eventTimeFormat, { locale })} - {format(zonedEventEnd, eventTimeFormat, { locale })}
-                                                </div>
-                                                {event.description && height > 50 && (
-                                                    <div className="text-[10px] text-muted-foreground/80 truncate mt-1 leading-tight opacity-80">
-                                                        {event.description}
-                                                    </div>
-                                                )}
-                                            </>
+                                    <div
+                                        className={cn(
+                                            "rounded-md border shadow-sm transition-all hover:shadow-md cursor-grab active:cursor-grabbing group overflow-hidden relative",
+                                            "glass",
+                                            !event.color && "border-primary/20 bg-primary/10",
+                                            isShortEvent ? "px-1 flex items-center justify-center" : "p-2",
+                                            // Add active border for overlapped events to distinguish them
+                                            count > 1 && "border-l-4 border-l-primary/50"
                                         )}
-                                        {/* Overlap Badge */}
-                                        {count > 1 && !isShortEvent && (
-                                            <div className="absolute top-1 right-1 bg-background/80 backdrop-blur-sm rounded-full w-4 h-4 flex items-center justify-center text-[9px] font-bold text-muted-foreground border border-border shadow-sm">
-                                                {count}
+                                        style={{
+                                            height: '100%',
+                                            backgroundColor: event.color ? `${event.color}15` : undefined,
+                                            borderColor: event.color ? `${event.color}40` : undefined,
+                                            borderLeftWidth: '3px',
+                                            borderLeftColor: event.color || 'var(--primary)'
+                                        }}
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            onEventClick?.(event);
+                                        }}
+                                        title={count > 1 ? `${event.title} (${index + 1}/${count})` : undefined}
+                                    >
+                                        <div className="flex flex-col h-full overflow-hidden w-full">
+                                            <div className={cn("font-semibold truncate text-foreground/90 leading-tight",
+                                                isShortEvent ? "text-xs text-center" : "text-xs"
+                                            )}>
+                                                {event.title}
                                             </div>
-                                        )}
+                                            {!isShortEvent && (
+                                                <>
+                                                    <div className="text-[10px] text-muted-foreground truncate mt-0.5 font-medium leading-tight">
+                                                        {format(zonedEventStart, eventTimeFormat, { locale })} - {format(zonedEventEnd, eventTimeFormat, { locale })}
+                                                    </div>
+                                                    {event.description && height > 50 && (
+                                                        <div className="text-[10px] text-muted-foreground/80 truncate mt-1 leading-tight opacity-80">
+                                                            {event.description}
+                                                        </div>
+                                                    )}
+                                                </>
+                                            )}
+                                            {/* Overlap Badge */}
+                                            {count > 1 && !isShortEvent && (
+                                                <div className="absolute top-1 right-1 bg-background/80 backdrop-blur-sm rounded-full w-4 h-4 flex items-center justify-center text-[9px] font-bold text-muted-foreground border border-border shadow-sm">
+                                                    {count}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
-                                    
-                                    <div className="absolute bottom-0 left-0 w-full h-1 cursor-ns-resize hover:bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                </div>
+                                </ResizableEvent>
                             </DraggableEvent>
                         );
                     })}
                     
                     {/* Current Time Indicator */}
                     {isToday(day) && (
-                    <div 
-                        className="absolute left-0 right-0 z-20 pointer-events-none flex items-center group"
+                    <div
+                        className="absolute left-0 right-0 z-20 pointer-events-none flex items-center"
                         style={{
-                        top: `${(zonedNow.getHours() * 60 + zonedNow.getMinutes()) / 60 * hourHeight}px`
+                          top: `${(zonedNow.getHours() * 60 + zonedNow.getMinutes()) / 60 * hourHeight}px`
                         }}
                     >
-                        <div className="h-[2px] w-full bg-primary/50 shadow-[0_0_8px_rgba(var(--primary),0.6)]" />
-                        <div className="absolute -left-1.5 w-3 h-3 bg-primary rounded-full shadow-lg ring-2 ring-background" />
+                        <div className="h-[2px] w-full bg-gradient-to-r from-primary via-primary to-primary/50" />
+                        <div className="absolute -left-1.5 w-3 h-3 bg-primary rounded-full shadow-lg shadow-primary/40 ring-2 ring-background animate-pulse" />
                     </div>
                     )}
                 </div>
