@@ -27,7 +27,7 @@ export function Header() {
           className="relative mr-6 flex items-center space-x-2"
         >
           <Image
-            src="/apple-touch-icon.png"
+            src="/favicon-32x32.png"
             alt="CalendarKit Logo"
             width={32}
             height={32}
