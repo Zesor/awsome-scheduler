@@ -64,6 +64,14 @@ export function constructMetadata({
       type: "website",
       locale: "en_US",
     },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+      creator: "@calendarkit",
+      site: "@calendarkit",
+    },
     icons: {
       icon: "/favicon.ico",
       shortcut: "/favicon-16x16.png",
