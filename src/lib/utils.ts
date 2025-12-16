@@ -72,6 +72,9 @@ export function constructMetadata({
       creator: "@calendarkit",
       site: "@calendarkit",
     },
+    other: {
+      "theme-color": "#6366f1", // Discord embed sidebar color (indigo)
+    },
     icons: {
       icon: "/favicon.ico",
       shortcut: "/favicon-16x16.png",
