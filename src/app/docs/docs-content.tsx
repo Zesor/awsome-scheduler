@@ -51,45 +51,43 @@ const navigation: NavItem[] = [
   },
   {
     id: "basic-scheduler",
-    label: "BasicScheduler",
+    label: "Basic (Free)",
     icon: <Calendar className="h-4 w-4" />,
     children: [
       { id: "basic-props", label: "Props Reference" },
       { id: "basic-views", label: "Views" },
+      { id: "basic-week-start", label: "Week Start" },
+      { id: "basic-custom-render", label: "Custom Event Render" },
+      { id: "basic-mobile", label: "Mobile Features" },
+      { id: "basic-loading", label: "Loading States" },
     ],
   },
   {
     id: "pro-scheduler",
-    label: "ProScheduler",
-    icon: <Calendar className="h-4 w-4" />,
+    label: "Pro (Premium)",
+    icon: <Settings className="h-4 w-4" />,
     children: [
       { id: "pro-props", label: "Props Reference" },
       { id: "pro-views", label: "Views" },
-    ],
-  },
-  {
-    id: "features",
-    label: "Features",
-    icon: <Settings className="h-4 w-4" />,
-    children: [
-      { id: "theming", label: "Theming" },
-      { id: "i18n", label: "Internationalization" },
-      { id: "timezone", label: "Timezone Support" },
-      { id: "resources", label: "Resource View" },
-      { id: "recurring", label: "Recurring Events" },
-      { id: "event-resizing", label: "Event Resizing" },
-      { id: "notifications", label: "Notifications" },
-      { id: "ics-import-export", label: "ICS Import/Export" },
-      { id: "context-menus", label: "Context Menus" },
-      { id: "mobile-gestures", label: "Mobile Gestures" },
-      { id: "loading-states", label: "Loading States" },
+      { id: "pro-drag-drop", label: "Drag & Drop" },
+      { id: "pro-resizing", label: "Event Resizing" },
+      { id: "pro-timezone", label: "Timezone Support" },
+      { id: "pro-i18n", label: "Internationalization" },
+      { id: "pro-recurring", label: "Recurring Events" },
+      { id: "pro-resources", label: "Resource View" },
+      { id: "pro-ics", label: "ICS Import/Export" },
+      { id: "pro-context-menus", label: "Context Menus" },
+      { id: "pro-notifications", label: "Notifications" },
     ],
   },
   {
     id: "customization",
     label: "Customization",
     icon: <Code className="h-4 w-4" />,
-    children: [{ id: "custom-event-form", label: "Custom Event Form" }],
+    children: [
+      { id: "theming", label: "Theming" },
+      { id: "custom-event-form", label: "Custom Event Form" },
+    ],
   },
 ];
 
@@ -280,12 +278,18 @@ export function DocsContent({ highlightedCode }: DocsContentProps) {
               <div className="mb-6 p-4 bg-green-500/10 rounded-lg border border-green-500/20">
                 <h4 className="font-semibold mb-3 text-green-600 dark:text-green-400">Basic (Free - Open Source)</h4>
                 <p className="text-sm text-muted-foreground mb-3">
-                  Install directly from npm - no purchase needed! Includes month, week, and day views with event management.
+                  Install directly from npm - no purchase needed! Full-featured calendar with modern UI and mobile support.
                 </p>
                 <ul className="space-y-1 text-sm text-muted-foreground">
                   <li>✓ Month, Week, Day views</li>
                   <li>✓ Event creation & editing</li>
+                  <li>✓ Event overlap detection</li>
+                  <li>✓ Custom event renderer</li>
+                  <li>✓ Week start configuration</li>
+                  <li>✓ Mobile swipe gestures</li>
+                  <li>✓ Loading skeletons & empty states</li>
                   <li>✓ Calendar filtering</li>
+                  <li>✓ Dark mode support</li>
                   <li>✓ Full TypeScript support</li>
                   <li>✓ MIT License</li>
                 </ul>
@@ -454,7 +458,19 @@ export function DocsContent({ highlightedCode }: DocsContentProps) {
                       <td className="px-4 py-3 font-mono text-xs">isLoading</td>
                       <td className="px-4 py-3 font-mono text-xs">boolean</td>
                       <td className="px-4 py-3 text-muted-foreground">false</td>
-                      <td className="px-4 py-3">Show loading state</td>
+                      <td className="px-4 py-3">Show loading skeleton</td>
+                    </tr>
+                    <tr>
+                      <td className="px-4 py-3 font-mono text-xs">weekStartsOn</td>
+                      <td className="px-4 py-3 font-mono text-xs">0 | 1 | 2 | 3 | 4 | 5 | 6</td>
+                      <td className="px-4 py-3 text-muted-foreground">0</td>
+                      <td className="px-4 py-3">First day of week (0=Sunday, 1=Monday)</td>
+                    </tr>
+                    <tr>
+                      <td className="px-4 py-3 font-mono text-xs">renderEvent</td>
+                      <td className="px-4 py-3 font-mono text-xs">function</td>
+                      <td className="px-4 py-3 text-muted-foreground">undefined</td>
+                      <td className="px-4 py-3">Custom event renderer component</td>
                     </tr>
                   </tbody>
                 </table>
@@ -467,19 +483,133 @@ export function DocsContent({ highlightedCode }: DocsContentProps) {
                 <div className="p-4 border rounded-lg">
                   <h4 className="font-semibold mb-2">Month View</h4>
                   <p className="text-sm text-muted-foreground">
-                    Traditional calendar grid showing all days in the current month. Events are displayed as colored bars.
+                    Traditional calendar grid showing all days in the current month. Events are displayed as colored bars. Respects weekStartsOn configuration.
                   </p>
                 </div>
                 <div className="p-4 border rounded-lg">
                   <h4 className="font-semibold mb-2">Week View</h4>
                   <p className="text-sm text-muted-foreground">
-                    7-day view with hourly grid. Shows event duration visually. Virtualized for performance.
+                    7-day view with hourly grid. Smart event overlap detection displays overlapping events side-by-side. Virtualized for performance.
                   </p>
                 </div>
                 <div className="p-4 border rounded-lg">
                   <h4 className="font-semibold mb-2">Day View</h4>
                   <p className="text-sm text-muted-foreground">
-                    Single day view with detailed hourly breakdown. 15-minute time slots for precise scheduling.
+                    Single day view with detailed hourly breakdown. 15-minute time slots with event collision detection for overlapping events.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
+                <h4 className="font-semibold mb-2">New in v1.0.0</h4>
+                <ul className="space-y-1 text-sm text-muted-foreground">
+                  <li>✓ Event overlap detection with side-by-side display</li>
+                  <li>✓ Configurable week start (Sunday through Saturday)</li>
+                  <li>✓ Custom event renderer for complete control</li>
+                  <li>✓ Event view modal with edit/delete actions</li>
+                  <li>✓ Mobile swipe gestures for navigation</li>
+                  <li>✓ Loading skeletons and empty states</li>
+                </ul>
+              </div>
+            </section>
+
+            {/* Basic Feature Sections */}
+            <section id="basic-week-start" className="mb-16 scroll-mt-20">
+              <h2 className="text-3xl font-bold mb-4">Week Start Configuration</h2>
+              <p className="text-muted-foreground mb-6">
+                Configure which day the week starts on. Affects Week view, Month view, and Mini Calendar.
+              </p>
+              <CodeBlock
+                code={highlightedCode.basicWeekStart}
+                title="Week Start Configuration"
+              />
+              <div className="mt-6 overflow-x-auto">
+                <table className="w-full text-sm border rounded-lg overflow-hidden">
+                  <thead className="bg-muted">
+                    <tr>
+                      <th className="px-4 py-3 text-left font-semibold">Value</th>
+                      <th className="px-4 py-3 text-left font-semibold">Day</th>
+                      <th className="px-4 py-3 text-left font-semibold">Common Usage</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y">
+                    <tr><td className="px-4 py-3 font-mono">0</td><td className="px-4 py-3">Sunday</td><td className="px-4 py-3 text-muted-foreground">US, Canada, Japan (default)</td></tr>
+                    <tr><td className="px-4 py-3 font-mono">1</td><td className="px-4 py-3">Monday</td><td className="px-4 py-3 text-muted-foreground">Europe, ISO standard</td></tr>
+                    <tr><td className="px-4 py-3 font-mono">6</td><td className="px-4 py-3">Saturday</td><td className="px-4 py-3 text-muted-foreground">Middle East</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section id="basic-custom-render" className="mb-16 scroll-mt-20">
+              <h2 className="text-3xl font-bold mb-4">Custom Event Renderer</h2>
+              <p className="text-muted-foreground mb-6">
+                Use the <code className="px-1.5 py-0.5 bg-muted rounded text-sm">renderEvent</code> prop for complete control over event appearance across all views.
+              </p>
+              <CodeBlock
+                code={highlightedCode.basicRenderEvent}
+                title="Custom Event Renderer"
+              />
+              <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
+                <h4 className="font-semibold mb-2">Render Props</h4>
+                <ul className="space-y-1 text-sm text-muted-foreground">
+                  <li><code className="bg-muted px-1.5 py-0.5 rounded">event</code> - The CalendarEvent object with all event data</li>
+                  <li><code className="bg-muted px-1.5 py-0.5 rounded">view</code> - Current view type (&apos;month&apos; | &apos;week&apos; | &apos;day&apos;)</li>
+                  <li><code className="bg-muted px-1.5 py-0.5 rounded">onClick</code> - Click handler to open event modal</li>
+                </ul>
+              </div>
+            </section>
+
+            <section id="basic-mobile" className="mb-16 scroll-mt-20">
+              <h2 className="text-3xl font-bold mb-4">Mobile Features</h2>
+              <p className="text-muted-foreground mb-6">
+                Built-in mobile support with swipe gestures, bottom sheet, and floating action buttons.
+              </p>
+              <CodeBlock
+                code={highlightedCode.basicMobile}
+                title="Mobile Features"
+              />
+              <div className="grid gap-4 mt-6">
+                <div className="p-4 border rounded-lg">
+                  <h4 className="font-semibold mb-2">Swipe Gestures</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Swipe left/right to navigate between time periods. Works on all views with configurable threshold.
+                  </p>
+                </div>
+                <div className="p-4 border rounded-lg">
+                  <h4 className="font-semibold mb-2">Mobile Bottom Sheet</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Quick access to mini calendar, calendar filters, and view switcher. Opens via the calendar FAB.
+                  </p>
+                </div>
+                <div className="p-4 border rounded-lg">
+                  <h4 className="font-semibold mb-2">Floating Action Buttons</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Calendar/filter button and create event FAB. The create button respects the readOnly prop.
+                  </p>
+                </div>
+              </div>
+            </section>
+
+            <section id="basic-loading" className="mb-16 scroll-mt-20">
+              <h2 className="text-3xl font-bold mb-4">Loading States</h2>
+              <p className="text-muted-foreground mb-6">
+                Beautiful skeleton loading animations and empty state components for a polished UX.
+              </p>
+              <CodeBlock
+                code={highlightedCode.basicLoadingStates}
+                title="Loading & Empty States"
+              />
+              <div className="grid gap-4 mt-6">
+                <div className="p-4 border rounded-lg">
+                  <h4 className="font-semibold mb-2">Skeleton Components</h4>
+                  <p className="text-sm text-muted-foreground">
+                    <code className="bg-muted px-1.5 py-0.5 rounded text-xs">CalendarSkeleton</code>, <code className="bg-muted px-1.5 py-0.5 rounded text-xs">MonthViewSkeleton</code>, <code className="bg-muted px-1.5 py-0.5 rounded text-xs">WeekViewSkeleton</code>, <code className="bg-muted px-1.5 py-0.5 rounded text-xs">DayViewSkeleton</code> - Animated shimmer effect placeholders.
+                  </p>
+                </div>
+                <div className="p-4 border rounded-lg">
+                  <h4 className="font-semibold mb-2">Empty State</h4>
+                  <p className="text-sm text-muted-foreground">
+                    Customizable component with icon, title, description, and optional action button.
                   </p>
                 </div>
               </div>
@@ -580,36 +710,54 @@ export function DocsContent({ highlightedCode }: DocsContentProps) {
               </div>
             </section>
 
-            {/* Features */}
-            <section id="theming" className="mb-16 scroll-mt-20">
+            {/* Pro Feature Sections */}
+            <section id="pro-drag-drop" className="mb-16 scroll-mt-20">
               <h2 className="text-3xl font-bold mb-4">
-                Theming
+                Drag &amp; Drop
                 <ProBadge />
               </h2>
               <p className="text-muted-foreground mb-6">
-                Customize colors, fonts, and border radius. Includes built-in dark mode support.
+                Smoothly drag events to reschedule them. Works across Month, Week, Day, and Resource views.
               </p>
               <CodeBlock
-                code={highlightedCode.theming}
-                title="Custom Theme Configuration"
+                code={highlightedCode.proDragDrop}
+                title="Drag & Drop Events"
               />
+              <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
+                <h4 className="font-semibold mb-2">Features</h4>
+                <ul className="space-y-1 text-sm text-muted-foreground">
+                  <li>✓ Snap-to-grid (15-minute intervals)</li>
+                  <li>✓ Visual drag preview with event color and shadow</li>
+                  <li>✓ Works in all views including Resource view</li>
+                  <li>✓ Respects readOnly prop</li>
+                </ul>
+              </div>
             </section>
 
-            <section id="i18n" className="mb-16 scroll-mt-20">
+            <section id="pro-resizing" className="mb-16 scroll-mt-20">
               <h2 className="text-3xl font-bold mb-4">
-                Internationalization
+                Event Resizing
                 <ProBadge />
               </h2>
               <p className="text-muted-foreground mb-6">
-                Built-in support for English and French. Add custom translations for any language.
+                Drag the bottom edge of events to resize them directly in the week and day views. Events snap to 15-minute intervals with visual feedback during resize.
               </p>
               <CodeBlock
-                code={highlightedCode.i18n}
-                title="i18n Configuration"
+                code={highlightedCode.eventResizing}
+                title="Event Resizing"
               />
+              <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
+                <h4 className="font-semibold mb-2">Features</h4>
+                <ul className="space-y-1 text-sm text-muted-foreground">
+                  <li>✓ Drag bottom edge to resize events</li>
+                  <li>✓ 15-minute snap intervals</li>
+                  <li>✓ Visual feedback during resize</li>
+                  <li>✓ Works in Week and Day views</li>
+                </ul>
+              </div>
             </section>
 
-            <section id="timezone" className="mb-16 scroll-mt-20">
+            <section id="pro-timezone" className="mb-16 scroll-mt-20">
               <h2 className="text-3xl font-bold mb-4">
                 Timezone Support
                 <ProBadge />
@@ -623,21 +771,21 @@ export function DocsContent({ highlightedCode }: DocsContentProps) {
               />
             </section>
 
-            <section id="resources" className="mb-16 scroll-mt-20">
+            <section id="pro-i18n" className="mb-16 scroll-mt-20">
               <h2 className="text-3xl font-bold mb-4">
-                Resource View
+                Internationalization
                 <ProBadge />
               </h2>
               <p className="text-muted-foreground mb-6">
-                Display events by resource - perfect for room booking, team scheduling, or equipment allocation.
+                Built-in support for English and French. Add custom translations for any language.
               </p>
               <CodeBlock
-                code={highlightedCode.resources}
-                title="Resource View Setup"
+                code={highlightedCode.i18n}
+                title="i18n Configuration"
               />
             </section>
 
-            <section id="recurring" className="mb-16 scroll-mt-20">
+            <section id="pro-recurring" className="mb-16 scroll-mt-20">
               <h2 className="text-3xl font-bold mb-4">
                 Recurring Events
                 <ProBadge />
@@ -668,54 +816,21 @@ export function DocsContent({ highlightedCode }: DocsContentProps) {
               </div>
             </section>
 
-            {/* New Pro Features */}
-            <section id="event-resizing" className="mb-16 scroll-mt-20">
+            <section id="pro-resources" className="mb-16 scroll-mt-20">
               <h2 className="text-3xl font-bold mb-4">
-                Event Resizing
+                Resource View
                 <ProBadge />
               </h2>
               <p className="text-muted-foreground mb-6">
-                Drag the bottom edge of events to resize them directly in the week and day views. Events snap to 15-minute intervals with visual feedback during resize.
+                Display events by resource - perfect for room booking, team scheduling, or equipment allocation.
               </p>
               <CodeBlock
-                code={highlightedCode.eventResizing}
-                title="Event Resizing"
+                code={highlightedCode.resources}
+                title="Resource View Setup"
               />
-              <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
-                <h4 className="font-semibold mb-2">Features</h4>
-                <ul className="space-y-1 text-sm text-muted-foreground">
-                  <li>✓ Drag bottom edge to resize events</li>
-                  <li>✓ 15-minute snap intervals</li>
-                  <li>✓ Visual feedback during resize</li>
-                  <li>✓ Works in Week and Day views</li>
-                </ul>
-              </div>
             </section>
 
-            <section id="notifications" className="mb-16 scroll-mt-20">
-              <h2 className="text-3xl font-bold mb-4">
-                Notification Reminders
-                <ProBadge />
-              </h2>
-              <p className="text-muted-foreground mb-6">
-                Add reminder notifications to events with predefined intervals. Users can set multiple reminders per event.
-              </p>
-              <CodeBlock
-                code={highlightedCode.notifications}
-                title="Event Reminders"
-              />
-              <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
-                <h4 className="font-semibold mb-2">Reminder Options</h4>
-                <ul className="space-y-1 text-sm text-muted-foreground">
-                  <li>✓ 5, 10, 15, 30 minutes before</li>
-                  <li>✓ 1 hour before</li>
-                  <li>✓ 1 day before</li>
-                  <li>✓ Multiple reminders per event</li>
-                </ul>
-              </div>
-            </section>
-
-            <section id="ics-import-export" className="mb-16 scroll-mt-20">
+            <section id="pro-ics" className="mb-16 scroll-mt-20">
               <h2 className="text-3xl font-bold mb-4">
                 ICS Import/Export
                 <ProBadge />
@@ -739,7 +854,7 @@ export function DocsContent({ highlightedCode }: DocsContentProps) {
               </div>
             </section>
 
-            <section id="context-menus" className="mb-16 scroll-mt-20">
+            <section id="pro-context-menus" className="mb-16 scroll-mt-20">
               <h2 className="text-3xl font-bold mb-4">
                 Context Menus
                 <ProBadge />
@@ -762,67 +877,61 @@ export function DocsContent({ highlightedCode }: DocsContentProps) {
               </div>
             </section>
 
-            <section id="mobile-gestures" className="mb-16 scroll-mt-20">
+            <section id="pro-notifications" className="mb-16 scroll-mt-20">
               <h2 className="text-3xl font-bold mb-4">
-                Mobile Swipe Gestures
+                Notification Reminders
                 <ProBadge />
               </h2>
               <p className="text-muted-foreground mb-6">
-                Navigate between dates with intuitive swipe gestures on mobile devices.
+                Add reminder notifications to events with predefined intervals. Users can set multiple reminders per event.
               </p>
               <CodeBlock
-                code={highlightedCode.mobileGestures}
-                title="Swipe Gesture Configuration"
+                code={highlightedCode.notifications}
+                title="Event Reminders"
               />
               <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
-                <h4 className="font-semibold mb-2">Features</h4>
+                <h4 className="font-semibold mb-2">Reminder Options</h4>
                 <ul className="space-y-1 text-sm text-muted-foreground">
-                  <li>✓ Swipe left/right to navigate dates</li>
-                  <li>✓ Configurable swipe threshold (default: 50px)</li>
-                  <li>✓ Works across all views</li>
-                  <li>✓ useSwipeGesture hook for custom implementations</li>
+                  <li>✓ 5, 10, 15, 30 minutes before</li>
+                  <li>✓ 1 hour before</li>
+                  <li>✓ 1 day before</li>
+                  <li>✓ Multiple reminders per event</li>
                 </ul>
               </div>
             </section>
 
-            <section id="loading-states" className="mb-16 scroll-mt-20">
-              <h2 className="text-3xl font-bold mb-4">
-                Loading States &amp; Empty States
-                <ProBadge />
-              </h2>
+            {/* Customization */}
+            <section id="theming" className="mb-16 scroll-mt-20">
+              <h2 className="text-3xl font-bold mb-4">Theming</h2>
               <p className="text-muted-foreground mb-6">
-                Beautiful skeleton loading animations and empty state displays for a polished user experience.
+                Customize colors, fonts, and border radius. Both Basic and Pro support custom themes.
               </p>
               <CodeBlock
-                code={highlightedCode.loadingStates}
-                title="Loading & Empty States"
+                code={highlightedCode.theming}
+                title="Custom Theme Configuration"
               />
-              <div className="grid gap-4 mt-6">
-                <div className="p-4 border rounded-lg">
-                  <h4 className="font-semibold mb-2">Skeleton Loading</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Per-view skeleton loaders (Month, Week, Day, Agenda) that automatically display when isLoading is true.
-                  </p>
-                </div>
-                <div className="p-4 border rounded-lg">
-                  <h4 className="font-semibold mb-2">Empty States</h4>
-                  <p className="text-sm text-muted-foreground">
-                    View-specific illustrations and messages with CTA button to create events.
-                  </p>
-                </div>
-              </div>
             </section>
 
-            {/* Customization */}
             <section id="custom-event-form" className="mb-16 scroll-mt-20">
               <h2 className="text-3xl font-bold mb-4">Custom Event Form</h2>
               <p className="text-muted-foreground mb-6">
-                Replace the built-in event form with your own custom component.
+                Replace the built-in event form with your own custom component. Works with both Basic and Pro schedulers.
               </p>
               <CodeBlock
                 code={highlightedCode.customEventForm}
                 title="Custom Event Form"
               />
+              <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
+                <h4 className="font-semibold mb-2">Render Props</h4>
+                <ul className="space-y-1 text-sm text-muted-foreground">
+                  <li><code className="bg-muted px-1.5 py-0.5 rounded">isOpen</code> - Whether the form should be visible</li>
+                  <li><code className="bg-muted px-1.5 py-0.5 rounded">onClose</code> - Function to close the form</li>
+                  <li><code className="bg-muted px-1.5 py-0.5 rounded">event</code> - Existing event (for edit mode) or null</li>
+                  <li><code className="bg-muted px-1.5 py-0.5 rounded">initialDate</code> - Pre-filled date for new events</li>
+                  <li><code className="bg-muted px-1.5 py-0.5 rounded">onSave</code> - Function to save the event</li>
+                  <li><code className="bg-muted px-1.5 py-0.5 rounded">onDelete</code> - Function to delete the event</li>
+                </ul>
+              </div>
             </section>
 
             {/* Footer */}

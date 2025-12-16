@@ -379,9 +379,10 @@ export function Comparison() {
                 isDarkMode && activePlan === "pro" ? "dark" : ""
               )}
               style={{
-                // Explicit CSS variable overrides for scheduler theme context
-                ...(isDarkMode && activePlan === "pro" ? {
-                  // Dark mode variables
+                // Only apply CSS variable overrides for ProScheduler
+                // BasicScheduler uses its own native styling
+                ...(activePlan === "pro" ? (isDarkMode ? {
+                  // Dark mode variables for Pro
                   backgroundColor: "oklch(0.1648 0.0075 270.93)",
                   "--background": "oklch(0.1648 0.0075 270.93)",
                   "--foreground": "oklch(0.9846 0.0018 264.54)",
@@ -402,7 +403,28 @@ export function Comparison() {
                   "--ring": "oklch(0.6222 0.2151 263.68)",
                   colorScheme: "dark",
                 } as React.CSSProperties : {
-                  // Light mode variables - explicit white theme
+                  // Light mode variables for Pro - explicit white theme
+                  backgroundColor: "white",
+                  "--background": "oklch(1 0 0)",
+                  "--foreground": "oklch(0.1648 0.0075 270.93)",
+                  "--card": "oklch(1 0 0)",
+                  "--card-foreground": "oklch(0.1648 0.0075 270.93)",
+                  "--popover": "oklch(1 0 0)",
+                  "--popover-foreground": "oklch(0.1648 0.0075 270.93)",
+                  "--primary": "oklch(0.4565 0.1878 263.68)",
+                  "--primary-foreground": "oklch(0.9846 0.0018 264.54)",
+                  "--secondary": "oklch(0.9627 0.0046 270.93)",
+                  "--secondary-foreground": "oklch(0.2063 0.0073 270.6)",
+                  "--muted": "oklch(0.9627 0.0046 270.93)",
+                  "--muted-foreground": "oklch(0.4581 0.0196 264.54)",
+                  "--accent": "oklch(0.9627 0.0046 270.93)",
+                  "--accent-foreground": "oklch(0.2063 0.0073 270.6)",
+                  "--border": "oklch(0.9207 0.0071 270.93)",
+                  "--input": "oklch(0.9207 0.0071 270.93)",
+                  "--ring": "oklch(0.4565 0.1878 263.68)",
+                  colorScheme: "light",
+                } as React.CSSProperties) : {
+                  // BasicScheduler needs light mode context to display correctly
                   backgroundColor: "white",
                   "--background": "oklch(1 0 0)",
                   "--foreground": "oklch(0.1648 0.0075 270.93)",

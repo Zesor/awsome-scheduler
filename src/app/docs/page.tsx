@@ -423,6 +423,108 @@ const { swipeDirection, swipeHandlers } = useSwipeGesture({
   }}
 />`,
 
+  // Basic Feature Examples
+  basicWeekStart: `// Configure which day the week starts on
+<BasicScheduler
+  events={events}
+  weekStartsOn={1}  // 0 = Sunday (default), 1 = Monday, etc.
+  // Affects Week view, Month view, and Mini Calendar
+/>
+
+// Common configurations:
+// weekStartsOn={0}  // Sunday (US default)
+// weekStartsOn={1}  // Monday (EU/ISO standard)
+// weekStartsOn={6}  // Saturday (Middle East)`,
+
+  basicRenderEvent: `// Custom event renderer for complete control over appearance
+<BasicScheduler
+  events={events}
+  renderEvent={({ event, view, onClick }) => (
+    <div
+      onClick={onClick}
+      className="p-2 rounded cursor-pointer hover:opacity-80"
+      style={{ backgroundColor: event.color }}
+    >
+      <div className="font-semibold text-white truncate">
+        {event.title}
+      </div>
+      {view !== 'month' && (
+        <div className="text-xs text-white/80">
+          {format(event.start, 'h:mm a')} - {format(event.end, 'h:mm a')}
+        </div>
+      )}
+    </div>
+  )}
+/>`,
+
+  basicMobile: `// Mobile features are built-in:
+// - Swipe left/right to navigate dates
+// - Mobile bottom sheet for calendar/filters
+// - Floating action buttons (FAB)
+
+// Swipe gestures work automatically on touch devices
+<BasicScheduler
+  events={events}
+  view={view}
+  onViewChange={setView}
+/>
+
+// Mobile Bottom Sheet provides:
+// - Mini calendar for date selection
+// - Calendar filter toggles
+// - View switcher (Month/Week/Day)`,
+
+  basicLoadingStates: `import {
+  BasicScheduler,
+  CalendarSkeleton,
+  MonthViewSkeleton,
+  WeekViewSkeleton,
+  DayViewSkeleton,
+  EmptyState
+} from 'calendarkit-basic';
+
+// Use isLoading prop for built-in skeleton
+<BasicScheduler
+  events={events}
+  isLoading={isLoadingEvents}
+/>
+
+// Or use skeleton components directly
+{isLoading ? (
+  <CalendarSkeleton />
+) : (
+  <BasicScheduler events={events} />
+)}
+
+// Empty state component
+<EmptyState
+  title="No events scheduled"
+  description="Create your first event to get started"
+  actionLabel="Create Event"
+  onAction={() => setIsModalOpen(true)}
+/>`,
+
+  // Pro Feature Examples
+  proDragDrop: `// Drag & drop is built-in to ProScheduler
+<ProScheduler
+  events={events}
+  // Called when an event is dragged to a new time
+  onEventDrop={(event, newStart, newEnd) => {
+    setEvents(events.map(e =>
+      e.id === event.id
+        ? { ...e, start: newStart, end: newEnd }
+        : e
+    ));
+  }}
+  // Optional: disable drag for specific scenarios
+  readOnly={false}
+/>
+
+// Drag features:
+// - Smooth drag with snap-to-grid (15-min intervals)
+// - Visual drag preview with event color
+// - Works in Month, Week, Day, and Resource views`,
+
   basicPropsTable: `// BasicScheduler Props
 interface BasicSchedulerProps {
   // Data
@@ -434,6 +536,9 @@ interface BasicSchedulerProps {
   onViewChange?: (view: ViewType) => void;
   date?: Date;
   onDateChange?: (date: Date) => void;
+
+  // Week Start Configuration
+  weekStartsOn?: 0 | 1 | 2 | 3 | 4 | 5 | 6;  // 0 = Sunday, 1 = Monday, etc.
 
   // Event Handlers
   onEventClick?: (event: CalendarEvent) => void;
@@ -451,6 +556,11 @@ interface BasicSchedulerProps {
 
   // Custom Rendering
   renderEventForm?: (props: EventFormProps) => React.ReactNode;
+  renderEvent?: (props: {
+    event: CalendarEvent;
+    view: ViewType;
+    onClick: () => void;
+  }) => React.ReactNode;
 }`,
 
   proPropsTable: `// ProScheduler Props (includes all BasicScheduler props)

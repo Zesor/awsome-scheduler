@@ -26,15 +26,41 @@ interface ProductChangelog {
 const changelog: ProductChangelog = {
   basic: [
     {
-      version: "1.0.0",
+      version: "1.1.0",
+      date: "December 16, 2025",
+      features: [
+        "Event Overlap Detection - Smart collision detection displays overlapping events side-by-side in Week and Day views",
+        "Week Start Configuration - New weekStartsOn prop to set first day of week (0=Sunday through 6=Saturday)",
+        "Custom Event Renderer - New renderEvent prop for complete control over event appearance across all views",
+        "Event View Modal - Read-only modal when clicking events with edit/delete actions and color-coded header",
+        "Mobile Swipe Gestures - Swipe left/right to navigate between time periods on touch devices",
+        "Mobile Bottom Sheet - Quick access to mini calendar, filters, and view switcher",
+        "Floating Action Buttons - Calendar/filter button and create event FAB for mobile",
+        "Loading Skeletons - CalendarSkeleton, MonthViewSkeleton, WeekViewSkeleton, DayViewSkeleton with shimmer effect",
+        "Empty State Component - Customizable no-events display with icon, title, description, and action button",
+      ],
+      improvements: [
+        "Event Modal Redesign - Modern card layout with gradient header, inline color picker, smooth animations",
+        "View Headers - Gradient backgrounds with glass morphism effect and sticky positioning",
+        "Event Cards - Glass effect with color accent bars, hover animations, better contrast",
+        "Dark Mode Polish - Improved contrast ratios, custom scrollbars, better border treatment",
+        "View Transitions - Fade and slide animations when switching views",
+        "Virtualized Rendering - Week view performance optimization with proper memoization",
+        "Improved TypeScript Types - Better prop validation and cleaner component architecture",
+      ],
+    },
+    {
+      version: "0.1.1",
       date: "December 10, 2025",
       features: [
         "Initial release on npm",
         "Month, Week, and Day views",
         "Event creation and editing",
+        "Mini calendar sidebar",
         "Calendar filtering",
+        "Responsive design",
+        "Light/dark mode support",
         "Full TypeScript support",
-        "React 18+ compatibility",
         "MIT License - free and open source",
       ],
     },
