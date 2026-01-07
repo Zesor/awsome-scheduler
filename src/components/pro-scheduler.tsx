@@ -1,10 +1,8 @@
 import { useState } from 'react';
-import { Scheduler } from './pro-scheduler/index';
-import { CalendarEvent, ViewType, EventType } from './pro-scheduler/types';
+import { Scheduler, CalendarEvent, ViewType, EventType } from 'calendarkit-pro';
 import { addDays, startOfWeek, addHours } from 'date-fns';
 import { enUS, fr } from 'date-fns/locale';
 import { Users, GraduationCap, Briefcase, Coffee } from 'lucide-react';
-import * as locales from './pro-scheduler/locales';
 
 export const ResourceDemo = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -14,7 +12,6 @@ export const ResourceDemo = () => {
   const [timezone, setTimezone] = useState<string>('');
 
   const currentLocale = language === 'en' ? enUS : fr;
-  const translations = language === 'en' ? locales.en : locales.fr;
 
   // --- 1. Fake Data Generation --
 
@@ -158,8 +155,6 @@ export const ResourceDemo = () => {
                 onThemeToggle={() => setIsDarkMode(!isDarkMode)}
                 language={language}
                 onLanguageChange={setLanguage}
-                // 4. Multi-language demo
-                translations={translations}
                 locale={currentLocale} // Pass locale to Scheduler
                 hideViewSwitcher={false} // Show internal view switcher now
                 timezone={timezone}

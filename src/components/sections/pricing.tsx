@@ -263,15 +263,15 @@ export function Pricing() {
         {/* Header */}
         <div className="p-6 md:p-10 text-center border-b">
           <h2 className="text-3xl md:text-5xl font-bold tracking-tighter text-balance">
-            Simple, One-Time Pricing
+            100% Free & Open Source
           </h2>
           <p className="mt-4 text-muted-foreground text-balance max-w-2xl mx-auto">
-            Pay once, own forever. Free updates included. No subscriptions.
+            Both Basic and Pro are now free and open source. Install from npm and start building.
           </p>
         </div>
 
         {/* Pricing Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-3">
+        <div className="grid grid-cols-1 lg:grid-cols-2">
           {(siteConfig.pricing as PricingTier[]).map((tier, index) => (
             <PricingTierCard
               key={index}

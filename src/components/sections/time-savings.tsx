@@ -274,7 +274,7 @@ export function TimeSavings() {
                           <Sparkles className="h-4 w-4 text-green-600 dark:text-green-400" />
                           <span className="font-bold text-base">CalendarKit Pro</span>
                         </div>
-                        <div className="text-xl font-bold text-green-600 dark:text-green-400">$149</div>
+                        <div className="text-xl font-bold text-green-600 dark:text-green-400">Free</div>
                         <div className="text-xs text-muted-foreground">one-time forever</div>
                       </div>
                     </th>
@@ -485,48 +485,13 @@ export function TimeSavings() {
                       <div className="text-xs text-muted-foreground font-normal">+ renewals</div>
                     </td>
                     <td className="p-4 text-center bg-green-500/10 rounded-b-lg">
-                      <div className="text-2xl text-green-600 dark:text-green-400">$149</div>
-                      <div className="text-xs text-green-600 dark:text-green-400 font-normal">one-time forever</div>
+                      <div className="text-2xl text-green-600 dark:text-green-400">Free</div>
+                      <div className="text-xs text-green-600 dark:text-green-400 font-normal">forever</div>
                     </td>
                   </tr>
                 </tbody>
               </table>
-            </div>
-
-            {/* Bottom CTA */}
-            <div className="mt-8 text-center space-y-3">
-              <div className="text-3xl font-bold text-green-600 dark:text-green-400">
-                Save up to 96% vs competitors
-              </div>
-              <p className="text-muted-foreground">
-                Get all premium features for a fraction of the cost. No per-developer fees, no renewals, no hidden costs.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* ROI Bottom Section */}
-        <div className="border-t bg-muted/30 p-6 md:p-10">
-          <div className="max-w-3xl mx-auto text-center space-y-4">
-            <div className="inline-flex items-center gap-2 text-primary">
-              <Calendar className="h-5 w-5" />
-              <span className="text-lg font-semibold">Quick ROI Calculation</span>
-            </div>
-            <p className="text-muted-foreground leading-relaxed">
-              A senior developer costs <span className="font-semibold text-foreground">$60 - 150/hour (US)</span>.
-              Building from scratch = <span className="font-semibold text-foreground">60 - 70 hours × $60-150</span> =
-              <span className="font-bold text-foreground text-lg"> $6,000 - 10,500</span> in development costs alone.
-            </p>
-            <p className="text-muted-foreground leading-relaxed">
-              CalendarKit Pro = <span className="font-bold text-green-600 dark:text-green-400 text-xl">$149</span> one-time.
-              <span className="font-semibold text-foreground"> That's a 90% cost reduction</span> and you ship
-              <span className="font-semibold text-foreground"> 4-6 weeks faster</span>.
-            </p>
-            <div className="pt-4">
-              <p className="text-sm text-muted-foreground italic">
-                Plus ongoing maintenance, bug fixes, and feature updates—all included.
-              </p>
-            </div>
+            </div>            
           </div>
         </div>
       </div>

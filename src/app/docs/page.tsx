@@ -10,24 +10,18 @@ export const metadata: Metadata = {
 // Code examples for documentation
 const codeExamples = {
   installation: `# Basic (Free - Open Source)
-# Install from npm - no purchase needed!
 npm install calendarkit-basic
 # or
 yarn add calendarkit-basic
 # or
 pnpm add calendarkit-basic
 
-# Pro (After Purchase)
-# You'll receive access to our private GitHub repository.
-# Clone the repository using your GitHub account:
-git clone https://github.com/Zesor/pro-scheduler.git
-
-# Install dependencies
-cd pro-scheduler
-npm install
-
-# Run the development server
-npm run dev`,
+# Pro (Premium - Open Source)
+npm install calendarkit-pro
+# or
+yarn add calendarkit-pro
+# or
+pnpm add calendarkit-pro`,
 
   basicImport: `import { BasicScheduler } from 'calendarkit-basic';
 import { CalendarEvent, ViewType } from 'calendarkit-basic';
@@ -52,8 +46,7 @@ export default function MyCalendar() {
   );
 }`,
 
-  proImport: `import { Scheduler } from '@/components/pro-scheduler';
-import { CalendarEvent, ViewType, Resource } from '@/components/pro-scheduler/types';
+  proImport: `import { Scheduler, CalendarEvent, ViewType, Resource } from 'calendarkit-pro';
 import { useState } from 'react';
 
 export default function MyCalendar() {
@@ -326,7 +319,8 @@ const event: CalendarEvent = {
 // - 1 hour before
 // - 1 day before`,
 
-  icsImportExport: `import { generateICS, parseICS } from '@/lib/ics';
+  icsImportExport: `// ICS utilities are included in calendarkit-pro
+// You can implement your own ICS handling like this:
 
 // Export events to ICS file
 const handleExport = () => {
@@ -353,49 +347,38 @@ const handleImport = async (file: File) => {
 // - Event attachments
 // - Multiple calendars`,
 
-  contextMenus: `// Context menus appear on right-click
-// Use the useEventContextMenu hook for custom actions
+  contextMenus: `// Context menus appear on right-click in calendarkit-pro
+// Built-in actions include Edit, Delete, and Duplicate
 
-import { useEventContextMenu } from '@/hooks/useEventContextMenu';
+import { Scheduler } from 'calendarkit-pro';
 
 function MyScheduler() {
-  const { contextMenu, handleContextMenu, closeContextMenu } =
-    useEventContextMenu();
-
   return (
     <Scheduler
       events={events}
-      onEventContextMenu={handleContextMenu}
-      // Built-in actions: Edit, Delete, Duplicate
-      onEventEdit={(event) => openEditModal(event)}
+      // Built-in context menu actions
+      onEventUpdate={(event) => updateEvent(event)}
       onEventDelete={(eventId) => deleteEvent(eventId)}
-      onEventDuplicate={(event) => {
-        const duplicate = { ...event, id: Date.now().toString() };
-        setEvents([...events, duplicate]);
-      }}
     />
   );
 }`,
 
   mobileGestures: `// Swipe gestures are automatically enabled on touch devices
-import { useSwipeGesture } from '@/hooks/useSwipeGesture';
-
-// The hook provides swipe detection with configurable threshold
-const { swipeDirection, swipeHandlers } = useSwipeGesture({
-  threshold: 50,  // Minimum swipe distance in pixels
-  onSwipeLeft: () => navigateToNextPeriod(),
-  onSwipeRight: () => navigateToPreviousPeriod(),
-});
-
-// Usage in custom component
-<div {...swipeHandlers}>
-  <CalendarContent />
-</div>
-
-// Built into ProScheduler:
+// Built into calendarkit-pro:
 // - Swipe left: Go to next week/month/day
 // - Swipe right: Go to previous week/month/day
-// - Works in all calendar views`,
+// - Works in all calendar views
+
+import { Scheduler } from 'calendarkit-pro';
+
+// Mobile gestures work automatically
+<Scheduler
+  events={events}
+  view={view}
+  onViewChange={setView}
+  date={date}
+  onDateChange={setDate}
+/>`,
 
   loadingStates: `// Show loading skeleton
 <Scheduler

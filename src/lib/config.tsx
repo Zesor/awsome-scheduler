@@ -18,9 +18,14 @@ export const BLUR_FADE_DELAY = 0.15;
 
 export const siteConfig = {
   name: "CalendarKit",
-  description: "The Modern React Calendar Component for Developers",
+  description: "Free React Calendar & Scheduler Component",
+  tagline: "Build scheduling features in minutes",
   cta: "Get Started",
   url: process.env.NEXT_PUBLIC_APP_URL || "https://calendarkit.io",
+  seo: {
+    title: "CalendarKit - Free React Calendar & Scheduler Component",
+    description: "Build scheduling features in minutes. Free, open-source React calendar with drag & drop, dark mode, TypeScript support. Perfect for booking systems & appointment schedulers.",
+  },
   keywords: [
     "React Calendar",
     "React Calendar Component",
@@ -151,7 +156,7 @@ export const siteConfig = {
 
   // Seasonal discount configuration
   seasonalDiscount: {
-    active: true,
+    active: false,
     reason: "Holiday Season Sale", // Can be: "Christmas Sale", "New Year Sale", "Chinese New Year", etc.
     percentage: 25, // 25% off
     endDate: "2026-01-31", // When discount ends
@@ -181,9 +186,9 @@ export const siteConfig = {
     },
     {
       name: "Pro",
-      price: "$149",
-      originalPrice: "$199",
-      description: "Everything you need for production apps.",
+      price: "Free",
+      originalPrice: null,
+      description: "Professional features for production apps. Now open source!",
       features: [
         "Everything in Basic",
         "Agenda & Resource views",
@@ -200,26 +205,9 @@ export const siteConfig = {
         "Guest management & attachments",
       ],
       popular: true,
-      cta: "Buy Now",
-      ctaLink: "https://calendarkit.lemonsqueezy.com/buy/f8025fe8-2134-4451-a8d5-0273c66d9ff2",
-    },
-    {
-      name: "Universal",
-      price: "Coming Soon",
-      originalPrice: null,
-      description: "Multi-framework support for all your projects.",
-      features: [
-        "Everything in Pro",
-        "React",
-        "Vue.js",
-        "Angular",
-        "Svelte",
-        "Solid",
-        "Web Components",
-        "Lifetime updates",
-      ],
-      comingSoon: true,
-      cta: "Notify Me",
+      cta: "View on npm",
+      ctaLink: "https://www.npmjs.com/package/calendarkit-pro",
+      openSource: true,
     },
   ],
   footer: {

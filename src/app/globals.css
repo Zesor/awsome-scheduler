@@ -2,6 +2,10 @@
 @plugin "@tailwindcss/typography";
 @import "tw-animate-css";
 
+/* Include calendarkit packages in Tailwind's content scan */
+@source "../../node_modules/calendarkit-pro/**/*.{js,mjs}";
+@source "../../node_modules/calendarkit-basic/**/*.{js,mjs}";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
@@ -354,35 +358,6 @@
 
   .dark ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.5);
-  }
-
-  /* Fix calendarkit-basic event text colors */
-  .event-title,
-  .event-time,
-  [class*="event"] h3,
-  [class*="event"] h4,
-  [class*="event"] p {
-    color: oklch(0.09 0.03 264) !important;
-  }
-
-  .event-time,
-  [class*="event"] p:not(.event-title),
-  [class*="event"] span:not(.event-title) {
-    color: oklch(0.52 0.01 264) !important;
-  }
-
-  .dark .event-title,
-  .dark .event-time,
-  .dark [class*="event"] h3,
-  .dark [class*="event"] h4,
-  .dark [class*="event"] p {
-    color: oklch(0.98 0.004 264) !important;
-  }
-
-  .dark .event-time,
-  .dark [class*="event"] p:not(.event-title),
-  .dark [class*="event"] span:not(.event-title) {
-    color: oklch(0.74 0.006 264) !important;
   }
 }
 

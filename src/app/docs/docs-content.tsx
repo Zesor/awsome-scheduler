@@ -64,7 +64,7 @@ const navigation: NavItem[] = [
   },
   {
     id: "pro-scheduler",
-    label: "Pro (Premium)",
+    label: "Pro (Free)",
     icon: <Settings className="h-4 w-4" />,
     children: [
       { id: "pro-props", label: "Props Reference" },
@@ -272,7 +272,7 @@ export function DocsContent({ highlightedCode }: DocsContentProps) {
             <section id="installation" className="mb-16 scroll-mt-20">
               <h2 className="text-3xl font-bold mb-4">Installation</h2>
               <p className="text-muted-foreground mb-6">
-                CalendarKit offers two versions: Basic (free, open source) and Pro (premium features).
+                CalendarKit offers two versions: Basic and Pro. Both are free and open source!
               </p>
 
               <div className="mb-6 p-4 bg-green-500/10 rounded-lg border border-green-500/20">
@@ -296,9 +296,9 @@ export function DocsContent({ highlightedCode }: DocsContentProps) {
               </div>
 
               <div className="mb-6 p-4 bg-blue-500/10 rounded-lg border border-blue-500/20">
-                <h4 className="font-semibold mb-3 text-blue-600 dark:text-blue-400">Pro (Premium)</h4>
+                <h4 className="font-semibold mb-3 text-blue-600 dark:text-blue-400">Pro (Premium - Open Source)</h4>
                 <p className="text-sm text-muted-foreground mb-3">
-                  After purchase, you&apos;ll receive access to a private GitHub repository with full source code.
+                  Install directly from npm! Professional features for production apps.
                 </p>
                 <ul className="space-y-1 text-sm text-muted-foreground">
                   <li>✓ Everything in Basic</li>
@@ -314,7 +314,7 @@ export function DocsContent({ highlightedCode }: DocsContentProps) {
                   <li>✓ Mobile swipe gestures</li>
                   <li>✓ Skeleton loading & empty states</li>
                   <li>✓ Event attachments & guests</li>
-                  <li>✓ Lifetime updates</li>
+                  <li>✓ MIT License</li>
                 </ul>
               </div>
 
@@ -872,7 +872,6 @@ export function DocsContent({ highlightedCode }: DocsContentProps) {
                   <li>✓ Edit event</li>
                   <li>✓ Delete event</li>
                   <li>✓ Duplicate event</li>
-                  <li>✓ Customizable via useEventContextMenu hook</li>
                 </ul>
               </div>
             </section>

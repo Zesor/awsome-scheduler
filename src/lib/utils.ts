@@ -14,7 +14,7 @@ export function absoluteUrl(path: string) {
 export function constructMetadata({
   title = siteConfig.name,
   description = siteConfig.description,
-  image = absoluteUrl("/og"),
+  image = absoluteUrl("/og-image.png"),
   noIndex = false,
   ...props
 }: {
@@ -145,16 +145,16 @@ export function generateStructuredData() {
           {
             "@type": "Offer",
             name: "Basic",
-            price: "89",
+            price: "0",
             priceCurrency: "USD",
-            description: "Basic calendar and scheduler component with Month, Week, and Day views",
+            description: "Free, open-source calendar component with Month, Week, and Day views",
           },
           {
             "@type": "Offer",
             name: "Pro",
-            price: "149",
+            price: "0",
             priceCurrency: "USD",
-            description: "Full-featured calendar and scheduler with drag & drop, timezone, i18n, and more",
+            description: "Free, open-source full-featured calendar with drag & drop, timezone, i18n, and more",
           },
         ],
         aggregateRating: {

@@ -20,9 +20,8 @@ export default function Home() {
       <Comparison />
       <SchedulerExamples />
       <UseCases />
-      <Features />
       <TimeSavings />
-      <Testimonials />
+      {/* <Testimonials /> */}
       <Pricing />
       <FAQ />
       <Footer />
