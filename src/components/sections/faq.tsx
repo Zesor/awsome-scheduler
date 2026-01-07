@@ -61,11 +61,6 @@ const faqs: FAQItem[] = [
     answer:
       "CalendarKit is headless when it comes to data - you control the events array. Use the onEventCreate, onEventUpdate, onEventDelete, and onEventDrop callbacks to sync with any REST API, GraphQL, or real-time backend.",
   },
-  {
-    question: "Is there a free trial?",
-    answer:
-      "We don't offer a free trial, but we have a 14-day money-back guarantee. If CalendarKit doesn't meet your needs, we'll refund your purchase - no questions asked.",
-  },
 ];
 
 function FAQItem({
