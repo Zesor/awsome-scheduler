@@ -1,13 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {
-    remotePatterns: [
-      { hostname: "localhost" },
-      { hostname: "randomuser.me" },
-      { hostname: "images.unsplash.com" },
-    ],
-  },
-  transpilePackages: ["geist"],
 
   // Disable source maps in production to protect source code
   productionBrowserSourceMaps: false,
@@ -67,9 +59,11 @@ const nextConfig = {
     ];
   },
 
-  // Optimize for Vercel
-  experimental: {
-    optimizePackageImports: ["lucide-react", "framer-motion", "date-fns"],
+  async rewrites() {
+    return [
+      { source: '/docs.md', destination: '/md' },
+      { source: '/docs/:slug.md', destination: '/md/:slug' },
+    ]
   },
 };
 

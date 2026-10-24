@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "baseUrl": ".",
     "target": "esnext",
     "lib": [
       "dom",
@@ -27,7 +26,9 @@
       "@/*": [
         "./src/*"
       ]
-    }
+    },
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true
   },
   "include": [
     "next-env.d.ts",
@@ -37,6 +38,8 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "content",
+    "docs"
   ]
 }
