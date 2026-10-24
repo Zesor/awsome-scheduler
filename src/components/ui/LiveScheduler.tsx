@@ -8,12 +8,14 @@ import { demoEvents, DEMO_CALENDARS } from "@/lib/demo";
 // The library is ~370 KB: fetch it only when the calendar mounts. `onReady` fires once it has rendered.
 const Cal = dynamic(
   () =>
-    import("calendarkit-pro").then(({ Scheduler }) =>
-      function Cal({ onReady, ...p }: CalendarProps & { onReady: () => void }) {
+    import("calendarkit-pro").then(({ Scheduler, photonPlaces }) => {
+      // Location suggestions from OpenStreetMap (Photon, no key), created once.
+      const placeSearch = photonPlaces({ lang: "en" });
+      return function Cal({ onReady, ...p }: CalendarProps & { onReady: () => void }) {
         useEffect(onReady, [onReady]);
-        return <Scheduler {...p} />;
-      },
-    ),
+        return <Scheduler placeSearch={placeSearch} {...p} />;
+      };
+    }),
   { ssr: false },
 );
 
@@ -52,6 +54,9 @@ export function LiveScheduler({
   const [visible, setVisible] = useState(!lazy);
   const [ready, setReady] = useState(false);
   const [events] = useState(() => demoEvents());
+  // The demo holds what the calendar leaves to its host: calendar toggles and the side panel's time zone.
+  const [calendars, setCalendars] = useState(DEMO_CALENDARS);
+  const [timezone, setTimezone] = useState<string>();
   useEffect(() => {
     if (visible || !ref.current) return;
     const io = new IntersectionObserver(
@@ -95,8 +100,12 @@ export function LiveScheduler({
             <Cal
               onReady={() => setReady(true)}
               defaultEvents={events}
-              calendars={DEMO_CALENDARS}
+              calendars={calendars}
+              onCalendarToggle={(id: string, active: boolean) => setCalendars((list) => list.map((c) => (c.id === id ? { ...c, active } : c)))}
               {...props}
+              // after the spread: callers pass `timezone={undefined}` when their example does not set one
+              timezone={props.timezone ?? timezone}
+              onTimezoneChange={(tz: string) => { setTimezone(tz); props.onTimezoneChange?.(tz) }}
             />
           </Boundary>
         )}
