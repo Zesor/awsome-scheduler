@@ -10,7 +10,7 @@ const LICENSE = 'https://github.com/Zesor/calendarkit-pro/blob/main/LICENSE'
 const README_SECTIONS = ['Installation', 'Quick start'] // shown on /docs, in this order
 const cache = new Map<string, DocPage[]>()
 
-export const readContent = (name: string, dir = 'content') => readFileSync(join(dir, name), 'utf8')
+export const readContent = (name: string, dir = 'content') => readFileSync(join(/* turbopackIgnore: true */ dir, name), 'utf8') // build-time read of content/, not a runtime dependency
 
 export function readMeta(dir = 'content'): Meta {
   const meta = JSON.parse(readContent('meta.json', dir))
