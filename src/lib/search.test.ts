@@ -22,3 +22,7 @@ test('empty query returns nothing; limit applies', () => {
 test('page titles rank before body matches', () => {
   assert.equal(search(index, 'theming')[0].url, '/docs/theming')
 })
+
+test('table separator rows do not leak dashes into snippets', () => {
+  assert.ok(index.every((e) => !/-{3,}/.test(e.text)))
+})
