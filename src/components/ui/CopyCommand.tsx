@@ -1,11 +1,18 @@
 'use client'
 import { Check, Copy } from 'lucide-react'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 
 export function CopyCommand({ command, className }: { command: string; className?: string }) {
   const [done, setDone] = useState(false)
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined)
+  const copy = async () => {
+    try { await navigator.clipboard.writeText(command) } catch { return }
+    setDone(true)
+    clearTimeout(timer.current)
+    timer.current = setTimeout(() => setDone(false), 1400)
+  }
   return (
-    <button type="button" className={`btn btn2 mono ${done ? 'done' : ''} ${className ?? ''}`} onClick={async () => { await navigator.clipboard.writeText(command); setDone(true); setTimeout(() => setDone(false), 1400) }} aria-label={`Copy ${command}`}>
+    <button type="button" className={`btn btn2 mono ${done ? 'done' : ''} ${className ?? ''}`} onClick={copy} aria-label={`Copy ${command}`}>
       <span className="prompt">$</span>{command}
       <span className="copy" aria-live="polite">{done ? <><Check size={15} />Copied</> : <Copy size={15} />}</span>
     </button>

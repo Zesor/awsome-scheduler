@@ -20,7 +20,7 @@
 .on { transform:none; opacity:1; background-size:100% .065em; }
 .leave { transform:translateY(-100%); opacity:0; background-size:100% .065em; transition-delay:0s; }
 .with { color:var(--muted); }
-.measure { position:absolute; visibility:hidden; white-space:nowrap; padding:0 .02em; }
+.sizer { display:inline-block; visibility:hidden; white-space:nowrap; padding:0 .02em; }
 .lead { font-size:clamp(16px, 2vw, 19px); line-height:1.55; color:var(--muted); max-width:640px; margin:0 auto 30px; }
 .ctas { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
 .proof { margin-top:26px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }

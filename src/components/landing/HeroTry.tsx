@@ -23,7 +23,7 @@ export function HeroTry() {
   return (
     <div className={`${s.try} ${s.in}`} id="try" style={{ animationDelay: '900ms' }}>
       <div className={s.bar}>
-        <p className={s.hint}><span className={s.dot} />Try it: click a free slot and type <span className={s.typed}>{typed}</span><span className={s.caret} aria-hidden /></p>
+        <p className={s.hint}><span className={s.dot} /><span className="sr-only">Try it: click a free slot and type {SENTENCE}</span><span aria-hidden>Try it: click a free slot and type <span className={s.typed}>{typed}</span><span className={s.caret} /></span></p>
         <div className={s.segs}>{seg<Theme>(theme, ['calm', 'vivid', 'editorial'], setTheme, 'Theme')}{seg<Layout>(layout, ['classic', 'focus', 'flow'], setLayout, 'Layout')}</div>
       </div>
       <div className={s.frame}><LiveScheduler lazy height={680} fallback="/images/week.png" theme={theme} layout={layout} /></div>

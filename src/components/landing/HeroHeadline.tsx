@@ -16,7 +16,17 @@ export function HeroHeadline() {
     const t = setTimeout(() => setK((k + 1) % PHRASES.length), k === 0 ? 3600 : 1900)
     return () => clearTimeout(t)
   }, [k])
-  useEffect(() => { if (measure.current) setWidth(measure.current.offsetWidth) }, [k])
+  // The in-flow sizer gives the width without JS; this keeps the explicit (animatable) width in sync on phrase change, resize and font load.
+  useEffect(() => {
+    const el = measure.current
+    if (!el) return
+    const update = () => setWidth(el.offsetWidth)
+    update()
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    document.fonts?.ready.then(update)
+    return () => ro.disconnect()
+  }, [k])
   return (
     <h1 className={s.h1}>
       <span className="sr-only">The best React calendar, with everything built in.</span>
@@ -27,9 +37,9 @@ export function HeroHeadline() {
         <span className={s.w} style={delay(WORDS.length + 1)}>
           <span className={s.swap} style={{ width }}>
             {PHRASES.map((p, i) => <span key={p} className={`${s.phrase} ${i === k ? s.on : i === (k + PHRASES.length - 1) % PHRASES.length ? s.leave : s.enter}`}>{p}</span>)}
+            <span ref={measure} className={s.sizer}>{PHRASES[k]}</span>
           </span>
         </span>
-        <span ref={measure} className={s.measure}>{PHRASES[k]}</span>
       </span>
     </h1>
   )
