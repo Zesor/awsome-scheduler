@@ -9,7 +9,7 @@ const find = (slug: string) => loadDocs().find((p) => p.slug === slug && slug)
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const page = find((await params).slug)
-  return page ? docMetadata(page) : {}
+  return page ? docMetadata({ ...page }) : {}
 }
 
 export default async function DocPage({ params }: { params: Promise<{ slug: string }> }) {

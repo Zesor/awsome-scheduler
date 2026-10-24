@@ -3,6 +3,9 @@ const nextConfig = {
   // Disable source maps in production to protect source code
   productionBrowserSourceMaps: false,
 
+  // The OG route reads its font from disk at request time
+  outputFileTracingIncludes: { '/og': ['./src/assets/fonts/**'] },
+
   // Compiler optimizations
   compiler: {
     // Remove console.log in production

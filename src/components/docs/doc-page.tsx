@@ -2,6 +2,8 @@ import { readMeta, renderDoc, type DocPage } from '@/lib/docs'
 import { NAV, docUrl } from '@/lib/docs-nav'
 import { site } from '@/lib/site'
 import s from '@/app/docs/docs.module.css'
+import { JsonLd } from '@/components/JsonLd'
+import { docJsonLd } from '@/lib/seo'
 import { CodeCopy } from './CodeCopy'
 import { LiveExample } from './LiveExample'
 import { Pager } from './Pager'
@@ -17,6 +19,7 @@ export async function DocPageView({ page }: { page: DocPage }) {
   return (
     <>
       <main className={s.main}>
+        <JsonLd data={docJsonLd(page, meta.syncedAt)} />
         <div className={s.crumb}><b>{page.group}</b> / {page.title}</div>
         <h1 className={s.h1}>{page.title}</h1>
         {!page.markdown.trimStart().startsWith(page.lede.trim()) && <p className={s.lede}>{page.lede}</p>}
