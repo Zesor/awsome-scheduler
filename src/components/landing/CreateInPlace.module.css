@@ -21,7 +21,6 @@
 .scene.on { opacity:1; visibility:visible; transform:none; transition-delay:0s; }
 .crop { position:absolute; inset:0; background-repeat:no-repeat; }
 .s1 .crop { background-image:url(/images/quick-create.png); background-size:155%; background-position: 92% 62%; }
-.s3 .crop { background-image:url(/images/event-card.png); background-size:150%; background-position: 46% 0%; }
 
 /* scene 2: the quick card, rebuilt in HTML so the sentence can be typed */
 .s2 { background: repeating-linear-gradient(0deg, transparent 0 59px, #f0f0f0 59px 60px), #fff; }
@@ -45,14 +44,9 @@
 .foot { display:flex; justify-content:flex-end; gap:14px; align-items:center; margin-top:20px; font-size:14.5px; }
 .save { background:#111; color:#fff; padding:9px 18px; border-radius:999px; }
 
-/* scene 3: undo toast over the event card */
-.toast { white-space:nowrap; position:absolute; left:50%; bottom:28px; transform:translate(-50%, 16px); opacity:0; display:flex; align-items:center; gap:18px; background:#111; color:#fff; padding:12px 14px 12px 18px; border-radius:12px; font-size:14.5px; box-shadow:0 20px 40px -16px rgba(0,0,0,.5); transition: transform .5s cubic-bezier(.16,1,.3,1), opacity .3s; }
-.s3.on .toast { transform:translate(-50%, 0); opacity:1; transition-delay:.5s; }
-.undo { color:#fff; font-weight:600; padding:5px 10px; border-radius:8px; background:rgba(255,255,255,.12); }
-.ring { width:18px; height:18px; }
-.ringC { fill:none; stroke:rgba(255,255,255,.7); stroke-width:2.5; stroke-dasharray:50.3; stroke-dashoffset:0; transform:rotate(-90deg); transform-origin:center; }
-.s3.on .ringC { animation: countdown 6s linear .5s forwards; }
-@keyframes countdown { to { stroke-dashoffset:50.3; } }
+/* scene 3: real screenshot, cropped on the toast */
+.s3 { background:#fff; }
+.shot { position:absolute; left:50%; bottom:14px; width:max(150%, 930px); max-width:none; height:auto; transform:translateX(-50%); }
 
 .facts { display:grid; grid-template-columns: repeat(4, 1fr); gap:28px; margin-top:56px; padding-top:28px; border-top:1px solid var(--line); }
 .fact { margin:0; display:flex; align-items:center; gap:8px; color:var(--muted); font-size:15px; font-weight:600; }
