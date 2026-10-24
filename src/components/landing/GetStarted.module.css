@@ -34,3 +34,4 @@
 .entries span { color:var(--muted); }
 @media (prefers-reduced-motion: reduce) { .panel { animation:none; } .tabs button { transition:none; } }
 .cmd :global(.copy) { margin-left:auto; }
+@media (max-width: 480px) { .panel pre { padding-top:54px; } }
