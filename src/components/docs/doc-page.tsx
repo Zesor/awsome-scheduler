@@ -13,13 +13,13 @@ export async function DocPageView({ page }: { page: DocPage }) {
   const { html, headings } = await renderDoc(page)
   const meta = readMeta()
   const i = NAV.findIndex((p) => p.slug === page.slug)
-  const toc = [...(page.live ? [{ depth: 2 as const, id: 'live-example', text: 'Live example' }] : []), ...headings.filter((h) => h.depth === 2), ...(page.props.length ? [{ depth: 2 as const, id: 'props', text: 'Props' }] : [])]
+  const toc = [...(page.live ? [{ depth: 2 as const, id: 'live-example', text: 'Live example' }] : []), ...headings.filter((h) => h.depth === 2), ...(page.slug === '' ? [{ depth: 2 as const, id: 'core-concepts', text: 'Core concepts' }, { depth: 2 as const, id: 'entry-points', text: 'Entry points' }] : []), ...(page.props.length ? [{ depth: 2 as const, id: 'props', text: 'Props' }] : [])]
   return (
     <>
       <main className={s.main}>
         <div className={s.crumb}><b>{page.group}</b> / {page.title}</div>
         <h1 className={s.h1}>{page.title}</h1>
-        <p className={s.lede}>{page.lede}</p>
+        {!page.markdown.trimStart().startsWith(page.lede.trim()) && <p className={s.lede}>{page.lede}</p>}
         {page.live && <LiveExample kind={page.live} />}
         <article className={s.prose} dangerouslySetInnerHTML={{ __html: html }} />
         {page.slug === '' && <IntroExtras />}
