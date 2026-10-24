@@ -1,0 +1,41 @@
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 120px 0; }
+.eyebrow { display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:500; color:var(--accent); }
+.eyebrow::before { content:""; width:18px; height:2px; background:var(--accent); border-radius:2px; }
+.h2 { font-size:clamp(32px, 4.6vw, 52px); line-height:1.05; letter-spacing:-0.035em; font-weight:600; margin:14px 0 48px; }
+.h2 .soft { color:var(--faint); }
+.bento { display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; }
+.tile { position:relative; display:flex; flex-direction:column; background:var(--surface); border:1px solid var(--line); border-radius:18px; overflow:hidden; text-decoration:none; color:inherit;
+        transition: transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s, border-color .25s; min-height:300px; }
+.tile:hover { transform:translateY(-2px); border-color:#d4d4d4; box-shadow:0 24px 48px -28px rgba(0,0,0,.25); }
+.dark .tile:hover { border-color:#3a3a3a; box-shadow:0 24px 48px -28px rgba(0,0,0,.8); }
+.wide { grid-column: span 2; }
+.viz { flex:1; position:relative; background:var(--soft); border-bottom:1px solid var(--line); overflow:hidden; min-height:180px; }
+.txt { padding:18px 20px 20px; display:flex; justify-content:space-between; align-items:flex-end; gap:12px; }
+.txt h3 { margin:0 0 3px; font-size:17px; letter-spacing:-0.01em; font-weight:600; }
+.txt p { margin:0; font-size:14px; color:var(--muted); }
+.txt .go { font-size:13px; color:var(--faint); white-space:nowrap; opacity:0; transform:translateX(-4px); transition: opacity .2s, transform .25s; }
+.tile:hover .go { opacity:1; transform:none; color:var(--ink); }
+@media (max-width: 900px) { .bento { grid-template-columns:1fr; } .wide { grid-column:auto; } }
+
+.btn { height:48px; display:inline-flex; align-items:center; gap:10px; padding:0 20px; border-radius:12px; font-size:15px; font-weight:500; position:relative; overflow:hidden;
+  transition: transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s, border-color .2s, background-color .2s; }
+.btn:active { transform: translateY(0) scale(.98); }
+.btn1 { background:var(--ink); color:var(--bg); box-shadow: 0 1px 0 rgba(255,255,255,.12) inset, 0 8px 20px -10px rgba(0,0,0,.5); }
+.btn1:hover { transform: translateY(-1px); box-shadow: 0 1px 0 rgba(255,255,255,.12) inset, 0 14px 28px -12px rgba(0,0,0,.55); }
+.btn1 svg { width:16px; height:16px; transition: transform .25s cubic-bezier(.16,1,.3,1); }
+.btn1:hover svg { transform: translateX(3px); }
+/* sheen: a light band crosses the button once after load, and again on hover */
+.btn1::after { content:""; position:absolute; top:0; bottom:0; left:-60%; width:40%; transform:skewX(-20deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent); animation: sheen 1.1s 1.6s cubic-bezier(.65,0,.35,1) both; }
+.btn1:hover::after { animation: sheen .9s cubic-bezier(.65,0,.35,1); }
+.dark .btn1::after { background: linear-gradient(90deg, transparent, rgba(0,0,0,.14), transparent); }
+@keyframes sheen { from { left:-60%; } to { left:130%; } }
+.btn2 { border:1px solid var(--line); background:var(--surface); color:var(--ink); cursor:pointer; font-size:14px; }
+.btn2:hover { transform: translateY(-1px); border-color: var(--faint); }
+.btn2 .prompt { color:var(--faint); }
+.btn2 .copy { color:var(--faint); display:inline-flex; align-items:center; gap:5px; font-family:var(--font-sans), system-ui; font-size:12.5px; transition: color .2s; }
+.btn2:hover .copy { color:var(--ink); }
+.btn2 .copy svg { width:15px; height:15px; }
+.btn2.done .copy { color:var(--accent); }
+@media (prefers-reduced-motion: reduce) { .btn, .btn1 svg, .tile { transition:none; } .btn1::after { display:none; } }

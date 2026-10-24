@@ -1,3 +1,13 @@
+import '@/components/landing/landing.css'
+import { DemoProvider } from '@/components/landing/DemoContext'
+import { Header } from '@/components/landing/Header'
+import { Hero } from '@/components/landing/Hero'
+
 export default function Home() {
-  return <main><h1>The best React calendar, with everything built in.</h1></main>
+  return (
+    <DemoProvider>
+      <Header />
+      <main><Hero /></main>
+    </DemoProvider>
+  )
 }
