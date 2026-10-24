@@ -1,0 +1,10 @@
+.final { position:relative; overflow:hidden; border-top:1px solid var(--line); padding:130px 0 140px; text-align:center; }
+.gridBg { position:absolute; inset:0; z-index:0;
+  background-image:linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:100% 56px, calc(100% / 7) 100%;
+  -webkit-mask-image:radial-gradient(ellipse 55% 70% at 50% 50%, #000 20%, transparent 75%); mask-image:radial-gradient(ellipse 55% 70% at 50% 50%, #000 20%, transparent 75%); }
+.in { position:relative; z-index:1; }
+.in h2 { font-size:clamp(36px, 6vw, 64px); line-height:1.02; letter-spacing:-0.045em; font-weight:600; margin:0 0 16px; }
+.soft { color:var(--faint); }
+.in p { font-size:17px; color:var(--muted); margin:0 0 30px; }
+.ctas { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
