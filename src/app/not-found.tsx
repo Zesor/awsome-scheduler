@@ -1,5 +1,8 @@
+import type { Metadata } from 'next'
 import Link from 'next/link'
 import { NAV, docUrl } from '@/lib/docs-nav'
+
+export const metadata: Metadata = { title: { absolute: 'Page not found | CalendarKit' }, robots: { index: false } }
 
 export default function NotFound() {
   return (
