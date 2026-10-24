@@ -21,21 +21,23 @@ export function CreateInPlaceSteps() {
   const reduce = useReducedMotion()
   const [cur, setCur] = useState(0)
   const [hovered, setHovered] = useState(false)
+  const [focused, setFocused] = useState(false)
+  const paused = hovered || focused
   const resumed = useRef(false)
 
   useEffect(() => {
-    if (reduce || hovered) return
+    if (reduce || paused) return
     const t = setTimeout(() => { resumed.current = false; setCur((c) => (c + 1) % 3) }, resumed.current ? 3000 : 5500)
     return () => clearTimeout(t)
-  }, [cur, hovered, reduce])
+  }, [cur, paused, reduce])
 
-  const hover = (h: boolean) => { resumed.current = !h; setHovered(h) }
+  const pause = (set: (v: boolean) => void, on: boolean) => { resumed.current = !on; set(on) }
 
   return (
-    <div className={`${s.split} ${hovered ? s.paused : ''}`} onMouseEnter={() => hover(true)} onMouseLeave={() => hover(false)}>
-      <div className={s.steps} role="tablist" aria-label="Create an event">
+    <div className={`${s.split} ${paused ? s.paused : ''}`} onMouseEnter={() => pause(setHovered, true)} onMouseLeave={() => pause(setHovered, false)}>
+      <div className={s.steps} role="tablist" aria-label="Create an event" onFocus={() => pause(setFocused, true)} onBlur={() => pause(setFocused, false)}>
         {STEPS.map((st, i) => (
-          <button key={st.title} type="button" role="tab" id={`cip-tab-${i}`} aria-selected={cur === i} aria-controls={`cip-panel-${i}`} tabIndex={cur === i ? 0 : -1}
+          <button key={st.title} type="button" role="tab" id={`cip-tab-${i}`} aria-selected={cur === i} aria-controls={`cip-panel-${i}`}
             className={s.step} onClick={() => { resumed.current = false; setCur(i) }}>
             <span className={s.n}>0{i + 1}</span><span className={s.stepTitle}>{st.title}</span>
             <span className={s.stepBody}>{st.body}</span>
