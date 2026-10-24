@@ -17,11 +17,11 @@
 .calm .today { background: #111; color: #fff; border-radius: 6px; } .calm .d .today { background: #fff; color: #111; }
 .calm .e { border-radius: 6px; background: #e0e7ff; color: #1e3a8a; } .calm .d .e { background: #1e2a4a; color: #c7d2fe; }
 .calm .e.g { background: #d1fae5; color: #065f46; } .calm .d .e.g { background: #11352b; color: #a7f3d0; }
-.vivid .mini { font-family: 'Plus Jakarta Sans', var(--font-sans), sans-serif; }
+.vivid .mini { font-family: var(--font-jakarta), 'Plus Jakarta Sans', var(--font-sans), sans-serif; }
 .vivid .l { background: #fff; color: #111; } .vivid .d { background: #0f1020; color: #eee; }
 .vivid .today { background: #4f46e5; color: #fff; border-radius: 999px; }
 .vivid .e { border-radius: 8px; background: #4f46e5; color: #fff; font-weight: 700; } .vivid .e.g { background: #059669; }
-.editorial .hd { font-family: Newsreader, Georgia, serif; font-weight: 500; font-size: 16px; }
+.editorial .hd { font-family: var(--font-newsreader), Newsreader, Georgia, serif; font-weight: 500; font-size: 16px; }
 .editorial .l { background: #fbf8f3; color: #2a2118; } .editorial .d { background: #1b1714; color: #efe7dc; }
 .editorial .today { text-decoration: underline; text-decoration-color: #e8590c; text-underline-offset: 4px; text-decoration-thickness: 2px; font-weight: 600; }
 .editorial .e { border-radius: 4px; background: #fff; color: #2a2118; border: 1px solid #eadfce; border-top: 3px solid #e8590c; } .editorial .d .e { background: #26201b; color: #efe7dc; border-color: #3a3029; border-top-color: #ff8f4f; }
@@ -45,3 +45,8 @@
 .half svg { width: 44px; height: 44px; }
 .mode code { position: absolute; left: 50%; bottom: 16px; transform: translateX(-50%); font-size: 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; color: var(--muted); white-space: nowrap; }
 @media (max-width: 900px) { .root { grid-auto-rows: auto; } }
+
+.t .nm { display: block; margin: 0 0 3px; font-size: 17px; letter-spacing: -0.01em; font-weight: 600; }
+.t .ds { display: block; font-size: 14px; color: var(--muted); }
+.t.on { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.sw button[aria-pressed='true'] { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--accent); }

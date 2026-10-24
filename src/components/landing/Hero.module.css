@@ -29,7 +29,7 @@
 .chip b { color:var(--ink); font-weight:600; }
 .chip svg { width:22px; height:22px; flex:none; border-radius:5px; }
 /* try it */
-.try { margin:72px auto 80px; max-width:1200px; }
+.try { margin:72px auto 80px; max-width:1200px; scroll-margin-top:72px; }
 .bar { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px; padding:0 2px; }
 .hint { margin:0; font-size:13.5px; color:var(--muted); display:flex; align-items:center; gap:8px; text-align:left; }
 .dot { flex:none; width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent); }

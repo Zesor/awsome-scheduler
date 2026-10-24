@@ -14,7 +14,7 @@ export function BrandTile({ i }: { i: number }) {
         <div className={s.demo} aria-hidden="true"><span className={s.btn}>Create</span><span className={s.ev}>Design review</span></div>
         <div className={s.sw}>
           {SW.map((x) => (
-            <button key={x.c} type="button" aria-label={`Use colour ${x.c}, radius ${x.r}`} style={{ background: x.c }}
+            <button key={x.c} type="button" aria-pressed={v.c === x.c} aria-label={`Use colour ${x.c}, radius ${x.r}`} style={{ background: x.c }}
               onMouseEnter={() => setV(x)} onFocus={() => setV(x)} onClick={() => setV(x)} />
           ))}
         </div>
