@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create in place</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+  :root { --bg:#fafafa; --surface:#fff; --ink:#0a0a0a; --muted:#5f5f5f; --faint:#8a8a8a; --line:#e7e7e7; --chip:#efefef; --accent:#059669; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:'Instrument Sans', system-ui, -apple-system, sans-serif; -webkit-font-smoothing:antialiased; }
+  .mono { font-family: ui-monospace, 'SF Mono', Menlo, monospace; }
+  section { max-width:1200px; margin:0 auto; padding:120px 24px; }
+  .eyebrow { display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:500; color:var(--accent); }
+  .eyebrow::before { content:""; width:18px; height:2px; background:var(--accent); border-radius:2px; }
+  h2 { font-size:clamp(32px, 4.6vw, 52px); line-height:1.05; letter-spacing:-0.035em; font-weight:600; margin:14px 0 16px; max-width:760px; }
+  h2 .soft { color:var(--faint); }
+  .intro { font-size:18px; line-height:1.55; color:var(--muted); margin:0 0 56px; }
+
+  .split { display:grid; grid-template-columns: 380px 1fr; gap:48px; align-items:center; }
+  .steps { display:flex; flex-direction:column; gap:6px; }
+  .step { all:unset; cursor:pointer; display:block; padding:18px 18px 18px 20px; border-radius:14px; border:1px solid transparent; position:relative; transition: background .25s, border-color .25s; }
+  .step:hover { background:var(--surface); }
+  .step[aria-selected="true"] { background:var(--surface); border-color:var(--line); box-shadow:0 10px 30px -18px rgba(0,0,0,.25); }
+  .step .n { font-size:12px; color:var(--faint); font-weight:500; }
+  .step h3 { margin:4px 0 6px; font-size:19px; letter-spacing:-0.01em; font-weight:600; }
+  .step p { margin:0; font-size:14.5px; line-height:1.55; color:var(--muted); display:none; }
+  .step[aria-selected="true"] p { display:block; }
+  .step .bar { position:absolute; left:20px; right:20px; bottom:0; height:2px; background:var(--chip); border-radius:2px; overflow:hidden; display:none; }
+  .step[aria-selected="true"] .bar { display:block; }
+  .step .bar i { display:block; height:100%; width:0; background:var(--ink); }
+  .step[aria-selected="true"] .bar i { animation: prog 5.5s linear forwards; }
+  .paused .step .bar i { animation-play-state: paused; }
+  @keyframes prog { to { width:100%; } }
+  .step code { font-size:12.5px; background:var(--chip); padding:1px 5px; border-radius:5px; }
+
+  .stage { position:relative; height:540px; border-radius:20px; border:1px solid var(--line); background:var(--surface); overflow:hidden; box-shadow:0 40px 80px -40px rgba(0,0,0,.28); }
+  .scene { position:absolute; inset:0; opacity:0; transform:translateY(10px); transition: opacity .45s, transform .6s cubic-bezier(.16,1,.3,1); }
+  .scene.on { opacity:1; transform:none; }
+  .crop { position:absolute; inset:0; background-repeat:no-repeat; }
+  .s1 .crop { background-image:url(/files/quick-create.png); background-size:155%; background-position: 92% 62%; }
+  .s3 .crop { background-image:url(/files/event-card.png); background-size:150%; background-position: 46% 0%; }
+
+  /* scene 2: the quick card, rebuilt in HTML so the sentence can be typed */
+  .s2 { background: repeating-linear-gradient(0deg, transparent 0 59px, #f0f0f0 59px 60px), #fff; }
+  .s2 .col { position:absolute; left:11%; top:0; bottom:0; width:24%; border-left:1px solid #f0f0f0; border-right:1px solid #f0f0f0; }
+  .s2 .times { position:absolute; left:0; top:0; width:10%; white-space:nowrap; font-size:12px; color:#8a8a8a; text-align:right; }
+  .s2 .times div { height:60px; padding-right:8px; transform:translateY(-7px); }
+  .ev { position:absolute; left:calc(11% + 6px); width:calc(24% - 12px); border-radius:9px; padding:8px 10px; font-size:13.5px; line-height:1.3; transition: top .7s cubic-bezier(.16,1,.3,1), height .7s cubic-bezier(.16,1,.3,1), background .3s, color .3s; }
+  .ev.draft { top:120px; height:60px; background:#0a0a0a; color:#fff; box-shadow:0 10px 20px -8px rgba(0,0,0,.4); }
+  .ev.saved { top:240px; height:120px; background:#e0e7ff; color:#1e3a8a; border:1px solid #c7d2fe; box-shadow:none; }
+  .ev small { display:block; opacity:.8; font-size:12.5px; }
+  .qc { position:absolute; left:36%; top:70px; width:58%; background:#fff; border:1px solid #e5e5e5; border-radius:18px; padding:26px 26px 20px; box-shadow:0 30px 60px -24px rgba(0,0,0,.3); transition: top .7s cubic-bezier(.16,1,.3,1), opacity .4s; }
+  .qc .title { font-size:26px; letter-spacing:-0.01em; padding-bottom:10px; border-bottom:2px solid #e5e5e5; min-height:46px; }
+  .qc .title .ph { color:#a3a3a3; }
+  .caret { display:inline-block; width:1.5px; height:24px; background:#111; vertical-align:-3px; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity:0; } }
+  .row { display:flex; gap:14px; align-items:flex-start; margin-top:16px; font-size:15px; color:#444; }
+  .row svg { width:20px; height:20px; flex:none; color:#666; margin-top:1px; }
+  .row .when b { font-weight:500; color:#111; transition: color .3s; }
+  .row .when small { display:block; color:#8a8a8a; font-size:13px; margin-top:2px; }
+  .flash b { color:var(--accent) !important; }
+  .qc .foot { display:flex; justify-content:flex-end; gap:14px; align-items:center; margin-top:20px; font-size:14.5px; }
+  .qc .save { background:#111; color:#fff; padding:9px 18px; border-radius:999px; }
+  .hint2 { position:absolute; left:36%; bottom:22px; font-size:12.5px; color:var(--faint); }
+  .hint2 kbd { font-family:inherit; font-size:11.5px; border:1px solid var(--line); border-bottom-width:2px; border-radius:5px; padding:0 5px; color:var(--muted); background:#fff; }
+
+  /* scene 3: undo toast over the event card */
+  .toast { position:absolute; left:50%; bottom:28px; transform:translate(-50%, 16px); opacity:0; display:flex; align-items:center; gap:18px; background:#111; color:#fff; padding:12px 14px 12px 18px; border-radius:12px; font-size:14.5px; box-shadow:0 20px 40px -16px rgba(0,0,0,.5); transition: transform .5s cubic-bezier(.16,1,.3,1), opacity .3s; }
+  .s3.on .toast { transform:translate(-50%, 0); opacity:1; transition-delay:.5s; }
+  .toast .undo { color:#fff; font-weight:600; padding:5px 10px; border-radius:8px; background:rgba(255,255,255,.12); }
+  .toast .ring { width:18px; height:18px; }
+  .toast .ring circle { fill:none; stroke:rgba(255,255,255,.7); stroke-width:2.5; stroke-dasharray:50.3; stroke-dashoffset:0; transform:rotate(-90deg); transform-origin:center; }
+  .s3.on .toast .ring circle { animation: countdown 6s linear .5s forwards; }
+  @keyframes countdown { to { stroke-dashoffset:50.3; } }
+
+  .facts { display:grid; grid-template-columns: repeat(4, 1fr); gap:28px; margin-top:56px; padding-top:28px; border-top:1px solid var(--line); }
+  .facts h4::before { content:""; width:6px; height:6px; border-radius:50%; background:var(--accent); }
+  .facts h4 { margin:0; display:flex; align-items:center; gap:8px; color:var(--muted); font-weight:500; font-size:15px; font-weight:600; }
+  .facts p { margin:0; font-size:14px; line-height:1.55; color:var(--muted); }
+  .note { font-size:12px; color:var(--faint); margin-top:40px; }
+
+  @media (prefers-reduced-motion: reduce) { .scene, .ev, .qc, .toast { transition:none; } .step .bar { display:none !important; } .caret { animation:none; } }
+  @media (max-width: 900px) { .split { grid-template-columns:1fr; } .stage { height:440px; } .facts { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+<section>
+  <span class="eyebrow">Create in place</span>
+  <h2>From a click to an event.<br><span class="soft">In one sentence.</span></h2>
+  <p class="intro">No modal, no form. Type what you mean.</p>
+
+  <div class="split" id="split">
+    <div class="steps" role="tablist">
+      <button class="step" role="tab" aria-selected="true" data-i="0">
+        <span class="n">01</span><h3>Click or drag over free time</h3>
+        <p>A quick card opens right beside it.</p>
+        <span class="bar"><i></i></span>
+      </button>
+      <button class="step" role="tab" aria-selected="false" data-i="1">
+        <span class="n">02</span><h3>Type a sentence</h3>
+        <p>Dates and times are understood, in English and French.</p>
+        <span class="bar"><i></i></span>
+      </button>
+      <button class="step" role="tab" aria-selected="false" data-i="2">
+        <span class="n">03</span><h3>Undo anything</h3>
+        <p>Every change can be undone for six seconds.</p>
+        <span class="bar"><i></i></span>
+      </button>
+    </div>
+
+    <div class="stage">
+      <div class="scene s1 on"><div class="crop" role="img" aria-label="Quick card next to a new event"></div></div>
+
+      <div class="scene s2">
+        <div class="times"><div>9 AM</div><div>10 AM</div><div>11 AM</div><div>12 PM</div><div>1 PM</div><div>2 PM</div><div>3 PM</div><div>4 PM</div><div>5 PM</div></div>
+        <div class="col"></div>
+        <div class="ev draft" id="ev"><span id="evTitle">(No title)</span><small id="evTime">11:00 AM – 12:00 PM</small></div>
+        <div class="qc">
+          <div class="title"><span id="typed"></span><span class="caret"></span><span class="ph" id="ph">Add title</span></div>
+          <div class="row" id="when"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span class="when"><b id="whenText">Today, 11:00 AM – 12:00 PM</b><small>GMT+2 · Does not repeat</small></span></div>
+          <div class="row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.8-3 3-4.5 5.5-4.5s4.7 1.5 5.5 4.5M16 5.5a3 3 0 010 5.6M18.5 14.8c1 .7 1.7 1.9 2 4.2"/></svg>Add guests</div>
+          <div class="row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0113 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>Add location</div>
+          <div class="foot"><span>More options</span><span class="save">Save</span></div>
+        </div>
+      </div>
+
+      <div class="scene s3"><div class="crop" role="img" aria-label="Event card beside an event"></div>
+        <div class="toast"><svg class="ring" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8"/></svg>Event duplicated<span class="undo">Undo</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="facts">
+    <div><h4>Beside, never on top</h4></div>
+    <div><h4>Overlaps announced</h4></div>
+    <div><h4>Nothing lost on close</h4></div>
+    <div><h4>Or bring your own form</h4></div>
+  </div>
+  <p class="note">Mockup: steps 1 and 3 use the real 2.0 screenshots; step 2 is redrawn so the sentence can be typed. The undo toast here is drawn by hand; the site will use a fresh screenshot of the real one.</p>
+</section>
+
+<script>
+  const steps = [...document.querySelectorAll('.step')], scenes = [...document.querySelectorAll('.scene')];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let cur = 0, timer, typer;
+  function go(i) {
+    cur = i;
+    steps.forEach((s, k) => s.setAttribute('aria-selected', k === i));
+    scenes.forEach((s, k) => s.classList.toggle('on', k === i));
+    if (i === 1) typeScene(); else resetScene();
+    clearTimeout(timer);
+    if (!reduce) timer = setTimeout(() => go((cur + 1) % 3), 5500);
+  }
+  function resetScene() {
+    clearInterval(typer);
+    document.getElementById('typed').textContent = ''; document.getElementById('ph').style.display = '';
+    const ev = document.getElementById('ev'); ev.className = 'ev draft';
+    document.getElementById('evTitle').textContent = '(No title)'; document.getElementById('evTime').textContent = '11:00 AM – 12:00 PM';
+    document.getElementById('whenText').textContent = 'Today, 11:00 AM – 12:00 PM'; document.getElementById('when').classList.remove('flash');
+  }
+  function parsed() {
+    document.getElementById('whenText').textContent = 'Tomorrow, 1:00 PM – 3:00 PM'; document.getElementById('when').classList.add('flash');
+    document.getElementById('typed').textContent = 'Lunch with Lea';
+    const ev = document.getElementById('ev'); ev.className = 'ev saved';
+    document.getElementById('evTitle').textContent = 'Lunch with Lea'; document.getElementById('evTime').textContent = '1:00 PM – 3:00 PM';
+  }
+  function typeScene() {
+    resetScene();
+    const text = 'Lunch with Lea tomorrow 1pm for 2h', out = document.getElementById('typed');
+    document.getElementById('ph').style.display = 'none';
+    if (reduce) { parsed(); return; }
+    let n = 0;
+    setTimeout(() => { typer = setInterval(() => {
+      out.textContent = text.slice(0, ++n); document.getElementById('evTitle').textContent = text.slice(0, n);
+      if (n >= text.length) { clearInterval(typer); setTimeout(parsed, 500); }
+    }, 55); }, 400);
+  }
+  steps.forEach(s => s.addEventListener('click', () => go(+s.dataset.i)));
+  const split = document.getElementById('split');
+  split.addEventListener('mouseenter', () => { split.classList.add('paused'); clearTimeout(timer); });
+  split.addEventListener('mouseleave', () => { split.classList.remove('paused'); if (!reduce) timer = setTimeout(() => go((cur + 1) % 3), 3000); });
+  go(0);
+</script>
+</body>
+</html>

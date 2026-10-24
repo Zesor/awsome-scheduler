@@ -1,16 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  images: {
-    remotePatterns: [
-      { hostname: "localhost" },
-      { hostname: "randomuser.me" },
-      { hostname: "images.unsplash.com" },
-    ],
-  },
-  transpilePackages: ["geist"],
-
   // Disable source maps in production to protect source code
   productionBrowserSourceMaps: false,
+
+  // The OG route reads its font from disk at request time
+  outputFileTracingIncludes: { '/og': ['./src/assets/fonts/**'] },
 
   // Compiler optimizations
   compiler: {
@@ -54,6 +48,8 @@ const nextConfig = {
           },
         ],
       },
+      // The markdown twins of the docs pages are for agents, not search results
+      { source: "/md/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex" }] },
       // Cache static assets
       {
         source: "/static/:path*",
@@ -67,9 +63,11 @@ const nextConfig = {
     ];
   },
 
-  // Optimize for Vercel
-  experimental: {
-    optimizePackageImports: ["lucide-react", "framer-motion", "date-fns"],
+  async rewrites() {
+    return [
+      { source: '/docs.md', destination: '/md' },
+      { source: '/docs/:slug.md', destination: '/md/:slug' },
+    ]
   },
 };
 

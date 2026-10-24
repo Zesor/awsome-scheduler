@@ -1,0 +1,10 @@
+.header { position:sticky; top:0; z-index:10; background:var(--bg); border-bottom:1px solid var(--line); }
+.hd { max-width:1200px; margin:0 auto; height:60px; padding:0 24px; display:flex; align-items:center; justify-content:space-between; }
+.logo { display:flex; align-items:center; gap:9px; font-weight:600; font-size:15px; letter-spacing:-.01em; }
+.nav { display:flex; align-items:center; gap:22px; font-size:14px; color:var(--muted); }
+.link:hover { color:var(--ink); }
+.ver { font-size:11.5px; padding:3px 7px; border:1px solid var(--line); border-radius:6px; color:var(--muted); background:var(--surface); }
+.iconBtn { width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--muted); cursor:pointer; padding:0; }
+.gh { display:inline-flex; align-items:center; gap:7px; font-size:13px; padding:6px 10px; border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--ink); }
+.gh svg { width:15px; height:15px; }
+@media (max-width: 720px) { .hideSm { display:none; } }

@@ -1,20 +1,12 @@
 {
-  "name": "CalendarKit - Modern React Calendar & Scheduler Component Provider",
+  "name": "CalendarKit Pro",
   "short_name": "CalendarKit",
-  "description": "The leading React calendar and scheduler component provider. Build beautiful, responsive calendars and schedulers with TypeScript support.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
-  "orientation": "portrait-primary",
+  "background_color": "#fafafa",
+  "theme_color": "#fafafa",
   "icons": [
-    {
-      "src": "/favicon.ico",
-      "sizes": "any",
-      "type": "image/x-icon"
-    }
-  ],
-  "categories": ["development", "productivity", "utilities"],
-  "lang": "en-US",
-  "dir": "ltr"
+    { "src": "/android-chrome-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/favicon-32x32.png", "sizes": "32x32", "type": "image/png" }
+  ]
 }

@@ -1,25 +1,12 @@
-import { MetadataRoute } from "next";
+import type { MetadataRoute } from 'next'
+import { site } from '@/lib/site'
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = "https://calendarkit.io";
-
   return {
     rules: [
-      {
-        userAgent: "*",
-        allow: "/",
-        disallow: ["/api/", "/_next/", "/private/"],
-      },
-      {
-        userAgent: "Googlebot",
-        allow: "/",
-      },
-      {
-        userAgent: "Bingbot",
-        allow: "/",
-      },
+      { userAgent: '*', allow: '/' },
+      ...['GPTBot', 'OAI-SearchBot', 'ClaudeBot', 'PerplexityBot', 'Google-Extended'].map((userAgent) => ({ userAgent, allow: '/' })),
     ],
-    sitemap: `${baseUrl}/sitemap.xml`,
-    host: baseUrl,
-  };
+    sitemap: `${site.url}/sitemap.xml`,
+  }
 }

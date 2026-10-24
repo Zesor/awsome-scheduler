@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Changelog</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+  :root { --bg:#fafafa; --surface:#fff; --ink:#0a0a0a; --muted:#5f5f5f; --faint:#8a8a8a; --line:#e7e7e7; --soft:#f4f4f5; --accent:#059669; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:'Instrument Sans', system-ui, -apple-system, sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; text-decoration:none; }
+  .mono, code { font-family: ui-monospace, 'SF Mono', Menlo, monospace; }
+  header { position:sticky; top:0; z-index:10; background:var(--bg); border-bottom:1px solid var(--line); }
+  .hd { max-width:1200px; margin:0 auto; height:60px; padding:0 24px; display:flex; align-items:center; justify-content:space-between; font-size:14px; }
+  .logo { display:flex; align-items:center; gap:9px; font-weight:600; font-size:15px; }
+  .logo svg { width:22px; height:22px; }
+  nav { display:flex; gap:22px; color:var(--muted); } nav .on { color:var(--ink); }
+
+  .wrap { max-width:1000px; margin:0 auto; padding:72px 24px 120px; }
+  h1 { font-size:clamp(36px, 5vw, 52px); letter-spacing:-0.04em; font-weight:600; margin:0 0 10px; }
+  .sub { font-size:17px; color:var(--muted); margin:0 0 20px; display:flex; gap:16px; align-items:center; flex-wrap:wrap; }
+  .sub a { font-size:14px; color:var(--ink); border-bottom:1px solid var(--accent); }
+  .filter { display:inline-flex; background:var(--soft); border:1px solid var(--line); border-radius:9px; padding:3px; font-size:13px; margin-bottom:56px; }
+  .filter button { all:unset; cursor:pointer; padding:5px 12px; border-radius:7px; color:var(--muted); }
+  .filter button[aria-pressed="true"] { background:var(--surface); color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.08); }
+
+  .rel { display:grid; grid-template-columns: 200px 1fr; gap:40px; padding:40px 0; border-top:1px solid var(--line); }
+  .when { position:sticky; top:84px; align-self:start; }
+  .when .v { font-size:22px; font-weight:600; letter-spacing:-0.02em; display:flex; align-items:center; gap:8px; }
+  .when .v a:hover { text-decoration:underline; text-decoration-color:var(--accent); text-underline-offset:4px; }
+  .when time { display:block; font-size:13.5px; color:var(--faint); margin-top:4px; }
+  .tag { font-size:11px; font-weight:600; padding:2px 7px; border-radius:999px; background:var(--ink); color:var(--bg); letter-spacing:0; }
+  .tag.pre { background:var(--soft); color:var(--muted); border:1px solid var(--line); }
+  .body p.intro { font-size:16px; line-height:1.65; color:#2b2b2b; margin:0 0 20px; }
+  .shot { border:1px solid var(--line); border-radius:14px; overflow:hidden; margin:0 0 24px; box-shadow:0 24px 48px -30px rgba(0,0,0,.3); }
+  .shot img { display:block; width:100%; }
+  .kind { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:600; padding:3px 9px; border-radius:7px; margin:18px 0 8px; }
+  .kind.added { background:#d1fae5; color:#065f46; } .kind.fixed { background:#dbeafe; color:#1e40af; } .kind.changed { background:#fef3c7; color:#92400e; } .kind.removed { background:#fee2e2; color:#991b1b; } .kind.hi { background:var(--ink); color:#fff; }
+  ul { margin:0; padding-left:18px; } li { font-size:15px; line-height:1.65; margin:5px 0; color:#2b2b2b; } li::marker { color:var(--faint); }
+  li b { font-weight:600; color:var(--ink); }
+  :not(pre) > code { font-size:.86em; background:var(--soft); border:1px solid var(--line); padding:1px 5px; border-radius:6px; }
+  .migrate { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:22px; padding:12px 16px; border:1px solid var(--line); border-radius:12px; background:var(--surface); font-size:14px; }
+  .migrate a { font-weight:500; }
+
+  details.pre { margin-top:28px; border:1px solid var(--line); border-radius:12px; background:var(--surface); }
+  details.pre summary { cursor:pointer; list-style:none; padding:12px 16px; font-size:14px; display:flex; justify-content:space-between; color:var(--muted); }
+  details.pre summary::-webkit-details-marker { display:none; }
+  details.pre summary b { color:var(--ink); font-weight:500; }
+  details.pre[open] summary { border-bottom:1px solid var(--line); }
+  .prelist { padding:4px 16px 12px; }
+  .prelist .row { display:grid; grid-template-columns: 150px 1fr; gap:16px; padding:10px 0; border-bottom:1px dashed var(--line); font-size:14px; }
+  .prelist .row:last-child { border-bottom:0; }
+  .prelist .row span { color:var(--muted); }
+
+  @media (max-width: 760px) { .rel { grid-template-columns:1fr; gap:14px; } .when { position:static; } }
+</style>
+</head>
+<body>
+<header><div class="hd">
+  <a class="logo" href="#"><svg viewBox="0 0 24 24" fill="none"><rect x="2.5" y="4" width="19" height="17.5" rx="4" stroke="currentColor" stroke-width="1.8"/><path d="M2.5 9.5h19M8 2.5v3M16 2.5v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="6.5" y="12.5" width="6" height="4.5" rx="1.2" fill="currentColor"/></svg>CalendarKit</a>
+  <nav><a href="#">Docs</a><a href="#">API</a><a class="on" href="#">Changelog</a></nav>
+</div></header>
+
+<div class="wrap">
+  <h1>Changelog</h1>
+  <p class="sub">Every release of calendarkit-pro. <a href="#">GitHub releases</a></p>
+  <div class="filter"><button aria-pressed="true">Releases</button><button aria-pressed="false">Include pre-releases</button></div>
+
+  <article class="rel" id="2.0.0">
+    <div class="when"><div class="v"><a href="#2.0.0">2.0.0</a><span class="tag">Latest</span></div><time>24 October 2026</time></div>
+    <div class="body">
+      <p class="intro">The new CalendarKit: rebuilt on a framework-free engine, redesigned, accessible and ready for phones.</p>
+      <div class="shot"><img src="/files/week.png" alt="CalendarKit 2.0 week view"></div>
+      <span class="kind hi">Highlights</span>
+      <ul>
+        <li><b>No setup.</b> The calendar ships its own compiled, scoped stylesheet: no Tailwind configuration, nothing to import.</li>
+        <li><b>Redesigned.</b> Three themes (Calm, Vivid, Editorial) in light and dark, every colour a CSS variable.</li>
+        <li><b>Create in place.</b> Click or drag over free time; the quick card understands sentences in English and French.</li>
+        <li><b>Three layouts.</b> Classic, Focus and Flow.</li>
+        <li>… the rest of the highlights, as in CHANGELOG.md</li>
+      </ul>
+      <span class="kind removed">Removed</span>
+      <ul><li>The root <code>cn</code> export, deprecated in 1.4.1.</li></ul>
+      <div class="migrate"><span>Upgrading from 1.x? Every 1.4 example still runs.</span><a href="#">Migration guide →</a></div>
+      <details class="pre"><summary><span><b>13 pre-releases</b> led to 2.0.0</span><span>Show</span></summary>
+        <div class="prelist">
+          <div class="row"><b>2.0.0-beta.1</b><span>24 Oct · API complete, fixes only from here</span></div>
+          <div class="row"><b>2.0.0-alpha.11</b><span>23 Oct · Phone layout</span></div>
+          <div class="row"><b>2.0.0-alpha.10</b><span>23 Oct · Keyboard and screen reader support</span></div>
+          <div class="row"><b>2.0.0-alpha.9</b><span>23 Oct · Focus and Flow layouts</span></div>
+          <div class="row"><b>…</b><span>each one expands to its full notes</span></div>
+        </div>
+      </details>
+    </div>
+  </article>
+
+  <article class="rel" id="1.4.1">
+    <div class="when"><div class="v"><a href="#1.4.1">1.4.1</a></div><time>18 October 2026</time></div>
+    <div class="body"><span class="kind changed">Deprecated</span><ul><li>The root <code>cn</code> export (clsx + tailwind-merge) is removed in 2.0. Copy it into your project.</li></ul></div>
+  </article>
+
+  <article class="rel" id="1.4.0">
+    <div class="when"><div class="v"><a href="#1.4.0">1.4.0</a></div><time>17 October 2026</time></div>
+    <div class="body">
+      <span class="kind added">Added</span>
+      <ul><li>All-day and multi-day events: continuous bars in the month view, and a collapsible all-day row in the week and day views.</li><li>Drag a bar to move it by whole days or stretch its right edge; click the all-day row to create an all-day event.</li></ul>
+      <span class="kind fixed">Fixed</span>
+      <ul><li>Multi-day and all-day events no longer appear only on their first day in the month view.</li></ul>
+    </div>
+  </article>
+</div>
+</body>
+</html>
