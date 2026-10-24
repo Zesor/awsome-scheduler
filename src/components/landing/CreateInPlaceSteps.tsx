@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import Image from 'next/image'
 import s from './CreateInPlace.module.css'
 
 const STEPS = [
@@ -52,10 +53,7 @@ export function CreateInPlaceSteps() {
         </div>
         <TypeScene active={cur === 1} reduce={reduce} />
         <div className={`${s.scene} ${s.s3} ${cur === 2 ? s.on : ''}`} role="tabpanel" id="cip-panel-2" aria-labelledby="cip-tab-2">
-          <div className={s.crop} role="img" aria-label="Event card beside an event" />
-          <div className={s.toast}>
-            <svg className={s.ring} viewBox="0 0 20 20" aria-hidden><circle className={s.ringC} cx="10" cy="10" r="8" /></svg>Event duplicated<span className={s.undo}>Undo</span>
-          </div>
+          <Image className={s.shot} src="/images/undo-toast.png" alt="Undo toast after deleting an event" width={2556} height={1596} loading="lazy" sizes="(max-width: 900px) 100vw, 900px" />
         </div>
       </div>
     </div>

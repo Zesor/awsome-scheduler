@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 import { TryTile } from './TryTile'
 import { BrandTile } from './BrandTile'
 import s from './LayoutsThemes.module.css'
@@ -7,13 +8,12 @@ const cx = (...a: string[]) => a.join(' ')
 const Win = ({ img }: { img: string }) => (
   <div className="viz" aria-hidden="true"><div className={s.win} style={{ backgroundImage: `url(/images/${img}.png)` }} /></div>
 )
-const Mini = ({ m }: { m: 'l' | 'd' }) => (
-  <div className={cx(s.mini, s[m])}><div className={s.hd}>October</div>
-    <div className={s.days}><span>Mon 19</span><span className={s.today}>Tue 20</span><span>Wed 21</span></div>
-    <div className={s.e}>Design review</div><div className={cx(s.e, s.g)}>Lunch with Lea</div></div>
-)
 const Pair = ({ t }: { t: string }) => (
-  <div className={cx('viz', t)} aria-hidden="true"><div className={s.pair}><Mini m="l" /><Mini m="d" /></div></div>
+  <div className="viz" aria-hidden="true"><div className={s.pair}>
+    {[t, `${t}-dark`].map((f) => <div key={f} className={s.shot}>
+      <Image src={`/images/theme-${f}.png`} alt="" width={2556} height={1596} loading="lazy" sizes="800px" />
+    </div>)}
+  </div></div>
 )
 
 export function LayoutsThemes() {
@@ -24,11 +24,11 @@ export function LayoutsThemes() {
         <h2 className="h2" data-reveal style={{ '--i': 1 } as React.CSSProperties}>Three layouts. Three themes.<br /><span className="soft">Light and dark.</span></h2>
         <div className={cx('bento', s.root)}>
           <TryTile i={2} kind="layout" value="classic" name="Classic" desc="Side panel, cards beside events."><Win img="week" /></TryTile>
-          <TryTile i={3} kind="theme" value="calm" name="Calm" desc="Neutral. The default."><Pair t={s.calm} /></TryTile>
-          <TryTile i={4} kind="theme" value="vivid" name="Vivid" desc="Saturated colours."><Pair t={s.vivid} /></TryTile>
+          <TryTile i={3} kind="theme" value="calm" name="Calm" desc="Neutral. The default."><Pair t="calm" /></TryTile>
+          <TryTile i={4} kind="theme" value="vivid" name="Vivid" desc="Saturated colours."><Pair t="vivid" /></TryTile>
           <TryTile i={5} kind="layout" value="focus" name="Focus" desc="Full-width grid, edit in a side panel."><Win img="focus" /></TryTile>
           <TryTile i={6} kind="layout" value="flow" name="Flow" desc="The day as a feed, free slots to book."><Win img="flow" /></TryTile>
-          <TryTile i={7} kind="theme" value="editorial" name="Editorial" desc="Warm tones, serif titles."><Pair t={s.editorial} /></TryTile>
+          <TryTile i={7} kind="theme" value="editorial" name="Editorial" desc="Warm tones, serif titles."><Pair t="editorial" /></TryTile>
           <BrandTile i={8} />
           <Link className={cx('tile', s.mode)} href="/docs/theming" data-reveal style={{ '--i': 9 } as React.CSSProperties}>
             <div className="viz" aria-hidden="true">
