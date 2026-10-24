@@ -1,4 +1,5 @@
 import { loadDocs } from '@/lib/docs'
+import { site } from '@/lib/site'
 import { pageMarkdown } from '@/lib/llms'
 
 export const dynamic = 'force-static'
@@ -9,5 +10,5 @@ export async function GET(_: Request, { params }: { params: Promise<{ slug?: str
   const slug = (await params).slug?.[0] ?? ''
   const page = loadDocs().find((p) => p.slug === slug)
   if (!page) return new Response('Not found', { status: 404 })
-  return new Response(pageMarkdown(page), { headers: { 'Content-Type': 'text/markdown; charset=utf-8' } })
+  return new Response(pageMarkdown(page), { headers: { 'Content-Type': 'text/markdown; charset=utf-8', Link: `<${site.url}${page.url}>; rel="canonical"` } })
 }

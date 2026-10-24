@@ -48,6 +48,8 @@ const nextConfig = {
           },
         ],
       },
+      // The markdown twins of the docs pages are for agents, not search results
+      { source: "/md/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex" }] },
       // Cache static assets
       {
         source: "/static/:path*",
