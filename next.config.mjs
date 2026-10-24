@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-
   // Disable source maps in production to protect source code
   productionBrowserSourceMaps: false,
 
