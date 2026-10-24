@@ -20,6 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" suppressHydrationWarning className={`${sans.variable} ${jakarta.variable} ${newsreader.variable}`}>
       <head>
         <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+        <noscript><style>{'[data-reveal]{opacity:1!important;transform:none!important}'}</style></noscript>
         <script defer src="https://cloud.umami.is/script.js" data-website-id="3b200f32-8e98-4fe9-8894-34d2a12884b7" />
       </head>
       <body>
