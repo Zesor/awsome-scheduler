@@ -1,0 +1,5 @@
+import { loadDocs } from '@/lib/docs'
+import { llmsTxt } from '@/lib/llms'
+
+export const dynamic = 'force-static'
+export function GET() { return new Response(llmsTxt(loadDocs()), { headers: { 'Content-Type': 'text/plain; charset=utf-8' } }) }
