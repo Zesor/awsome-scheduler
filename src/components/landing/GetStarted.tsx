@@ -26,9 +26,9 @@ export function MyCalendar() {
   return (
     <Scheduler
       events={events}
-      onEventCreate={(e) => setEvents((l) => [...l, { ...e, id: crypto.randomUUID() }])}
-      onEventUpdate={(e) => setEvents((l) => l.map((x) => (x.id === e.id ? e : x)))}
-      onEventDelete={(id) => setEvents((l) => l.filter((x) => x.id !== id))}
+      onEventCreate={(event) => setEvents((list) => [...list, { ...event, id: crypto.randomUUID() } as CalendarEvent])}
+      onEventUpdate={(event) => setEvents((list) => list.map((e) => (e.id === event.id ? event : e)))}
+      onEventDelete={(id) => setEvents((list) => list.filter((e) => e.id !== id))}
     />
   );
 }` },

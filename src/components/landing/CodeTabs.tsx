@@ -26,8 +26,9 @@ export function CodeTabs({ tabs }: { tabs: CodeTab[] }) {
       </div>
       <div className={s.body}>
         <button type="button" className={s.copy} onClick={copy} aria-label={`Copy ${tabs[cur].file} example`}>
-          {done ? <Check size={14} aria-hidden="true" /> : <Copy size={14} aria-hidden="true" />}<span aria-live="polite">{done ? 'Copied' : 'Copy'}</span>
+          {done ? <Check size={14} aria-hidden="true" /> : <Copy size={14} aria-hidden="true" />}<span>{done ? 'Copied' : 'Copy'}</span>
         </button>
+        <span className="sr-only" role="status">{done ? 'Copied' : ''}</span>
         {tabs.map((t, i) => (
           <div key={t.label} role="tabpanel" id={`code-panel-${i}`} aria-labelledby={`code-tab-${i}`} hidden={cur !== i} className={s.panel} dangerouslySetInnerHTML={{ __html: t.html }} />
         ))}
