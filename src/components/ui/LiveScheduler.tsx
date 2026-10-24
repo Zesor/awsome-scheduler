@@ -1,8 +1,21 @@
 "use client";
 import { Component, useEffect, useRef, useState, type ReactNode } from "react";
-import { Scheduler } from "calendarkit-pro";
+import dynamic from "next/dynamic";
+import Image from "next/image";
 import type { CalendarProps } from "calendarkit-pro";
 import { demoEvents, DEMO_CALENDARS } from "@/lib/demo";
+
+// The library is ~370 KB: fetch it only when the calendar mounts. `onReady` fires once it has rendered.
+const Cal = dynamic(
+  () =>
+    import("calendarkit-pro").then(({ Scheduler }) =>
+      function Cal({ onReady, ...p }: CalendarProps & { onReady: () => void }) {
+        useEffect(onReady, [onReady]);
+        return <Scheduler {...p} />;
+      },
+    ),
+  { ssr: false },
+);
 
 class Boundary extends Component<
   { fallback: ReactNode; children: ReactNode },
@@ -21,6 +34,7 @@ type Props = Omit<CalendarProps, "mode"> & {
   height: number;
   fallback: string;
   lazy?: boolean;
+  priority?: boolean;
   width?: number;
   minWidth?: number;
 };
@@ -29,12 +43,14 @@ export function LiveScheduler({
   height,
   fallback,
   lazy,
+  priority,
   width,
   minWidth,
   ...props
 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(!lazy);
+  const [ready, setReady] = useState(false);
   const [events] = useState(() => demoEvents());
   useEffect(() => {
     if (visible || !ref.current) return;
@@ -51,15 +67,14 @@ export function LiveScheduler({
     return () => io.disconnect();
   }, [visible]);
   const img = (
-    <img
+    <Image
       src={fallback}
       alt="CalendarKit Pro calendar"
-      style={{
-        width: "100%",
-        height: "100%",
-        objectFit: "cover",
-        objectPosition: "top left",
-      }}
+      width={2556}
+      height={1596}
+      priority={priority}
+      sizes="(min-width: 1200px) 1200px, 100vw"
+      style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top left", borderRadius: 15 }}
     />
   );
   return (
@@ -70,22 +85,22 @@ export function LiveScheduler({
         width,
         maxWidth: "100%",
         margin: width ? "0 auto" : undefined,
-        overflowX: "auto",
+        overflowX: minWidth ? "auto" : undefined,
       }}
     >
-      <div style={{ height: "100%", minWidth }}>
-        {visible ? (
-          <Boundary fallback={img}>
+      <div style={{ height: "100%", minWidth, position: "relative" }}>
+        {visible && (
+          <Boundary fallback={null}>
             {/* No `mode`: the library turns dark under a `.dark` ancestor, which next-themes sets on <html> before paint, so server and client HTML match. */}
-            <Scheduler
+            <Cal
+              onReady={() => setReady(true)}
               defaultEvents={events}
               calendars={DEMO_CALENDARS}
               {...props}
             />
           </Boundary>
-        ) : (
-          img
         )}
+        {!ready && <div style={visible ? { position: "absolute", inset: 0 } : { height: "100%" }}>{img}</div>}
       </div>
     </div>
   );
