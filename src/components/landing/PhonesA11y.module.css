@@ -1,5 +1,7 @@
 .root { --focusRing:#2563eb; --eventBg:#e0e7ff; --eventInk:#1e3a8a; --hair:#f0f0f0; }
 :global(.dark) .root { --focusRing:#60a5fa; --eventBg:#1e3a5f; --eventInk:#bfdbfe; --hair:#232323; }
+.root { grid-template-columns:1fr 1fr; }
+@media (max-width: 900px) { .root { grid-template-columns:1fr; } }
 .root > :global(.tile) { min-height:0; }
 .root :global(.viz) { flex:none; height:420px; }
 .top { flex:1; display:flex; justify-content:space-between; align-items:flex-end; gap:12px; }
