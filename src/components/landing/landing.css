@@ -9,6 +9,8 @@
         transition: transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s, border-color .25s; min-height:300px; }
 .tile:hover { transform:translateY(-2px); border-color:#d4d4d4; box-shadow:0 24px 48px -28px rgba(0,0,0,.25); }
 .dark .tile:hover { border-color:#3a3a3a; box-shadow:0 24px 48px -28px rgba(0,0,0,.8); }
+.tile[data-reveal].shown:hover, .tile[data-reveal].shown:focus-visible { transition: opacity .6s ease, transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s, border-color .25s; transition-delay:0s; }
+.tile:focus-visible { outline:2px solid var(--accent); outline-offset:3px; }
 .wide { grid-column: span 2; }
 .viz { flex:1; position:relative; background:var(--soft); border-bottom:1px solid var(--line); overflow:hidden; min-height:180px; }
 .txt { padding:18px 20px 20px; display:flex; justify-content:space-between; align-items:flex-end; gap:12px; }

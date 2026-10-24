@@ -19,7 +19,7 @@ export function FeaturesViews() {
   return (
     <Link className={'tile wide'} href="/docs/views" data-reveal style={{ '--i': 2 } as React.CSSProperties}
       onMouseEnter={() => { hold.current = true }} onMouseLeave={() => { hold.current = false }}>
-      <div className="viz">
+      <div className="viz" aria-hidden="true">
         <div className={s.tabs}>
           {TABS.map((t, i) => <span key={t} className={cx(s.tab, v === i && s.tabOn)} onMouseEnter={() => setV(i)}>{t}</span>)}
         </div>
@@ -53,7 +53,7 @@ export function FeaturesViews() {
           <div className={cx(s.ev, s.cv)} style={{ left: '30%', top: 84, width: '22%', height: 22 }}>Shoot</div>
         </div></div>
       </div>
-      <div className="txt"><div><h3>Five views</h3><p>Month, week, day, agenda and resource.</p></div><span className="go">Docs →</span></div>
+      <div className="txt"><div><h3>Five views</h3><p>Month, week, day, agenda and resource.</p></div><span className="go" aria-hidden="true">Docs →</span></div>
     </Link>
   )
 }
