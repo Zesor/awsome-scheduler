@@ -46,7 +46,6 @@
 .ctrl { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .ctrl label { display: inline-flex; gap: 6px; align-items: center; }
 .ctrl select, .ctrl input[type=number] { font: inherit; font-size: 12.5px; border: 1px solid var(--line); border-radius: 6px; padding: 2px 4px; background: var(--surface); color: var(--ink); }
-.live .cal { height: 380px; }
 
 .prose table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; margin: 12px 0 24px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: var(--surface); }
 .prose th { text-align: left; font-weight: 500; color: var(--faint); font-size: 12.5px; padding: 9px 14px; background: var(--soft); border-bottom: 1px solid var(--line); }
