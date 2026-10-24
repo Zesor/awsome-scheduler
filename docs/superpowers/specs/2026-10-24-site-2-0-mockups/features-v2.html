@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Features</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+  :root { --bg:#fafafa; --surface:#fff; --ink:#0a0a0a; --muted:#5f5f5f; --faint:#8a8a8a; --line:#e7e7e7; --soft:#f4f4f5; --accent:#059669;
+          --blue:#dbeafe; --blueInk:#1e40af; --green:#d1fae5; --greenInk:#065f46; --violet:#ede9fe; --violetInk:#5b21b6; --amber:#fef3c7; --amberInk:#92400e; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:'Instrument Sans', system-ui, -apple-system, sans-serif; -webkit-font-smoothing:antialiased; }
+  .mono { font-family: ui-monospace, 'SF Mono', Menlo, monospace; }
+  section { max-width:1200px; margin:0 auto; padding:120px 24px; }
+  .eyebrow { display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:500; color:var(--accent); }
+  .eyebrow::before { content:""; width:18px; height:2px; background:var(--accent); border-radius:2px; }
+  h2 { font-size:clamp(32px, 4.6vw, 52px); line-height:1.05; letter-spacing:-0.035em; font-weight:600; margin:14px 0 48px; }
+  h2 .soft { color:var(--faint); }
+
+  .bento { display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; }
+  .tile { position:relative; display:flex; flex-direction:column; background:var(--surface); border:1px solid var(--line); border-radius:18px; overflow:hidden; text-decoration:none; color:inherit;
+          transition: transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s, border-color .25s; min-height:300px; }
+  .tile:hover { transform:translateY(-2px); border-color:#d4d4d4; box-shadow:0 24px 48px -28px rgba(0,0,0,.25); }
+  .tile.wide { grid-column: span 2; }
+  .viz { flex:1; position:relative; background:var(--soft); border-bottom:1px solid var(--line); overflow:hidden; min-height:180px; }
+  .txt { padding:18px 20px 20px; display:flex; justify-content:space-between; align-items:flex-end; gap:12px; }
+  .txt h3 { margin:0 0 3px; font-size:17px; letter-spacing:-0.01em; font-weight:600; }
+  .txt p { margin:0; font-size:14px; color:var(--muted); }
+  .txt .go { font-size:13px; color:var(--faint); white-space:nowrap; opacity:0; transform:translateX(-4px); transition: opacity .2s, transform .25s; }
+  .tile:hover .go { opacity:1; transform:none; color:var(--ink); }
+
+  /* shared mini parts */
+  .ev { position:absolute; border-radius:6px; font-size:11px; font-weight:500; padding:4px 6px; line-height:1.2; overflow:hidden; white-space:nowrap; }
+  .b { background:var(--blue); color:var(--blueInk); } .g { background:var(--green); color:var(--greenInk); } .v { background:var(--violet); color:var(--violetInk); } .a { background:var(--amber); color:var(--amberInk); }
+
+  /* 1. five views: tabs + panes that cycle */
+  .views .tabs { position:absolute; top:16px; left:50%; transform:translateX(-50%); display:flex; background:#e9e9eb; border-radius:9px; padding:3px; font-size:12px; z-index:2; }
+  .views .tabs span { padding:4px 10px; border-radius:7px; color:var(--muted); transition: background .3s, color .3s; }
+  .views .tabs span.on { background:#fff; color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.08); }
+  .pane { position:absolute; left:24px; right:24px; top:58px; bottom:-1px; background:#fff; border:1px solid var(--line); border-bottom:0; border-radius:12px 12px 0 0; opacity:0; transform:translateY(8px); transition: opacity .4s, transform .5s cubic-bezier(.16,1,.3,1); overflow:hidden; }
+  .pane.on { opacity:1; transform:none; }
+  .monthg { display:grid; grid-template-columns:repeat(7,1fr); grid-auto-rows:44px; height:100%; }
+  .monthg div { border-right:1px solid #f0f0f0; border-bottom:1px solid #f0f0f0; font-size:10px; color:var(--faint); padding:4px 6px; position:relative; }
+  .monthg i { display:block; height:5px; border-radius:3px; margin-top:4px; }
+  .weekg { position:absolute; inset:0; background: repeating-linear-gradient(90deg, transparent 0 calc(100%/7 - 1px), #f0f0f0 calc(100%/7 - 1px) calc(100%/7)), repeating-linear-gradient(0deg, transparent 0 29px, #f5f5f5 29px 30px); }
+  .agenda { padding:12px 16px; display:flex; flex-direction:column; gap:8px; }
+  .agenda .r { display:flex; gap:12px; align-items:center; font-size:12px; }
+  .agenda .r b { width:46px; color:var(--faint); font-weight:500; }
+  .agenda .r span { flex:1; padding:6px 9px; border-radius:7px; }
+  .resg { position:absolute; inset:0; }
+  .resg .row { position:absolute; left:0; right:0; height:38px; border-bottom:1px solid #f0f0f0; font-size:11px; color:var(--muted); padding:12px 10px; }
+
+  /* 2. drag and drop */
+  .dnd .grid { position:absolute; inset:24px 24px -1px; background:#fff; border:1px solid var(--line); border-bottom:0; border-radius:12px 12px 0 0;
+               background-image: linear-gradient(90deg, transparent calc(33.3% - 1px), #f0f0f0 calc(33.3% - 1px) 33.3%, transparent 33.3% calc(66.6% - 1px), #f0f0f0 calc(66.6% - 1px) 66.6%, transparent 66.6%), repeating-linear-gradient(0deg, transparent 0 23px, #f5f5f5 23px 24px); }
+  .dnd .mv { left:calc(3% + 2px); top:30px; width:calc(30% - 4px); height:46px; transition: left .7s cubic-bezier(.65,0,.35,1), top .7s cubic-bezier(.65,0,.35,1), height .5s .7s cubic-bezier(.65,0,.35,1), box-shadow .3s; }
+  .tile.dnd:hover .mv, .dnd.play .mv { left:calc(36.3% + 2px); top:78px; height:70px; box-shadow:0 10px 18px -8px rgba(30,64,175,.4); }
+  .dnd .ghost { left:calc(3% + 2px); top:30px; width:calc(30% - 4px); height:46px; border:1.5px dashed #93c5fd; background:transparent; opacity:0; transition: opacity .3s; }
+  .tile.dnd:hover .ghost { opacity:1; }
+
+  /* 3. recurring */
+  .rec .strip { position:absolute; left:24px; right:24px; top:50%; transform:translateY(-50%); display:grid; grid-template-columns:repeat(7,1fr); gap:6px; }
+  .rec .strip div { height:64px; border-radius:9px; background:#fff; border:1px solid var(--line); font-size:10px; color:var(--faint); padding:6px; position:relative; }
+  .rec .strip div.on::after { content:""; position:absolute; left:6px; right:6px; bottom:7px; height:16px; border-radius:5px; background:var(--violet); transform:scaleX(0); transform-origin:left; transition: transform .35s cubic-bezier(.16,1,.3,1); }
+  .rec.lit .strip div.on::after, .tile.rec:hover .strip div.on::after { transform:none; }
+  .rec .rule { position:absolute; left:24px; top:22px; font-size:12px; background:#fff; border:1px solid var(--line); border-radius:999px; padding:4px 10px; color:var(--muted); }
+
+  /* 4. time zones */
+  .tz .clocks { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; gap:16px; }
+  .tz .c { background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px 16px; min-width:112px; }
+  .tz .c small { display:block; font-size:11px; color:var(--faint); }
+  .tz .c b { font-size:24px; font-weight:600; letter-spacing:-0.02em; font-variant-numeric: tabular-nums; }
+
+  /* 5. time grid */
+  .tg .axis { position:absolute; left:24px; right:24px; top:24px; bottom:-1px; background:#fff; border:1px solid var(--line); border-bottom:0; border-radius:12px 12px 0 0; overflow:hidden; }
+  .tg .off { position:absolute; left:44px; right:0; background: repeating-linear-gradient(135deg, #f4f4f5 0 6px, #fafafa 6px 12px); }
+  .tg .hrs { position:absolute; left:0; top:0; bottom:0; width:44px; font-size:10px; color:var(--faint); text-align:right; padding-right:6px; }
+  .tg .hrs div { height:26px; transform:translateY(-6px); }
+  .tg .line { position:absolute; left:44px; right:0; border-top:1px solid #f0f0f0; }
+
+  /* 6. resources */
+  .res .tl { position:absolute; left:24px; right:24px; top:24px; bottom:-1px; background:#fff; border:1px solid var(--line); border-bottom:0; border-radius:12px 12px 0 0; overflow:hidden; }
+  .res .lane { position:absolute; left:0; right:0; height:46px; border-bottom:1px solid #f0f0f0; }
+  .res .lane span { position:absolute; left:0; top:0; bottom:0; width:120px; border-right:1px solid #f0f0f0; font-size:12px; color:var(--muted); padding:15px 12px; }
+  .res .ev { height:30px; top:8px; padding:7px 8px; }
+  .res .hours { position:absolute; left:120px; right:0; top:0; height:24px; display:flex; font-size:10px; color:var(--faint); border-bottom:1px solid #f0f0f0; }
+  .res .hours div { flex:1; padding:6px; border-left:1px solid #f5f5f5; }
+
+  /* 7. places */
+  .pl .field { position:absolute; left:24px; right:24px; top:30px; background:#fff; border:1px solid var(--line); border-radius:12px; overflow:hidden; box-shadow:0 14px 30px -20px rgba(0,0,0,.25); }
+  .pl .in { padding:11px 14px; font-size:13px; border-bottom:1px solid var(--line); display:flex; gap:8px; align-items:center; }
+  .pl .in svg, .pl .s svg { width:15px; height:15px; color:var(--faint); flex:none; }
+  .pl .s { padding:9px 14px; font-size:12.5px; display:flex; gap:8px; align-items:flex-start; }
+  .pl .s small { display:block; color:var(--faint); font-size:11.5px; }
+  .pl .s.on { background:var(--soft); }
+  .pl .osm { position:absolute; right:30px; bottom:12px; font-size:10.5px; color:var(--faint); }
+
+  /* reveal: tiles rise in, one after another, when the grid scrolls into view */
+  .js .reveal { opacity:0; transform:translateY(24px) scale(.985); }
+  .reveal.shown { opacity:1; transform:none; transition: opacity .6s ease, transform .8s cubic-bezier(.16,1,.3,1); transition-delay: calc(var(--i) * 70ms); }
+  .reveal.shown.tile:hover { transform:translateY(-2px); transition-delay:0s; }
+  .also { display:flex; flex-wrap:wrap; gap:10px 28px; justify-content:center; margin-top:36px; font-size:14px; color:var(--muted); }
+  .also span { display:inline-flex; align-items:center; gap:8px; }
+  .also span::before { content:""; width:6px; height:6px; border-radius:50%; background:var(--accent); }
+
+  @media (max-width: 900px) { .bento { grid-template-columns:1fr; } .tile.wide { grid-column:auto; } }
+  @media (prefers-reduced-motion: reduce) { .js .reveal { opacity:1; transform:none; } .tile, .pane, .mv, .rec .strip div.on::after { transition:none; } }
+</style>
+</head>
+<body>
+<section>
+  <span class="eyebrow">Features</span>
+  <h2>Everything a calendar needs.<br><span class="soft">Nothing left to build.</span></h2>
+
+  <div class="bento">
+    <!-- 1 -->
+    <a class="tile wide views" href="#">
+      <div class="viz">
+        <div class="tabs" id="tabs"><span class="on">Month</span><span>Week</span><span>Day</span><span>Agenda</span><span>Resource</span></div>
+        <div class="pane on">
+          <div class="monthg">
+            <div>28</div><div>29</div><div>30<i class="b" style="background:#bfdbfe"></i></div><div>1</div><div>2<i style="background:#a7f3d0"></i></div><div>3</div><div>4</div>
+            <div>5<i style="background:#bfdbfe"></i></div><div>6<i style="background:#ddd6fe;width:300%;position:relative;z-index:1"></i></div><div>7</div><div>8</div><div>9<i style="background:#a7f3d0"></i></div><div>10</div><div>11</div>
+            <div>12<i style="background:#bfdbfe"></i></div><div>13</div><div>14<i style="background:#a7f3d0"></i></div><div>15<i style="background:#bfdbfe"></i></div><div>16</div><div>17<i style="background:#fde68a;width:200%;position:relative"></i></div><div>18</div>
+          </div>
+        </div>
+        <div class="pane"><div class="weekg"></div>
+          <div class="ev b" style="left:calc(100%/7*1 + 3px);top:20px;width:calc(100%/7 - 6px);height:52px">Review</div>
+          <div class="ev g" style="left:calc(100%/7*2 + 3px);top:80px;width:calc(100%/7 - 6px);height:34px">Lunch</div>
+          <div class="ev v" style="left:calc(100%/7*4 + 3px);top:36px;width:calc(100%/7 - 6px);height:70px">Workshop</div>
+          <div class="ev b" style="left:calc(100%/7*5 + 3px);top:10px;width:calc(100%/7 - 6px);height:40px">Planning</div>
+        </div>
+        <div class="pane"><div class="weekg" style="background: repeating-linear-gradient(0deg, transparent 0 29px, #f5f5f5 29px 30px)"></div>
+          <div class="ev b" style="left:12%;top:14px;width:42%;height:44px">Design review<br><span style="opacity:.7">10:00 – 11:30</span></div>
+          <div class="ev g" style="left:56%;top:30px;width:40%;height:34px">Coffee with Alex</div>
+          <div class="ev a" style="left:12%;top:80px;width:84%;height:30px">Focus time</div>
+        </div>
+        <div class="pane"><div class="agenda">
+          <div class="r"><b>Mon 19</b><span class="b">Team standup · 9:00</span></div>
+          <div class="r"><b>Tue 20</b><span class="g">Lunch with Lea · 13:00</span></div>
+          <div class="r"><b>Wed 21</b><span class="v">Workshop · 10:00</span></div>
+        </div></div>
+        <div class="pane"><div class="resg">
+          <div class="row" style="top:0">Room A</div><div class="row" style="top:38px">Room B</div><div class="row" style="top:76px">Studio</div>
+          <div class="ev b" style="left:24%;top:8px;width:30%;height:22px">Interview</div>
+          <div class="ev g" style="left:40%;top:46px;width:40%;height:22px">Training</div>
+          <div class="ev v" style="left:30%;top:84px;width:22%;height:22px">Shoot</div>
+        </div></div>
+      </div>
+      <div class="txt"><div><h3>Five views</h3><p>Month, week, day, agenda and resource.</p></div><span class="go">Docs →</span></div>
+    </a>
+
+    <!-- 2 -->
+    <a class="tile dnd" href="#">
+      <div class="viz"><div class="grid"></div><div class="ev ghost"></div><div class="ev b mv">Sprint review</div></div>
+      <div class="txt"><div><h3>Drag and drop</h3><p>Move and stretch, snapped to your slots.</p></div><span class="go">Docs →</span></div>
+    </a>
+
+    <!-- 3 -->
+    <a class="tile rec" href="#">
+      <div class="viz"><span class="rule">Every Tuesday and Thursday</span>
+        <div class="strip"><div>Mon</div><div class="on">Tue</div><div>Wed</div><div class="on">Thu</div><div>Fri</div><div>Sat</div><div>Sun</div></div></div>
+      <div class="txt"><div><h3>Recurring events</h3><p>Daily to yearly, steady across clock changes.</p></div><span class="go">Docs →</span></div>
+    </a>
+
+    <!-- 4 -->
+    <a class="tile tz" href="#">
+      <div class="viz"><div class="clocks"><div class="c"><small>Paris</small><b id="t1">14:00</b></div><div class="c"><small>New York</small><b id="t2">08:00</b></div></div></div>
+      <div class="txt"><div><h3>Time zones</h3><p>Any IANA zone. All-day events never shift.</p></div><span class="go">Docs →</span></div>
+    </a>
+
+    <!-- 5 -->
+    <a class="tile tg" href="#">
+      <div class="viz"><div class="axis">
+        <div class="hrs"><div></div><div>8</div><div>9</div><div>10</div><div>11</div><div>12</div><div>13</div></div>
+        <div class="off" style="top:0;height:52px"></div>
+        <div class="line" style="top:26px"></div><div class="line" style="top:52px"></div><div class="line" style="top:78px"></div><div class="line" style="top:104px"></div><div class="line" style="top:130px"></div>
+        <div class="ev g" style="left:56px;right:16px;top:60px;height:40px">Working hours, 9 to 18</div>
+      </div></div>
+      <div class="txt"><div><h3>Time grid</h3><p>Your hours, slot length and working hours.</p></div><span class="go">Docs →</span></div>
+    </a>
+
+    <!-- 6 -->
+    <a class="tile wide res" href="#">
+      <div class="viz"><div class="tl">
+        <div class="hours"><div>9:00</div><div>10:00</div><div>11:00</div><div>12:00</div><div>13:00</div><div>14:00</div></div>
+        <div class="lane" style="top:24px"><span>Room A</span><div class="ev b" style="left:calc(120px + 6%);width:22%">Interview</div><div class="ev b" style="left:calc(120px + 52%);width:14%">1:1</div></div>
+        <div class="lane" style="top:70px"><span>Room B</span><div class="ev g" style="left:calc(120px + 20%);width:36%">Training</div></div>
+        <div class="lane" style="top:116px"><span>Lea Martin</span><div class="ev v" style="left:calc(120px + 2%);width:18%">Shoot</div><div class="ev a" style="left:calc(120px + 44%);width:26%">Client visit</div></div>
+      </div></div>
+      <div class="txt"><div><h3>Resources</h3><p>Rooms, people and equipment on one timeline.</p></div><span class="go">Docs →</span></div>
+    </a>
+
+    <!-- 7 -->
+    <a class="tile pl" href="#">
+      <div class="viz"><div class="field">
+        <div class="in"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0113 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></svg>Louvre<span class="caret" style="width:1px;height:14px;background:#111"></span></div>
+        <div class="s on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0113 0c0 5.4-6.5 11-6.5 11z"/></svg><span>Musée du Louvre<small>Rue de Rivoli, Paris</small></span></div>
+        <div class="s"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0113 0c0 5.4-6.5 11-6.5 11z"/></svg><span>Louvre-Rivoli<small>Paris 1er</small></span></div>
+      </div><span class="osm">OpenStreetMap</span></div>
+      <div class="txt"><div><h3>Places</h3><p>Optional location suggestions, no key.</p></div><span class="go">Docs →</span></div>
+    </a>
+  </div>
+
+  <div class="also"><span>English and French</span><span>10,000 events</span><span>Server rendering</span><span>Headless core</span><span>Zero CSS setup</span></div>
+</section>
+
+<script>
+  document.documentElement.classList.add('js');
+  const items = [...document.querySelectorAll('.eyebrow, h2, .tile, .also')];
+  items.forEach((el, i) => { el.classList.add('reveal'); el.style.setProperty('--i', el.classList.contains('tile') ? [...document.querySelectorAll('.tile')].indexOf(el) + 2 : (i < 2 ? i : 9)); });
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('shown'); io.unobserve(e.target); } }), { threshold: .15 });
+  items.forEach(el => io.observe(el));
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // five views: cycle the panes (pauses while hovered)
+  const tabs = [...document.querySelectorAll('#tabs span')], panes = [...document.querySelectorAll('.views .pane')];
+  let v = 0, hold = false;
+  const show = i => { v = i; tabs.forEach((t, k) => t.classList.toggle('on', k === i)); panes.forEach((p, k) => p.classList.toggle('on', k === i)); };
+  tabs.forEach((t, i) => t.addEventListener('mouseenter', () => show(i)));
+  document.querySelector('.views').addEventListener('mouseenter', () => hold = true);
+  document.querySelector('.views').addEventListener('mouseleave', () => hold = false);
+  if (!reduce) setInterval(() => { if (!hold) show((v + 1) % tabs.length); }, 2600);
+  // recurring: light the occurrences when scrolled into view
+  new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('lit')), { threshold: .5 }).observe(document.querySelector('.rec'));
+  // time zones: both clocks tick from the same instant
+  const fmt = tz => new Intl.DateTimeFormat('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: tz }).format(new Date());
+  const tick = () => { t1.textContent = fmt('Europe/Paris'); t2.textContent = fmt('America/New_York'); };
+  tick(); setInterval(tick, 10000);
+</script>
+</body>
+</html>

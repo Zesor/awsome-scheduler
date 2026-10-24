@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Upgrade, closing, footer</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+  :root { --bg:#fafafa; --surface:#fff; --ink:#0a0a0a; --muted:#5f5f5f; --faint:#8a8a8a; --line:#e7e7e7; --soft:#f4f4f5; --grid:#ececec; --accent:#059669; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:'Instrument Sans', system-ui, -apple-system, sans-serif; -webkit-font-smoothing:antialiased; }
+  .mono, code { font-family: ui-monospace, 'SF Mono', Menlo, monospace; }
+  a { color:inherit; text-decoration:none; }
+  .wrap { max-width:1200px; margin:0 auto; padding:0 24px; }
+  .eyebrow { display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:500; color:var(--accent); }
+  .eyebrow::before { content:""; width:18px; height:2px; background:var(--accent); border-radius:2px; }
+
+  /* 9. upgrade */
+  .upgrade { padding:40px 0 120px; }
+  .up { display:grid; grid-template-columns: 1.1fr 1fr; background:var(--surface); border:1px solid var(--line); border-radius:18px; overflow:hidden; transition: box-shadow .25s; }
+  .up:hover { box-shadow:0 24px 48px -28px rgba(0,0,0,.25); }
+  .up .l { padding:36px 36px 32px; display:flex; flex-direction:column; }
+  .up h2 { font-size:clamp(28px, 3.4vw, 38px); line-height:1.08; letter-spacing:-0.03em; font-weight:600; margin:12px 0 10px; }
+  .up p { margin:0 0 24px; font-size:15px; color:var(--muted); }
+  .up .more { margin-top:auto; font-size:14px; font-weight:500; display:inline-flex; gap:6px; align-items:center; }
+  .up .more svg { width:15px; height:15px; transition: transform .25s cubic-bezier(.16,1,.3,1); }
+  .up:hover .more svg { transform:translateX(3px); }
+  .up .r { background:var(--soft); border-left:1px solid var(--line); padding:28px; display:flex; flex-direction:column; gap:14px; justify-content:center; }
+  .diff { background:#0b0b0c; color:#e5e5e5; border-radius:12px; padding:14px 16px; font-size:13px; line-height:1.8; }
+  .diff .m { color:#fca5a5; } .diff .p { color:#86efac; }
+  .todo { list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px; }
+  .todo li { display:flex; gap:10px; align-items:flex-start; font-size:14px; background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:10px 12px; }
+  .todo li svg { width:16px; height:16px; flex:none; margin-top:2px; color:var(--accent); }
+  .todo code { font-size:12.5px; background:var(--soft); padding:1px 5px; border-radius:5px; }
+
+  /* 10. closing call */
+  .final { position:relative; overflow:hidden; border-top:1px solid var(--line); padding:130px 0 140px; text-align:center; }
+  .final .grid-bg { position:absolute; inset:0; z-index:0;
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 100% 56px, calc(100% / 7) 100%;
+    -webkit-mask-image: radial-gradient(ellipse 55% 70% at 50% 50%, #000 20%, transparent 75%); mask-image: radial-gradient(ellipse 55% 70% at 50% 50%, #000 20%, transparent 75%); }
+  .final .in { position:relative; z-index:1; }
+  .final h2 { font-size:clamp(36px, 6vw, 64px); line-height:1.02; letter-spacing:-0.045em; font-weight:600; margin:0 0 16px; }
+  .final h2 .soft { color:var(--faint); }
+  .final p { font-size:17px; color:var(--muted); margin:0 0 30px; }
+  .ctas { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
+  .btn { height:48px; display:inline-flex; align-items:center; gap:10px; padding:0 20px; border-radius:12px; font-size:15px; font-weight:500; position:relative; overflow:hidden; transition: transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s, border-color .2s; }
+  .btn-1 { background:var(--ink); color:var(--bg); box-shadow: 0 1px 0 rgba(255,255,255,.12) inset, 0 8px 20px -10px rgba(0,0,0,.5); }
+  .btn-1:hover { transform:translateY(-1px); }
+  .btn-1 svg { width:16px; height:16px; transition: transform .25s cubic-bezier(.16,1,.3,1); }
+  .btn-1:hover svg { transform:translateX(3px); }
+  .btn-1::after { content:""; position:absolute; top:0; bottom:0; left:-60%; width:40%; transform:skewX(-20deg); background:linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent); }
+  .btn-1:hover::after { animation: sheen .9s cubic-bezier(.65,0,.35,1); }
+  @keyframes sheen { from { left:-60%; } to { left:130%; } }
+  .btn-2 { border:1px solid var(--line); background:var(--surface); color:var(--ink); font-size:14px; cursor:pointer; }
+  .btn-2:hover { transform:translateY(-1px); border-color:var(--faint); }
+  .btn-2 .pr { color:var(--faint); }
+
+  /* footer */
+  footer { border-top:1px solid var(--line); padding:56px 0 36px; }
+  .cols { display:grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap:32px; }
+  .brand .logo { display:flex; align-items:center; gap:9px; font-weight:600; font-size:15px; margin-bottom:10px; }
+  .brand .logo svg { width:22px; height:22px; }
+  .brand p { margin:0; font-size:14px; color:var(--muted); max-width:260px; }
+  .col h4 { margin:0 0 12px; font-size:13px; font-weight:500; color:var(--faint); }
+  .col a { display:block; font-size:14px; color:var(--muted); padding:4px 0; transition: color .2s; }
+  .col a:hover { color:var(--ink); }
+  .bottom { display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-top:48px; padding-top:20px; border-top:1px solid var(--line); font-size:13px; color:var(--faint); }
+
+  .js .reveal { opacity:0; transform:translateY(24px) scale(.985); }
+  .reveal.shown { opacity:1; transform:none; transition: opacity .6s ease, transform .8s cubic-bezier(.16,1,.3,1); transition-delay: calc(var(--i) * 70ms); }
+  @media (max-width: 900px) { .up { grid-template-columns:1fr; } .up .r { border-left:0; border-top:1px solid var(--line); } .cols { grid-template-columns:1fr 1fr; } }
+  @media (prefers-reduced-motion: reduce) { .js .reveal { opacity:1; transform:none; } .btn, .btn-1::after { transition:none; animation:none; } }
+</style>
+</head>
+<body>
+
+<section class="upgrade"><div class="wrap">
+  <a class="up" href="#">
+    <div class="l">
+      <span class="eyebrow">Upgrading from 1.x</span>
+      <h2>Your 1.4 code still runs.</h2>
+      <p>Every 1.4 example is part of the 2.0 test suite.</p>
+      <span class="more">Read the migration guide<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+    </div>
+    <div class="r">
+      <div class="diff mono"><span class="m">- "calendarkit-pro": "^1.4.1"</span><br><span class="p">+ "calendarkit-pro": "^2.0.0"</span></div>
+      <ul class="todo">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12l4.5 4.5L19 7"/></svg><span>No Tailwind setup anymore</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12l4.5 4.5L19 7"/></svg><span><code>theme="vivid"</code> for the 1.x look</span></li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12l4.5 4.5L19 7"/></svg><span><code>cn</code> is no longer exported</span></li>
+      </ul>
+    </div>
+  </a>
+</div></section>
+
+<section class="final">
+  <div class="grid-bg"></div>
+  <div class="in wrap">
+    <h2>Your calendar,<br><span class="soft">shipped today.</span></h2>
+    <p>Free and MIT licensed.</p>
+    <div class="ctas">
+      <a class="btn btn-1" href="#">Get started, it's free<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <button class="btn btn-2 mono"><span class="pr">$</span>npm i calendarkit-pro</button>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap">
+  <div class="cols">
+    <div class="brand">
+      <div class="logo"><svg viewBox="0 0 24 24" fill="none"><rect x="2.5" y="4" width="19" height="17.5" rx="4" stroke="currentColor" stroke-width="1.8"/><path d="M2.5 9.5h19M8 2.5v3M16 2.5v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="6.5" y="12.5" width="6" height="4.5" rx="1.2" fill="currentColor"/></svg>CalendarKit</div>
+      <p>The best React calendar, with everything built in.</p>
+    </div>
+    <div class="col"><h4>Product</h4><a href="#">Docs</a><a href="#">API reference</a><a href="#">Changelog</a><a href="#">Migration</a></div>
+    <div class="col"><h4>Open source</h4><a href="#">GitHub</a><a href="#">npm</a><a href="#">Issues</a><a href="#">License</a></div>
+    <div class="col"><h4>Contact</h4><a href="#">support@calendarkit.io</a></div>
+  </div>
+  <div class="bottom"><span>© 2026 CalendarKit. MIT licensed.</span><span>Made by Illyas Chihi</span></div>
+</div></footer>
+
+<script>
+  document.documentElement.classList.add('js');
+  const items = [...document.querySelectorAll('.up, .final .in > *, footer .cols > *')];
+  items.forEach((el, i) => { el.classList.add('reveal'); el.style.setProperty('--i', i % 4); });
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('shown'); io.unobserve(e.target); } }), { threshold: .15 });
+  items.forEach(el => io.observe(el));
+</script>
+</body>
+</html>

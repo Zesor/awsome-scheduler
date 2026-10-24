@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phones and accessibility</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+  :root { --bg:#fafafa; --surface:#fff; --ink:#0a0a0a; --muted:#5f5f5f; --faint:#8a8a8a; --line:#e7e7e7; --soft:#f4f4f5; --accent:#059669; --focus:#2563eb; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:'Instrument Sans', system-ui, -apple-system, sans-serif; -webkit-font-smoothing:antialiased; }
+  section { max-width:1200px; margin:0 auto; padding:120px 24px; }
+  .eyebrow { display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:500; color:var(--accent); }
+  .eyebrow::before { content:""; width:18px; height:2px; background:var(--accent); border-radius:2px; }
+  h2 { font-size:clamp(32px, 4.6vw, 52px); line-height:1.05; letter-spacing:-0.035em; font-weight:600; margin:14px 0 48px; }
+  h2 .soft { color:var(--faint); }
+
+  .bento { display:grid; grid-template-columns: 1fr 1fr; gap:14px; }
+  .tile { position:relative; display:flex; flex-direction:column; background:var(--surface); border:1px solid var(--line); border-radius:18px; overflow:hidden; text-decoration:none; color:inherit;
+          transition: transform .25s cubic-bezier(.16,1,.3,1), box-shadow .25s, border-color .25s; }
+  .tile:hover { transform:translateY(-2px); border-color:#d4d4d4; box-shadow:0 24px 48px -28px rgba(0,0,0,.25); }
+  .viz { position:relative; height:420px; background:var(--soft); border-bottom:1px solid var(--line); overflow:hidden; }
+  .txt { padding:18px 20px 20px; }
+  .txt .top { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; }
+  .txt h3 { margin:0 0 3px; font-size:17px; letter-spacing:-0.01em; font-weight:600; }
+  .txt p { margin:0; font-size:14px; color:var(--muted); }
+  .txt .go { font-size:13px; color:var(--faint); opacity:0; transform:translateX(-4px); transition: opacity .2s, transform .25s; white-space:nowrap; }
+  .tile:hover .go { opacity:1; transform:none; color:var(--ink); }
+  .chips { display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; }
+  .chips span { font-size:12.5px; color:var(--muted); background:var(--soft); border:1px solid var(--line); border-radius:999px; padding:4px 10px; }
+
+  /* phones */
+  .phone { position:absolute; width:210px; aspect-ratio: 712 / 1596; border-radius:30px; background:#0a0a0a; padding:7px; box-shadow:0 30px 60px -28px rgba(0,0,0,.45);
+           transition: transform .8s cubic-bezier(.16,1,.3,1); }
+  .phone img { display:block; width:100%; height:100%; object-fit:cover; object-position:top; border-radius:24px; }
+  .p1 { left:calc(50% - 205px); top:40px; transform:rotate(-4deg); }
+  .p2 { left:calc(50% - 5px); top:70px; transform:rotate(4deg); }
+  .tile:hover .p1 { transform:rotate(-6deg) translate(-10px, -6px); }
+  .tile:hover .p2 { transform:rotate(6deg) translate(10px, -6px); }
+
+  /* accessibility: a focus ring walks from a slot to the event, the announced name appears */
+  .grid { position:absolute; left:100px; right:40px; top:40px; height:250px; background:#fff; border:1px solid var(--line); border-radius:12px;
+          background-image: repeating-linear-gradient(0deg, transparent 0 49px, #f0f0f0 49px 50px); }
+  .hrs { position:absolute; left:36px; top:40px; width:56px; font-size:11px; color:var(--faint); text-align:right; }
+  .hrs div { height:50px; padding:4px 8px 0 0; }
+  .slot, .event { position:absolute; left:110px; right:56px; border-radius:8px; }
+  .slot { top:40px; height:50px; }
+  .event { top:140px; height:88px; background:#e0e7ff; color:#1e3a8a; padding:10px 12px; font-size:13.5px; font-weight:500; }
+  .event small { display:block; font-weight:400; opacity:.85; margin-top:2px; }
+  .ring { position:absolute; left:106px; right:52px; top:36px; height:58px; border:2.5px solid var(--focus); border-radius:11px; box-shadow:0 0 0 4px rgba(37,99,235,.15);
+          transition: top .6s cubic-bezier(.65,0,.35,1), height .6s cubic-bezier(.65,0,.35,1); }
+  .ring.on-event { top:136px; height:96px; }
+  .sr { position:absolute; left:40px; right:40px; bottom:26px; display:flex; gap:10px; align-items:flex-start; background:#0a0a0a; color:#f5f5f5; border-radius:12px; padding:12px 14px; font-size:13px; line-height:1.45; min-height:62px; }
+  .sr svg { width:18px; height:18px; flex:none; margin-top:1px; color:#a3a3a3; }
+  .keys { position:absolute; right:40px; top:12px; display:flex; gap:5px; }
+  .keys kbd { font-family:inherit; font-size:11.5px; color:var(--muted); background:#fff; border:1px solid var(--line); border-bottom-width:2px; border-radius:6px; padding:2px 7px; transition: background .15s, color .15s; }
+  .keys kbd.down { background:var(--ink); color:#fff; }
+
+  .js .reveal { opacity:0; transform:translateY(24px) scale(.985); }
+  .reveal.shown { opacity:1; transform:none; transition: opacity .6s ease, transform .8s cubic-bezier(.16,1,.3,1); transition-delay: calc(var(--i) * 70ms); }
+  .reveal.shown.tile:hover { transform:translateY(-2px); transition-delay:0s; }
+  @media (max-width: 900px) { .bento { grid-template-columns:1fr; } }
+  @media (prefers-reduced-motion: reduce) { .js .reveal { opacity:1; transform:none; } .tile, .phone, .ring { transition:none; } }
+</style>
+</head>
+<body>
+<section>
+  <span class="eyebrow">Phones and accessibility</span>
+  <h2>Works on every screen.<br><span class="soft">And for everyone.</span></h2>
+
+  <div class="bento">
+    <a class="tile" href="#">
+      <div class="viz">
+        <div class="phone p1"><img src="/files/phone.png" alt="Phone layout, day view"></div>
+        <div class="phone p2"><img src="/files/phone-sheet.png" alt="Phone layout, event card as a bottom sheet"></div>
+      </div>
+      <div class="txt">
+        <div class="top"><div><h3>Ready for phones</h3><p>Under 768 px of calendar width, it becomes a phone app.</p></div><span class="go">Docs →</span></div>
+        <div class="chips"><span>Day view first</span><span>Drawer</span><span>Bottom sheets</span><span>44 px targets</span></div>
+      </div>
+    </a>
+
+    <a class="tile" href="#">
+      <div class="viz">
+        <div class="hrs"><div>9 AM</div><div>10 AM</div><div>11 AM</div><div>12 PM</div><div>1 PM</div></div>
+        <div class="grid"></div>
+        <div class="slot"></div>
+        <div class="event">Design review<small>10:00 AM – 11:45 AM · Room B</small></div>
+        <div class="ring" id="ring"></div>
+        <div class="keys"><kbd id="kTab">Tab</kbd><kbd id="kEnter">Enter</kbd></div>
+        <div class="sr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.5 8.5a5 5 0 010 7M19 5a10 10 0 010 14"/></svg><span id="said"></span></div>
+      </div>
+      <div class="txt">
+        <div class="top"><div><h3>Accessible</h3><p>Every event and slot is a named button.</p></div><span class="go">Docs →</span></div>
+        <div class="chips"><span>Tab, Enter, Space, Escape</span><span>Focus returned</span><span>WCAG AA colours</span><span>No shortcuts to learn</span></div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<script>
+  document.documentElement.classList.add('js');
+  const items = [...document.querySelectorAll('.eyebrow, h2, .tile')];
+  items.forEach((el, i) => { el.classList.add('reveal'); el.style.setProperty('--i', i); });
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('shown'); io.unobserve(e.target); } }), { threshold: .15 });
+  items.forEach(el => io.observe(el));
+
+  // the announced names come from the 2.0 guide
+  const said = document.getElementById('said'), ring = document.getElementById('ring');
+  const lines = ['Create an event on Thursday 15 October at 9:00 AM', 'Design review, Thursday 15 October, 10:00 AM to 11:45 AM, Work calendar, Room B'];
+  const press = id => { const k = document.getElementById(id); k.classList.add('down'); setTimeout(() => k.classList.remove('down'), 220); };
+  let step = 0;
+  function loop() {
+    if (step === 0) { ring.classList.remove('on-event'); press('kTab'); said.textContent = lines[0]; }
+    else { ring.classList.add('on-event'); press('kTab'); said.textContent = lines[1]; }
+    step = 1 - step;
+  }
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) { ring.classList.add('on-event'); said.textContent = lines[1]; }
+  else { loop(); setInterval(loop, 2800); }
+</script>
+</body>
+</html>

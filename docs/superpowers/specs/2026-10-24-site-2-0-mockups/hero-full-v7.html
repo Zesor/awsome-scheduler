@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CalendarKit hero</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --bg:#fafafa; --surface:#fff; --ink:#0a0a0a; --muted:#5f5f5f; --faint:#8a8a8a;
+    --line:#e7e7e7; --grid:#ececec; --chip:#efefef; --accent:#047857;
+    --shadow: 0 40px 80px -40px rgba(0,0,0,.28);
+  }
+  html[data-mode="dark"] {
+    --bg:#0b0b0b; --surface:#141414; --ink:#f5f5f5; --muted:#a3a3a3; --faint:#737373;
+    --line:#262626; --grid:#1c1c1c; --chip:#1f1f1f; --accent:#34d399;
+    --shadow: 0 40px 80px -40px rgba(0,0,0,.8);
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:'Instrument Sans', system-ui, -apple-system, sans-serif; -webkit-font-smoothing:antialiased; transition: background .25s, color .25s; }
+  a { color:inherit; text-decoration:none; }
+  .mono { font-family: ui-monospace, 'SF Mono', Menlo, monospace; }
+
+  /* header */
+  header { position:sticky; top:0; z-index:10; background:var(--bg); border-bottom:1px solid var(--line); }
+  .hd { max-width:1200px; margin:0 auto; height:60px; padding:0 24px; display:flex; align-items:center; justify-content:space-between; }
+  .logo { display:flex; align-items:center; gap:9px; font-weight:600; font-size:15px; letter-spacing:-.01em; }
+  .logo svg { width:22px; height:22px; }
+  nav { display:flex; align-items:center; gap:22px; font-size:14px; color:var(--muted); }
+  nav a:hover { color:var(--ink); }
+  .ver { font-size:11.5px; padding:3px 7px; border:1px solid var(--line); border-radius:6px; color:var(--muted); background:var(--surface); }
+  .icon-btn { width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--muted); cursor:pointer; }
+  .icon-btn svg { width:16px; height:16px; }
+  .gh { display:inline-flex; align-items:center; gap:7px; font-size:13px; padding:6px 10px; border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--ink); }
+  .gh svg { width:15px; height:15px; }
+
+  /* hero */
+  .hero { position:relative; overflow:hidden; }
+  .grid-bg { position:absolute; inset:0 0 auto 0; height:620px; z-index:0;
+    background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 100% 56px, calc(100% / 7) 100%;
+    -webkit-mask-image: radial-gradient(ellipse 60% 70% at 50% 30%, #000 25%, transparent 75%);
+            mask-image: radial-gradient(ellipse 60% 70% at 50% 30%, #000 25%, transparent 75%);
+    opacity:0; animation: fade 1.4s .1s ease forwards; }
+  .wrap { position:relative; z-index:1; max-width:1200px; margin:0 auto; padding:84px 24px 0; text-align:center; }
+  .badge { display:inline-flex; align-items:center; gap:8px; font-size:13px; padding:5px 12px 5px 6px; border-radius:999px; border:1px solid var(--line); background:var(--surface); color:var(--muted); }
+  .badge .tag { font-size:11.5px; font-weight:600; padding:2px 8px; border-radius:999px; background:var(--ink); color:var(--bg); }
+  .badge svg { width:12px; height:12px; }
+  h1 { font-size:clamp(40px, 7vw, 76px); line-height:1; letter-spacing:-0.045em; font-weight:600; margin:22px auto 20px; max-width:900px; }
+  h1 .soft { color:var(--faint); }
+  /* rotating highlighted phrase */
+  .swap { display:inline-block; position:relative; height:1.22em; margin-bottom:-.1em; vertical-align:top; overflow:hidden; transition: width .55s cubic-bezier(.16,1,.3,1); text-align:left; }
+  .phrase { position:absolute; left:0; top:0; white-space:nowrap; color:var(--muted);
+    background-image: linear-gradient(var(--hl), var(--hl));
+    background-repeat:no-repeat; background-position:0 96%; background-size:0% .065em; padding:0 .02em;
+    transition: transform .55s cubic-bezier(.16,1,.3,1), opacity .4s ease, background-size .6s cubic-bezier(.65,0,.35,1) .25s; }
+  .phrase.enter { transform:translateY(100%); opacity:0; }
+  .phrase.on { transform:none; opacity:1; background-size:100% .065em; }
+  .phrase.leave { transform:translateY(-100%); opacity:0; background-size:100% .065em; transition-delay:0s; }
+  .soft2 { color:var(--muted); }
+  .measure { position:absolute; visibility:hidden; white-space:nowrap; padding:0 .02em; }
+  :root { --hl:#059669; }
+  html[data-mode="dark"] { --hl:#34d399; }
+  @media (prefers-reduced-motion: reduce) { .swap, .phrase { transition:none; } }
+  .lead { font-size:clamp(16px, 2vw, 19px); line-height:1.55; color:var(--muted); max-width:640px; margin:0 auto 30px; }
+  .ctas { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
+  .btn { height:48px; display:inline-flex; align-items:center; gap:10px; padding:0 20px; border-radius:12px; font-size:15px; font-weight:500; position:relative; overflow:hidden;
+    transition: transform .2s cubic-bezier(.16,1,.3,1), box-shadow .2s, border-color .2s, background-color .2s; }
+  .btn:active { transform: translateY(0) scale(.98); }
+  .btn-1 { background:var(--ink); color:var(--bg); box-shadow: 0 1px 0 rgba(255,255,255,.12) inset, 0 8px 20px -10px rgba(0,0,0,.5); }
+  .btn-1:hover { transform: translateY(-1px); box-shadow: 0 1px 0 rgba(255,255,255,.12) inset, 0 14px 28px -12px rgba(0,0,0,.55); }
+  .btn-1 svg { width:16px; height:16px; transition: transform .25s cubic-bezier(.16,1,.3,1); }
+  .btn-1:hover svg { transform: translateX(3px); }
+  /* sheen: a light band crosses the button once after load, and again on hover */
+  .btn-1::after { content:""; position:absolute; top:0; bottom:0; left:-60%; width:40%; transform:skewX(-20deg);
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,.28), transparent); animation: sheen 1.1s 1.6s cubic-bezier(.65,0,.35,1) both; }
+  .btn-1:hover::after { animation: sheen .9s cubic-bezier(.65,0,.35,1); }
+  html[data-mode="dark"] .btn-1::after { background: linear-gradient(90deg, transparent, rgba(0,0,0,.14), transparent); }
+  @keyframes sheen { from { left:-60%; } to { left:130%; } }
+  .btn-2 { border:1px solid var(--line); background:var(--surface); color:var(--ink); cursor:pointer; font-size:14px; }
+  .btn-2:hover { transform: translateY(-1px); border-color: var(--faint); }
+  .btn-2 .prompt { color:var(--faint); }
+  .btn-2 .copy { color:var(--faint); display:inline-flex; align-items:center; gap:5px; font-family:'Instrument Sans', system-ui; font-size:12.5px; transition: color .2s; }
+  .btn-2:hover .copy { color:var(--ink); }
+  .btn-2 .copy svg { width:15px; height:15px; }
+  .btn-2.done .copy { color:var(--accent); }
+  .proof { margin-top:26px; display:flex; justify-content:center; gap:10px; flex-wrap:wrap; }
+  .chip { display:inline-flex; align-items:center; gap:9px; height:38px; padding:0 14px 0 9px; border:1px solid var(--line); border-radius:10px; background:var(--surface); font-size:13.5px; color:var(--muted); transition: transform .2s cubic-bezier(.16,1,.3,1), border-color .2s; }
+  .chip:hover { transform: translateY(-1px); border-color: var(--faint); }
+  .chip b { color:var(--ink); font-weight:600; }
+  .chip svg { width:22px; height:22px; flex:none; border-radius:5px; }
+  @media (prefers-reduced-motion: reduce) { .btn, .chip, .btn-1 svg { transition:none; } .btn-1::after { display:none; } }
+  /* try it */
+  .try { margin:72px auto 0; max-width:1200px; }
+  .bar { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px; padding:0 2px; }
+  .hint { font-size:13.5px; color:var(--muted); display:flex; align-items:center; gap:8px; text-align:left; }
+  .hint .dot { width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent); }
+  .hint .typed { color:var(--ink); }
+  .caret { display:inline-block; width:1px; height:15px; background:var(--ink); vertical-align:-2px; margin-left:1px; animation: blink 1s steps(1) infinite; }
+  .segs { display:flex; gap:8px; flex-wrap:wrap; }
+  .seg { display:inline-flex; background:var(--chip); border-radius:9px; padding:3px; font-size:12.5px; }
+  .seg button { all:unset; cursor:pointer; padding:5px 11px; border-radius:7px; color:var(--muted); }
+  .seg button[aria-pressed="true"] { background:var(--surface); color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.08); }
+  .frame { border:1px solid var(--line); border-radius:16px; overflow:hidden; background:var(--surface); box-shadow:var(--shadow); height:680px; }
+  .frame img { display:block; width:100%; height:100%; object-fit:cover; object-position:top left; }
+  .cap { font-size:12px; color:var(--faint); margin:14px 0 80px; }
+
+  /* motion */
+  .w { display:inline-block; opacity:0; transform:translateY(18px); animation: rise .7s cubic-bezier(.16,1,.3,1) forwards; }
+  .in { opacity:0; transform:translateY(10px); animation: rise .7s cubic-bezier(.16,1,.3,1) forwards; }
+  @keyframes rise { to { opacity:1; transform:none; } }
+  @keyframes fade { to { opacity:1; } }
+  @keyframes blink { 50% { opacity:0; } }
+  @media (prefers-reduced-motion: reduce) { .w, .in, .grid-bg { animation:none; opacity:1; transform:none; } .caret { animation:none; } }
+
+  @media (max-width: 720px) {
+    nav .hide-sm { display:none; }
+    .wrap { padding-top:56px; }
+    .bar { flex-direction:column; align-items:stretch; }
+    .frame { height:560px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="hd">
+    <a class="logo" href="#"><svg viewBox="0 0 24 24" fill="none"><rect x="2.5" y="4" width="19" height="17.5" rx="4" stroke="currentColor" stroke-width="1.8"/><path d="M2.5 9.5h19M8 2.5v3M16 2.5v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="6.5" y="12.5" width="6" height="4.5" rx="1.2" fill="currentColor"/></svg>CalendarKit</a>
+    <nav>
+      <a href="#" class="hide-sm">Docs</a>
+      <a href="#" class="hide-sm">API</a>
+      <a href="#" class="hide-sm">Changelog</a>
+      <span class="ver mono hide-sm">v2.0.0</span>
+      <a class="gh" href="#"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+      <button class="icon-btn" id="mode" aria-label="Switch to dark mode"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></button>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="grid-bg"></div>
+  <div class="wrap">
+    <a class="badge in" href="#" style="animation-delay:0ms"><span class="tag">2.0</span>Redesigned, accessible, ready for phones<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg></a>
+    <h1 id="h1" data-a="The best React calendar," data-b="your calendar."></h1>
+    <p class="lead in" style="animation-delay:520ms">CalendarKit Pro is the complete React calendar. Five views, events created from a sentence, drag and drop, recurring events, time zones and a real phone layout. Free and MIT licensed.</p>
+    <div class="ctas in" style="animation-delay:640ms">
+      <a class="btn btn-1" href="#">Get started, it's free<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <button class="btn btn-2 mono" id="copy"><span class="prompt">$</span>npm i calendarkit-pro<span class="copy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 012-2h9"/></svg></span></button>
+    </div>
+    <div class="proof in" style="animation-delay:760ms"><a class="chip" href="#"><svg viewBox="0 0 22 22" aria-hidden="true"><rect width="22" height="22" rx="5" fill="#CB3837"/><path d="M5 7h12v8h-6V8.6H9.3V15H5z" fill="#fff"/><path d="M11 8.6h1.7V13H11z" fill="#CB3837"/></svg><span><b>50,000+</b> installs</span></a><a class="chip" href="#"><svg viewBox="0 0 22 22" aria-hidden="true"><rect width="22" height="22" rx="5" fill="#A31F34"/><text x="11" y="14.6" text-anchor="middle" font-family="system-ui, sans-serif" font-size="8.6" font-weight="700" fill="#fff" letter-spacing=".2">MIT</text></svg><span><b>MIT</b> licensed</span></a><a class="chip" href="#"><svg viewBox="0 0 22 22" aria-hidden="true"><rect width="22" height="22" rx="5" fill="#3178C6"/><text x="19.2" y="18.6" text-anchor="end" font-family="system-ui, sans-serif" font-size="9.5" font-weight="700" fill="#fff">TS</text></svg><span><b>TypeScript</b> types included</span></a></div>
+
+    <div class="try in" style="animation-delay:900ms">
+      <div class="bar">
+        <div class="hint"><span class="dot"></span><span>Try it: click a free slot and type <span class="typed" id="typed"></span><span class="caret"></span></span></div>
+        <div class="segs">
+          <div class="seg" data-k="theme"><button aria-pressed="true">Calm</button><button aria-pressed="false">Vivid</button><button aria-pressed="false">Editorial</button></div>
+          <div class="seg" data-k="layout"><button aria-pressed="true" data-img="week.png">Classic</button><button aria-pressed="false" data-img="focus.png">Focus</button><button aria-pressed="false" data-img="flow.png">Flow</button></div>
+        </div>
+      </div>
+      <div class="frame"><img id="cal" src="/files/week.png" alt="CalendarKit Pro week view"></div>
+      <p class="cap">On the site this frame holds the live <span class="mono">&lt;Scheduler&gt;</span>; the page's light / dark toggle drives its <span class="mono">mode</span>.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  // headline: words rise, second line softer
+  const h1 = document.getElementById('h1');
+  let i = 0;
+  const line = (t, cls) => t.split(' ').map(w => `<span class="w ${cls}" style="animation-delay:${120 + (i++) * 55}ms">${w}</span>`).join(' ');
+  h1.innerHTML = line(h1.dataset.a, '') + '<br><span class="w soft2" style="animation-delay:' + (120 + i * 55) + 'ms">with</span> <span class="w" style="animation-delay:' + (120 + (i + 1) * 55) + 'ms"><span class="swap" id="swap"></span></span><span class="measure" id="measure"></span>';
+
+  // second line: highlighted phrase that cycles through what you stop paying for
+  const phrases = ['everything built in.', 'drag and drop.', 'recurring events.', 'time zones.', 'resource views.', 'three themes.', 'a phone layout.', 'undo everywhere.'];
+  const swap = document.getElementById('swap'), measure = document.getElementById('measure');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let k = 0, current;
+  function show(text) {
+    measure.textContent = text;
+    measure.style.font = getComputedStyle(h1).font; measure.style.letterSpacing = getComputedStyle(h1).letterSpacing;
+    swap.style.width = measure.offsetWidth + 'px';
+    const el = document.createElement('span'); el.className = 'phrase enter'; el.textContent = text; swap.appendChild(el);
+    el.offsetHeight; el.classList.replace('enter', 'on');
+    if (current) { const old = current; old.classList.replace('on', 'leave'); setTimeout(() => old.remove(), 600); }
+    current = el;
+  }
+  show(phrases[0]);
+  if (!reduce) (function next() {
+    setTimeout(() => { k = (k + 1) % phrases.length; show(phrases[k]); next(); }, k === 0 ? 3600 : 1900);
+  })();
+
+  // hint types a sentence once, after the hero has settled
+  const text = '"Lunch with Lea tomorrow 1pm for 2h"', out = document.getElementById('typed');
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) out.textContent = text;
+  else setTimeout(() => { let n = 0; const t = setInterval(() => { out.textContent = text.slice(0, ++n); if (n >= text.length) clearInterval(t); }, 45); }, 1500);
+
+  // segmented controls (mockup: layout swaps the screenshot)
+  document.querySelectorAll('.seg').forEach(seg => seg.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    seg.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', x === b));
+    if (b.dataset.img) document.getElementById('cal').src = '/files/' + b.dataset.img;
+  }));
+
+  // light / dark
+  document.getElementById('mode').addEventListener('click', () => {
+    const dark = (document.documentElement.dataset.mode = document.documentElement.dataset.mode === "dark" ? "" : "dark") === "dark";
+    const layout = document.querySelector('[data-k="layout"] [aria-pressed="true"]').dataset.img;
+    document.getElementById('cal').src = '/files/' + (dark ? 'month-dark.png' : layout);
+  });
+
+  document.getElementById('copy').addEventListener('click', e => { const s = e.currentTarget.querySelector('.copy'); const b = e.currentTarget, html = s.innerHTML; b.classList.add('done'); s.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12l4.5 4.5L19 7"/></svg>Copied'; setTimeout(() => { s.innerHTML = html; b.classList.remove('done'); }, 1400); });
+</script>
+</body>
+</html>

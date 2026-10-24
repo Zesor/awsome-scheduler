@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Docs page</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+  :root { --bg:#fafafa; --surface:#fff; --ink:#0a0a0a; --muted:#5f5f5f; --faint:#8a8a8a; --line:#e7e7e7; --soft:#f4f4f5; --accent:#059669; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family:'Instrument Sans', system-ui, -apple-system, sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:inherit; text-decoration:none; }
+  .mono, code, pre { font-family: ui-monospace, 'SF Mono', Menlo, monospace; }
+
+  header { position:sticky; top:0; z-index:10; background:var(--bg); border-bottom:1px solid var(--line); }
+  .hd { max-width:1440px; margin:0 auto; height:60px; padding:0 24px; display:flex; align-items:center; justify-content:space-between; }
+  .logo { display:flex; align-items:center; gap:9px; font-weight:600; font-size:15px; }
+  .logo svg { width:22px; height:22px; }
+  .logo .sep { color:var(--line); font-weight:400; margin:0 2px; }
+  .logo .sec { color:var(--muted); font-weight:500; }
+  nav { display:flex; align-items:center; gap:22px; font-size:14px; color:var(--muted); }
+  nav a.on { color:var(--ink); }
+  .ver { font-size:11.5px; padding:3px 7px; border:1px solid var(--line); border-radius:6px; color:var(--muted); background:var(--surface); }
+  .icon-btn { width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--line); border-radius:8px; background:var(--surface); color:var(--muted); }
+  .icon-btn svg { width:16px; height:16px; }
+
+  .layout { max-width:1440px; margin:0 auto; display:grid; grid-template-columns: 260px minmax(0, 1fr) 220px; gap:48px; padding:0 24px; }
+
+  /* sidebar */
+  aside.nav { position:sticky; top:60px; height:calc(100vh - 60px); overflow:auto; padding:24px 0 40px; }
+  .search { display:flex; align-items:center; gap:8px; height:36px; padding:0 10px; border:1px solid var(--line); border-radius:9px; background:var(--surface); color:var(--faint); font-size:13.5px; margin-bottom:22px; }
+  .search svg { width:15px; height:15px; }
+  .grp { margin-bottom:20px; }
+  .grp h4 { margin:0 0 6px; font-size:12px; font-weight:600; color:var(--ink); padding-left:10px; }
+  .grp a { display:block; font-size:14px; color:var(--muted); padding:5px 10px; border-radius:7px; transition: background .15s, color .15s; }
+  .grp a:hover { color:var(--ink); background:var(--soft); }
+  .grp a.on { color:var(--ink); background:var(--surface); box-shadow: inset 2px 0 0 var(--accent), 0 0 0 1px var(--line); font-weight:500; }
+
+  /* content */
+  main { padding:40px 0 100px; max-width:760px; }
+  .crumb { font-size:13px; color:var(--faint); margin-bottom:10px; }
+  .crumb b { color:var(--accent); font-weight:500; }
+  h1 { font-size:40px; letter-spacing:-0.035em; line-height:1.05; font-weight:600; margin:0 0 12px; }
+  .lede { font-size:18px; line-height:1.55; color:var(--muted); margin:0 0 30px; }
+  h2 { font-size:22px; letter-spacing:-0.02em; font-weight:600; margin:44px 0 12px; scroll-margin-top:80px; display:flex; align-items:center; gap:8px; }
+  h2 .anchor { color:var(--faint); opacity:0; font-weight:400; transition: opacity .15s; }
+  h2:hover .anchor { opacity:1; }
+  p, li { font-size:15.5px; line-height:1.7; color:#2b2b2b; }
+  ul { padding-left:20px; }
+  li { margin:6px 0; }
+  li::marker { color:var(--faint); }
+  :not(pre) > code { font-size:.86em; background:var(--soft); border:1px solid var(--line); padding:1px 5px; border-radius:6px; color:var(--ink); }
+  a.link { color:var(--ink); text-decoration:underline; text-decoration-color:var(--accent); text-underline-offset:3px; text-decoration-thickness:1.5px; }
+
+  .live { border:1px solid var(--line); border-radius:16px; overflow:hidden; background:var(--surface); margin:8px 0 28px; }
+  .live .bar { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 14px; border-bottom:1px solid var(--line); font-size:13px; color:var(--muted); flex-wrap:wrap; }
+  .live .bar b { display:inline-flex; align-items:center; gap:7px; color:var(--ink); font-weight:500; }
+  .live .bar b::before { content:""; width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent); }
+  .ctrl { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .ctrl label { display:inline-flex; gap:6px; align-items:center; }
+  .ctrl select, .ctrl input[type=number] { font:inherit; font-size:12.5px; border:1px solid var(--line); border-radius:6px; padding:2px 4px; background:var(--surface); }
+  .live .cal { height:380px; background-image:url(/files/week.png); background-size:cover; background-position:top left; }
+
+  .code { position:relative; border-radius:14px; overflow:hidden; background:#0b0b0c; margin:16px 0 22px; }
+  .code .fn { display:flex; justify-content:space-between; align-items:center; padding:9px 14px; font-size:12.5px; color:#8a8a8f; border-bottom:1px solid #1f1f22; font-family:'Instrument Sans', sans-serif; }
+  .code .fn button { all:unset; cursor:pointer; display:inline-flex; gap:6px; align-items:center; color:#a3a3a3; font-size:12px; }
+  .code .fn button svg { width:14px; height:14px; }
+  pre { margin:0; padding:16px 18px; font-size:13.5px; line-height:1.75; color:#e5e5e5; overflow:auto; }
+  .k { color:#c4a7ff; } .s { color:#86efac; } .f { color:#7dd3fc; } .c { color:#6b6b70; } .t { color:#fda4af; } .n { color:#fcd34d; }
+
+  table { width:100%; border-collapse:separate; border-spacing:0; font-size:14px; margin:12px 0 24px; border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--surface); }
+  th { text-align:left; font-weight:500; color:var(--faint); font-size:12.5px; padding:9px 14px; background:var(--soft); border-bottom:1px solid var(--line); }
+  td { padding:11px 14px; border-bottom:1px solid var(--line); vertical-align:top; line-height:1.55; color:#2b2b2b; }
+  tr:last-child td { border-bottom:0; }
+  td:first-child code { white-space:nowrap; }
+  td .ty { color:var(--faint); font-size:12.5px; }
+
+  .pager { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:56px; }
+  .pager a { border:1px solid var(--line); border-radius:12px; padding:14px 16px; background:var(--surface); transition: border-color .2s, transform .2s cubic-bezier(.16,1,.3,1); }
+  .pager a:hover { border-color:var(--faint); transform:translateY(-1px); }
+  .pager small { display:block; font-size:12px; color:var(--faint); margin-bottom:2px; }
+  .pager b { font-weight:500; }
+  .pager .next { text-align:right; }
+  .meta { display:flex; justify-content:space-between; margin-top:24px; font-size:13px; color:var(--faint); }
+  .meta a:hover { color:var(--ink); }
+
+  /* right toc */
+  aside.toc { position:sticky; top:60px; height:calc(100vh - 60px); padding:44px 0; font-size:13.5px; }
+  .toc h4 { margin:0 0 10px; font-size:12px; font-weight:600; }
+  .toc a { display:block; padding:4px 0 4px 12px; color:var(--muted); border-left:1px solid var(--line); }
+  .toc a.on { color:var(--ink); border-left:2px solid var(--accent); padding-left:11px; }
+  .toc .gh { margin-top:22px; display:flex; flex-direction:column; gap:8px; }
+  .toc .gh a { border:0; padding:0; color:var(--faint); }
+
+  @media (max-width: 1100px) { .layout { grid-template-columns: 240px minmax(0,1fr); } aside.toc { display:none; } }
+  @media (max-width: 760px) { .layout { grid-template-columns: 1fr; } aside.nav { display:none; } }
+</style>
+</head>
+<body>
+<header><div class="hd">
+  <a class="logo" href="#"><svg viewBox="0 0 24 24" fill="none"><rect x="2.5" y="4" width="19" height="17.5" rx="4" stroke="currentColor" stroke-width="1.8"/><path d="M2.5 9.5h19M8 2.5v3M16 2.5v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><rect x="6.5" y="12.5" width="6" height="4.5" rx="1.2" fill="currentColor"/></svg>CalendarKit<span class="sep">/</span><span class="sec">Docs</span></a>
+  <nav><a class="on" href="#">Docs</a><a href="#">API</a><a href="#">Changelog</a><span class="ver mono">v2.0.0</span><a class="icon-btn" href="#" aria-label="GitHub"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a><span class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/></svg></span></nav>
+</div></header>
+
+<div class="layout">
+  <aside class="nav">
+    <div class="search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>Search the docs</div>
+    <div class="grp"><h4>Getting started</h4><a href="#">Introduction</a><a href="#">Migrating from 1.x</a></div>
+    <div class="grp"><h4>Calendar</h4><a href="#">Views</a><a class="on" href="#">Time grid</a><a href="#">All-day and multi-day events</a><a href="#">Recurring events</a><a href="#">Time zones</a><a href="#">Resource scheduling</a><a href="#">Multiple calendars</a></div>
+    <div class="grp"><h4>Editing</h4><a href="#">Creating, editing and undoing</a><a href="#">Custom event form</a><a href="#">Places</a></div>
+    <div class="grp"><h4>Look and feel</h4><a href="#">Layouts</a><a href="#">Theming</a><a href="#">Customizing</a><a href="#">Internationalization</a></div>
+    <div class="grp"><h4>Platform</h4><a href="#">Phones and narrow calendars</a><a href="#">Accessibility</a><a href="#">Headless core and React bindings</a></div>
+    <div class="grp"><h4>Reference</h4><a href="#">API reference</a><a href="#">Changelog</a></div>
+  </aside>
+
+  <main>
+    <div class="crumb"><b>Calendar</b> / Time grid</div>
+    <h1>Time grid</h1>
+    <p class="lede">The week, day and resource views share one time grid.</p>
+
+    <div class="live">
+      <div class="bar"><b>Live example</b>
+        <div class="ctrl"><label>Hours <input type="number" value="7" style="width:44px"> to <input type="number" value="20" style="width:44px"></label><label>Slot <select><option>15 min</option><option selected>30 min</option><option>60 min</option></select></label><label><input type="checkbox" checked> Working hours</label><label><input type="checkbox"> Reversed</label></div>
+      </div>
+      <div class="cal" role="img" aria-label="Live calendar"></div>
+    </div>
+
+    <div class="code"><div class="fn"><span>tsx</span><button><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 012-2h9"/></svg>Copy</button></div>
+<pre>&lt;<span class="t">Scheduler</span>
+  dayStartHour={<span class="n">7</span>}
+  dayEndHour={<span class="n">20</span>}
+  slotDuration={<span class="n">30</span>}
+  workingHours={{ start: <span class="n">9</span>, end: <span class="n">17.5</span> }} <span class="c">// Monday to Friday by default; `days: [1, 2, 3, 4]` (0 is Sunday)</span>
+  scrollToHour={<span class="n">8</span>}
+  reverseTimeAxis
+/&gt;</pre></div>
+
+    <ul>
+      <li><code>dayStartHour</code> / <code>dayEndHour</code> set the hours drawn. Events that run past them are cut at the edge; events entirely outside are not drawn in the grid (they stay in the agenda and the month view).</li>
+      <li><code>slotDuration</code> sets the slot length: a click, a drop, a resize and a drag selection snap to it.</li>
+      <li><code>reverseTimeAxis</code> puts the latest hours on top: the day runs upward, and an event's end is its top edge (the resize handle sits there). The resource view keeps its left-to-right timeline.</li>
+      <li><code>workingHours</code> shades the time outside working hours, and whole days that are not working days. Shaded time can still be clicked and dropped on.</li>
+      <li><code>scrollToHour</code> is the hour at the top of the grid when it opens (on a reversed grid too).</li>
+      <li>Drag over free time with a mouse or a pen to create an event over that range: the quick card opens with it. On touch screens a drag scrolls, and a tap creates as before.</li>
+    </ul>
+
+    <h2 id="props">Props <a class="anchor" href="#props">#</a></h2>
+    <table>
+      <tr><th>Prop</th><th>Type</th><th>Description</th></tr>
+      <tr><td><code>dayStartHour</code></td><td class="ty mono">number</td><td>First hour of the week, day and resource grids (0 to 23, default 0)</td></tr>
+      <tr><td><code>dayEndHour</code></td><td class="ty mono">number</td><td>Hour those grids end at (1 to 24, default 24)</td></tr>
+      <tr><td><code>slotDuration</code></td><td class="ty mono">number</td><td>Slot length in minutes: 5, 10, 15 (default), 20, 30 or 60</td></tr>
+      <tr><td><code>reverseTimeAxis</code></td><td class="ty mono">boolean</td><td>Week and day views: the latest hours on top</td></tr>
+      <tr><td><code>workingHours</code></td><td class="ty mono">WorkingHours</td><td>Week and day views: shade the time outside <code>{ start, end, days? }</code></td></tr>
+      <tr><td><code>scrollToHour</code></td><td class="ty mono">number</td><td>Week and day views: the hour at the top when the grid opens</td></tr>
+    </table>
+
+    <div class="pager"><a href="#"><small>Previous</small><b>Views</b></a><a class="next" href="#"><small>Next</small><b>All-day and multi-day events</b></a></div>
+    <div class="meta"><span>From <span class="mono">docs/guide.md</span> at v2.0.0</span><a href="#">Edit on GitHub</a></div>
+  </main>
+
+  <aside class="toc">
+    <h4>On this page</h4>
+    <a class="on" href="#">Time grid</a><a href="#">Live example</a><a href="#props">Props</a>
+    <div class="gh"><a href="#">Edit on GitHub</a><a href="#">Report an issue</a></div>
+  </aside>
+</div>
+</body>
+</html>
