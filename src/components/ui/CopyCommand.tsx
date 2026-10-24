@@ -11,10 +11,16 @@ export function CopyCommand({ command, className }: { command: string; className
     clearTimeout(timer.current)
     timer.current = setTimeout(() => setDone(false), 1400)
   }
-  return (
+  const btn = (
     <button type="button" className={`btn btn2 mono ${done ? 'done' : ''} ${className ?? ''}`} onClick={copy} aria-label={`Copy ${command}`}>
       <span className="prompt">$</span>{command}
-      <span className="copy" aria-live="polite">{done ? <><Check size={15} />Copied</> : <Copy size={15} />}</span>
+      <span className="copy" aria-hidden="true">{done ? <><Check size={15} />Copied</> : <Copy size={15} />}</span>
     </button>
+  )
+  return (
+    <>
+      {btn}
+      <span className="sr-only" role="status">{done ? 'Copied' : ''}</span>
+    </>
   )
 }
