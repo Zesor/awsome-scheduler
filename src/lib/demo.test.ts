@@ -14,11 +14,18 @@ test('unique ids, valid ranges, known calendars and resources', () => {
   }
 })
 
-test('the current week is never empty: at least one timed event every weekday', () => {
-  for (let d = 1; d <= 5; d++) {
-    assert.ok(events.some((e) => !e.allDay && e.start.getDay() === d && Math.abs(+e.start - +now) < 7 * 864e5), `weekday ${d}`)
-  }
-})
+// Every day of the previous, current and next week has a timed event, whatever the day of the visit and
+// whether the calendar's week starts on Sunday or Monday (it follows the locale): that is every day within
+// 13 days of the visit. A Sunday visit used to show an empty "today" and empty weeks around it.
+for (const [label, visit] of [['Wednesday', now], ['Sunday', new Date(2026, 9, 25, 10)], ['Saturday', new Date(2026, 9, 31, 22)], ['Monday', new Date(2026, 9, 26, 8)]] as const) {
+  test(`previous, current and next week filled around a ${label} visit`, () => {
+    const evs = demoEvents(visit)
+    for (let d = -13; d <= 13; d++) {
+      const day = new Date(visit.getFullYear(), visit.getMonth(), visit.getDate() + d)
+      assert.ok(evs.some((e) => !e.allDay && e.start.toDateString() === day.toDateString()), day.toDateString())
+    }
+  })
+}
 
 test('has an all-day multi-day event, a recurring event and resource events', () => {
   assert.ok(events.some((e) => e.allDay && +e.end - +e.start > 864e5))
